@@ -1,0 +1,133 @@
+.actions-container {
+  /* max-width: 800px; */
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-form {
+  margin-bottom: 20px;
+}
+
+.action-form h3 {
+  margin-bottom: 10px;
+}
+
+.action-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-form input,
+.action-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.action-form .submit-button,
+.action-form .cancel-button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.action-form .submit-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.action-form .cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.actions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.actions-table th,
+.actions-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.actions-table th {
+  background-color: #f4f4f4;
+}
+
+.edit-button,
+.delete-button {
+  padding: 6px 12px;
+  margin-right: 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.edit-button:disabled,
+.delete-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* .actions-container {
+  padding: 20px;
+}
+
+.action-form {
+  margin-bottom: 20px;
+}
+
+.action-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submit-button, .cancel-button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.actions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.actions-table th, .actions-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.actions-table th {
+  background-color: #f4f4f4;
+} */

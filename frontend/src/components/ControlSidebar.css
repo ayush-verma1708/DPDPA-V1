@@ -1,0 +1,54 @@
+/* ControlSidebar.css
+.control-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #f4f4f4;
+    border-left: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+  
+  .control-sidebar h3 {
+    margin-top: 0;
+  }
+  
+  .control-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .control-sidebar li {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .family-header {
+    font-weight: bold;
+  }
+  
+  .family-header:hover {
+    background-color: #ddd;
+  }
+  
+  .controls-list {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .controls-list li {
+    padding: 5px;
+  }
+  
+  .controls-list li.active {
+    background-color: #ddd;
+  }
+  
+  .controls-list li:hover {
+    background-color: #eee;
+  }
+   */

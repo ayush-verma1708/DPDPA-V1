@@ -1,0 +1,133 @@
+.controls-container {
+  /* max-width: 800px; */
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.control-form {
+  margin-bottom: 20px;
+}
+
+.control-form h3 {
+  margin-bottom: 10px;
+}
+
+.control-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.control-form input,
+.control-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.control-form .submit-button,
+.control-form .cancel-button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.control-form .submit-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.control-form .cancel-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.controls-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.controls-table th,
+.controls-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.controls-table th {
+  background-color: #f4f4f4;
+}
+
+.edit-button,
+.delete-button {
+  padding: 6px 12px;
+  margin-right: 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.edit-button:disabled,
+.delete-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* .controls-container {
+  padding: 20px;
+}
+
+.control-form {
+  margin-bottom: 20px;
+}
+
+.control-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.submit-button, .cancel-button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.controls-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.controls-table th, .controls-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.controls-table th {
+  background-color: #f4f4f4;
+} */

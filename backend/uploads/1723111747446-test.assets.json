@@ -1,0 +1,281 @@
+[{
+  "_id": {
+    "$oid": "66a4d5cd04779e9b9785d5cb"
+  },
+  "name": "Asset Name",
+  "desc": "Asset Description",
+  "type": "Asset Type",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a4eef4be1cf6f3bd7c7cb8"
+  },
+  "name": "Asset1",
+  "desc": "Asset Description 1",
+  "type": "Asset Type1",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a4ef0cbe1cf6f3bd7c7cbc"
+  },
+  "name": "Asset3",
+  "desc": "Asset Description 3",
+  "type": "Asset Type3",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9dc685fd2bcf81105a074"
+  },
+  "name": "Azure",
+  "desc": "Cloud Services",
+  "type": "Cloud",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9dc7d5fd2bcf81105a076"
+  },
+  "name": "AWS",
+  "desc": "Cloud Services",
+  "type": "Cloud",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9dc855fd2bcf81105a078"
+  },
+  "name": "GCP",
+  "desc": "Cloud Services",
+  "type": "Cloud",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9de125fd2bcf81105a095"
+  },
+  "name": "Zoho Suite:",
+  "desc": "Service",
+  "type": "SAAS",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9de205fd2bcf81105a097"
+  },
+  "name": "Freshworks Suite",
+  "desc": "Service",
+  "type": "SAAS",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9de2f5fd2bcf81105a099"
+  },
+  "name": "Microsoft 365",
+  "desc": "Service",
+  "type": "SAAS",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66a9de435fd2bcf81105a09b"
+  },
+  "name": "Google Workspace",
+  "desc": "Service",
+  "type": "SAAS",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66aa2dc2514718f7a81a013c"
+  },
+  "name": "Google Workspace1",
+  "desc": "Service2",
+  "type": "SAAS",
+  "isScoped": true,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66aba0a165118fb23bfae5ca"
+  },
+  "name": "DummyApp",
+  "type": "Application",
+  "desc": "Dummy work",
+  "isScoped": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66accaf05ea060bba82c85a0"
+  },
+  "name": "Siminal",
+  "type": "App",
+  "desc": "app",
+  "isScoped": true,
+  "criticality": false,
+  "createdAt": {
+    "$date": "2024-08-02T12:02:56.235Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-02T12:02:56.235Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66ae40188b21530819211137"
+  },
+  "name": "t",
+  "type": "t",
+  "desc": "r",
+  "isScoped": true,
+  "createdAt": {
+    "$date": "2024-08-03T14:35:04.949Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-03T14:35:04.949Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66af2b9c68a3655703246679"
+  },
+  "name": "Housem",
+  "type": "soft",
+  "desc": "soft",
+  "isScoped": false,
+  "createdAt": {
+    "$date": "2024-08-04T07:19:56.217Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-04T07:19:56.217Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66af5479cdb6830b50e5a41a"
+  },
+  "name": "muyr",
+  "type": "tyre",
+  "desc": "",
+  "isScoped": false,
+  "createdAt": {
+    "$date": "2024-08-04T10:14:17.076Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-04T10:14:17.076Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66af6470ed45505ea0dc33d1"
+  },
+  "name": "Cloudnary",
+  "type": "webapp",
+  "desc": "file",
+  "isScoped": true,
+  "createdAt": {
+    "$date": "2024-08-04T11:22:24.589Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-04T11:22:24.589Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66b060ff54c624f922fa69f2"
+  },
+  "name": "Asst-22",
+  "type": "office",
+  "desc": "offie",
+  "isScoped": true,
+  "createdAt": {
+    "$date": "2024-08-05T05:19:59.958Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-05T05:19:59.958Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66b0c35be43caa6aac0fc535"
+  },
+  "name": "Salesforce",
+  "type": "saas service",
+  "desc": "crm application ",
+  "isScoped": false,
+  "createdAt": {
+    "$date": "2024-08-05T12:19:39.187Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-05T12:19:39.187Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66b0c3c7e43caa6aac0fc55b"
+  },
+  "name": "salesforce",
+  "type": "saas service",
+  "desc": "saas sservice to be reviewed",
+  "isScoped": false,
+  "createdAt": {
+    "$date": "2024-08-05T12:21:27.590Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-05T12:21:27.590Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66b30407d12396bc7cebf54d"
+  },
+  "name": "Tally",
+  "type": "Local Software",
+  "desc": "Acoounting",
+  "isScoped": false,
+  "createdAt": {
+    "$date": "2024-08-07T05:20:07.070Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-07T05:20:07.070Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66b349c377202c26286ffdc3"
+  },
+  "name": "blah blah",
+  "type": "blah",
+  "desc": "aba",
+  "isScoped": true,
+  "createdAt": {
+    "$date": "2024-08-07T10:17:39.788Z"
+  },
+  "updatedAt": {
+    "$date": "2024-08-07T10:17:39.788Z"
+  },
+  "__v": 0
+}]

@@ -1,0 +1,47 @@
+/* Make the sidebar fixed to the left side */
+.main-sidebar {
+  width: 16rem;
+  background-color: #1a202c;
+  color: white;
+  height: 100vh; /* Full viewport height */
+  position: fixed; /* Fixed position to stay in place */
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Allows scrolling if content exceeds height */
+  z-index: 1000; /* Ensure it stays above other content */
+}
+
+/* Ensure the content area doesn't overlap with the sidebar */
+.main-content {
+  margin-left: 16rem; /* Match the width of the sidebar */
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.main-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main-sidebar .MuiList-root {
+  padding: 0;
+}
+
+.main-sidebar .MuiListItem-root {
+  padding-left: 1rem;
+}
+
+.main-sidebar .MuiListItem-root.active {
+  background-color: #2d3748;
+}
+
+.main-sidebar .MuiListItem-root:hover {
+  background-color: #2d3748;
+}
+
+.main-sidebar .MuiListItemText-primary {
+  color: white;
+}

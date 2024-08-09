@@ -1,0 +1,45 @@
+/* ActionTable.css */
+.action-table {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .action-table h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .action-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .action-table th, .action-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .action-table th {
+    background-color: #f8f8f8;
+    color: #333;
+  }
+  
+  .action-table td select, .action-table td button {
+    padding: 5px 10px;
+  }
+  
+  .action-table td button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .action-table td button:hover {
+    background-color: #0056b3;
+  }
+  

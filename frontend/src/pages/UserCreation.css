@@ -1,0 +1,38 @@
+.user-creation-container {
+    padding: 20px;
+  }
+  
+  .user-creation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .user-creation-form div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-creation-form label {
+    margin-bottom: 5px;
+  }
+  
+  .user-creation-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .user-creation-form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .user-creation-form button:hover {
+    background-color: #0056b3;
+  }
+  
