@@ -16,6 +16,17 @@ export const getScopedInAsset = async (assetId) => {
   return response.data;
 };
 
+// Fetch asset details by asset ID
+export const getAssetDetailsByAssetId = async (assetId) => {
+  try {
+    const response = await axios.get(`http://localhost:8021/api/v1/assetDetails/assetDetails/${assetId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching asset details by asset ID:', error);
+    throw error;
+  }
+};
+
 // import axios from 'axios';
 
 // export const getAssetDetails = async () => {

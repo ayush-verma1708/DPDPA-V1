@@ -14,27 +14,27 @@ const assetDetailsSchema = new Schema({
   },
   criticality: {
     type: String,
-    required: true
+    // required: true
   },
   businessOwnerName: {
     type: String,
-    required: true
+    // required: true
   },
   businessOwnerEmail: {
     type: String,
-    required: true
+    // required: true
   },
   itOwnerName: {
     type: String,
-    required: true
+    // required: true
   },
   itOwnerEmail: {
     type: String,
-    required: true
+    // required: true
   },
   coverages: {
     type: Number,
-    required: true,
+    // required: true,
     default: 0
   }
 }, { timestamps: true });

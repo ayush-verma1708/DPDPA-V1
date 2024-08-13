@@ -22,7 +22,7 @@ const getAssetById = AsyncHandler(async (req, res) => {
   }
 });
 
-const addAsset = AsyncHandler(async (req, res) => {
+const createAsset = AsyncHandler(async (req, res) => {
   const {
     name, type, desc, isScoped } = req.body;
 
@@ -83,7 +83,7 @@ const getScopedByAsset = AsyncHandler(async (req, res) => {
 });
 
 export {
-  addAsset,
+  createAsset,
   getAssets,
   getAssetById,
   updateAsset,
