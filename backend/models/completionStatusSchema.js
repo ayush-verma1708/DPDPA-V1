@@ -1,37 +1,16 @@
 import mongoose from 'mongoose';
 
-const completionStatusSchema = new mongoose.Schema({
-  asset: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Asset',
-    required: true
-  },
-  action: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Action',
-    required: true
-  },
-  isCompleted: {
-    type: Boolean,
-    default: false
-  },
-  completionDate: {
-    type: Date
-  },
-  isScoped: {
-    type: Boolean,
-    default: false
-  },
-  scopeName: {
-    type: String,
-    required: function() { return this.isScoped; } // Required if scoped
-  },
-  scopeInfo: {
-    type: String,
-    required: function() { return this.isScoped; } // Required if scoped
-  }
-}, { timestamps: true });
+const CompletionStatusSchema = new mongoose.Schema({
+  actionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Action', required: true },
+  assetId: { type: mongoose.Schema.Types.ObjectId, ref: 'Asset', required: true },
+  scopeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Scope', required: false }, // Optional if scopeless
+  controlId: { type: mongoose.Schema.Types.ObjectId, ref: 'Control', required: true },
+  familyId: { type: mongoose.Schema.Types.ObjectId, ref: 'ControlFamily', required: true },
+  isCompleted: { type: Boolean, default: true },
+  completedAt: { type: Date, default: null },
+  username: { type: String, required: true }, // Added username field
+});
 
-const CompletionStatus = mongoose.model('CompletionStatus', completionStatusSchema);
+const CompletionStatus = mongoose.model('CompletionStatus', CompletionStatusSchema);
 
 export default CompletionStatus;
