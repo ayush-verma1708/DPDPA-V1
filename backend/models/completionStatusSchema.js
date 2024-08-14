@@ -9,6 +9,8 @@ const CompletionStatusSchema = new mongoose.Schema({
   isCompleted: { type: Boolean, default: true },
   completedAt: { type: Date, default: null },
   username: { type: String, required: true }, // Added username field
+}, {
+  timestamps: true, // This adds `createdAt` and `updatedAt` fields
 });
 
 const CompletionStatus = mongoose.model('CompletionStatus', CompletionStatusSchema);

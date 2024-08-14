@@ -155,8 +155,110 @@ const ListOfActions = () => {
   const handleControlClick = (controlId) => {
     setSelectedControlId(controlId);
   };
+  const ActionCompletionCell = ({ action, expandedFamilyId, selectedControlId, selectedAssetId, selectedScopeId, handleMarkAsCompleted }) => {
+    const [isCompleted, setIsCompleted] = useState(false);
+  
+    useEffect(() => {
+      const fetchCompletionStatus = async () => {
+        const status = await checkCompletionStatus(
+          action._id,
+          selectedAssetId,
+          selectedScopeId,
+          selectedControlId,
+          expandedFamilyId
+        );
+        setIsCompleted(status);
+      };
+  
+      fetchCompletionStatus();
+    }, [action._id, selectedAssetId, selectedScopeId, selectedControlId, expandedFamilyId]);
+  
+    return (
+      <TableCell>
+        {
+          isCompleted ? (
+            <Button variant="contained" color="success" disabled>
+              Completed
+            </Button>
+          ) : (
+            <Button variant="contained" color="primary" onClick={() => handleMarkAsCompleted(action._id)}>
+              Mark as Completed
+            </Button>
+          )
+        }
+      </TableCell>
+    );
+  };
+  
+
+  // const handleMarkAsCompleted = async (actionId) => {
+  //   try {
+  //     // Find the action by its ID
+  //     const action = actions.find(a => a._id === actionId);
+  
+  //     // Check if the action is already marked as completed
+  //     if (action && action.isCompleted) {
+  //       setNotification({ message: 'This action is already marked as completed.', severity: 'info' });
+  //       return; // Exit the function early if the action is already completed
+  //     }
+  
+  //     // Simulate a completion entry (replace with actual API call)
+  //     const completionEntry = {
+  //       username: 'dummyUser',
+  //       familyId: expandedFamilyId,
+  //       controlId: selectedControlId,
+  //       assetId: selectedAssetId,
+  //       // scopeId: selectedScopeId || null,
+  //       ...(selectedScopeId && { scopeId: selectedScopeId }),
+  //       actionId: actionId,
+  //     };
+  
+  //     console.log('Completion Entry:', completionEntry);
+  
+  //     // Simulate marking the action as completed (replace with actual API call)
+  //     const response = await axios.post(`http://localhost:8021/api/v1/completion-status`, completionEntry);
+  
+  //     if (response.status === 200) {
+  //       setNotification({ message: 'Action marked as completed!', severity: 'success' });
+  //       // Refetch actions for the selected control to update UI
+  //       const updatedActionsResponse = await fetchActions();
+  //       if (Array.isArray(updatedActionsResponse)) {
+  //         setActions(updatedActionsResponse.filter(action => action.control_Id._id === selectedControlId));
+  //       } else {
+  //         throw new Error('Failed to refetch actions.');
+  //       }
+  //     } else {
+  //       throw new Error('Failed to mark action as completed.');
+  //     }
+  //   } catch (error) {
+  //     setNotification({ message: 'Failed to mark action as completed. Please try again later.', severity: 'error' });
+  //     console.error('Mark as Completed Error:', error); // Log error details
+  //   }
+  // };
 
 
+  const checkCompletionStatus = async (actionId, assetId, scopeId, controlId, familyId) => {
+    try {
+      // Construct the params object, conditionally including scopeId if it exists
+      const params = {
+        actionId,
+        assetId,
+        controlId,
+        familyId,
+        ...(scopeId && { scopeId }), // Only include scopeId if it is not null or undefined
+      };
+  
+      // Make the API request with the constructed params
+      const response = await axios.get('http://localhost:8021/api/v1/completion-status', { params });
+  
+      // Return true if the response data indicates completion, otherwise false
+      return response.data ? true : false;
+    } catch (error) {
+      console.error('Error fetching completion status:', error);
+      return false;
+    }
+  };
+  
   const handleMarkAsCompleted = async (actionId) => {
     try {
       // Find the action by its ID
@@ -168,20 +270,33 @@ const ListOfActions = () => {
         return; // Exit the function early if the action is already completed
       }
   
-      // Simulate a completion entry (replace with actual API call)
+      // Prepare completion entry details
       const completionEntry = {
-        username: 'dummyUser',
+        username: 'dummyUser', // Replace with actual username if needed
         familyId: expandedFamilyId,
         controlId: selectedControlId,
         assetId: selectedAssetId,
-        // scopeId: selectedScopeId || null,
         ...(selectedScopeId && { scopeId: selectedScopeId }),
         actionId: actionId,
       };
   
       console.log('Completion Entry:', completionEntry);
   
-      // Simulate marking the action as completed (replace with actual API call)
+      // Check if the action has already been marked as completed in the database
+      const isAlreadyCompleted = await checkCompletionStatus(
+        actionId,
+        selectedAssetId,
+        selectedScopeId,
+        selectedControlId,
+        expandedFamilyId
+      );
+  
+      if (isAlreadyCompleted) {
+        setNotification({ message: 'This action is already marked as completed.', severity: 'info' });
+        return; // Exit the function early if the action is already completed
+      }
+  
+      // Mark the action as completed by making an API call
       const response = await axios.post(`http://localhost:8021/api/v1/completion-status`, completionEntry);
   
       if (response.status === 200) {
@@ -202,57 +317,6 @@ const ListOfActions = () => {
     }
   };
   
-  
-
-const checkCompletionStatus = async (actionId, assetId, scopeId, controlId, familyId) => {
-  try {
-    const response = await axios.get('http://localhost:8021/api/v1/completion-status', {
-      params: {
-        actionId,
-        assetId,
-        scopeId,
-        controlId,
-        familyId,
-      },
-    });
-    return response.data ? true : false;
-  } catch (error) {
-    console.error('Error fetching completion status:', error);
-    return false;
-  }
-};
-
-  const handleFileUpload = async (event, actionId) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await axios.put(`http://localhost:8021/api/v1/actions/${actionId}/upload`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 200) {
-        setNotification({ message: 'File uploaded successfully!', severity: 'success' });
-        // Refetch actions for the selected control
-        const updatedActionsResponse = await fetchActions();
-        if (Array.isArray(updatedActionsResponse)) {
-          setActions(updatedActionsResponse.filter(action => action.control_Id._id === selectedControlId));
-        } else {
-          throw new Error('Failed to refetch actions.');
-        }
-      } else {
-        throw new Error('Failed to upload file.');
-      }
-    } catch (error) {
-      setNotification({ message: 'Failed to upload file. Please try again later.', severity: 'error' });
-      console.error('File Upload Error:', error); // Log error details
-    }
-  };
 
   const handleSnackbarClose = () => {
     setNotification({ message: '', severity: 'info' });
@@ -360,28 +424,28 @@ const checkCompletionStatus = async (actionId, assetId, scopeId, controlId, fami
                   <TableCell>{action.variable_id}</TableCell>
                   <TableCell>{action.description}</TableCell>
                   <TableCell>
-                    {action.file && (
-                      <a href={action.file.url} target="_blank" rel="noopener noreferrer">
-                        {action.file.name}
-                      </a>
-                    )}
+                   
                   </TableCell>
-                  <TableCell>
-                    {action.isCompleted ? (
-                      <Button variant="contained" color="success" disabled>
-                        Completed
-                      </Button>
-                    ) : (
+                  {/* <TableCell>
+                    {
                       <Button variant="contained" color="primary" onClick={() => handleMarkAsCompleted(action._id)}>
                         Mark as Completed
                       </Button>
-                    )}
-                  </TableCell>
+                    }
+                  </TableCell> */}
+             <ActionCompletionCell
+        action={action}
+        expandedFamilyId={expandedFamilyId}
+        selectedControlId={selectedControlId}
+        selectedAssetId={selectedAssetId}
+        selectedScopeId={selectedScopeId}
+        handleMarkAsCompleted={handleMarkAsCompleted}
+      />
                   <TableCell>
                     <input
                       type="file"
-                      onChange={(e) => handleFileUpload(e, action._id)}
-                      disabled={action.isCompleted}
+                     
+                     
                     />
                   </TableCell>
                 </TableRow>
@@ -408,31 +472,7 @@ const checkCompletionStatus = async (actionId, assetId, scopeId, controlId, fami
 
 export default ListOfActions;
 
-// const fetchCompletionStatus = async (actionId, assetId, scopeId, controlId, familyId) => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8021/api/v1/completion-status', {
-  //       params: {
-  //         actionId,
-  //         assetId,
-  //         scopeId,
-  //         controlId,
-  //         familyId,
-  //       },
-  //     });
-  
-  //     if (response.status === 200 && response.data) {
-  //       console.log('Completion Status:', response.data);
-  //       return response.data;
-  //     } else {
-  //       console.log('No matching completion status found.');
-  //       return null;
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching completion status:', error);
-  //     return null;
-  //   }
-  // };
-  
+
 
   // const handleMarkAsCompleted = async (actionId) => {
      
