@@ -16,6 +16,7 @@ import controlRoutes from './routes/controlRoutes.js'; // Import control routes
 import actionRoutes from './routes/actionRoutes.js'; // Import action routes
 import assetDetailRouter from './routes/assetDetail.routes.js';
 import completionStatusRoutes from './routes/completionStatus.js'; // Import completion status routes
+import evidenceRoutes from './routes/evidenceRoutes.js';
 
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/api/v1/controls', controlRoutes); // Add control routes
 app.use('/api/v1/actions', actionRoutes); // Add action routes
 app.use('/api/v1/assetDetails', assetDetailRouter);
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
+app.use('/api/evidence', evidenceRoutes);
 
 
 // Global error handling middleware
