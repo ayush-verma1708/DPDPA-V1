@@ -1,0 +1,48 @@
+
+Compliance Officer ( To add controls) 
+
+
+
+view only - reader 
+View - Executive  
+Add - IT Team ( Upload evidence and status to actions)
+Edit - Auditor (commenting and approving) 
+Compliance Team ( add and edit controls and actions)
+
+IT persona
+
+Upload - (Event log , Document and Image {upto 5} )
+Size - 20mb 
+
+
+View for uploaded evidences ( document , images) 
+
+
+# 1. Sidebar -> Collapsable menu
+# 2. CF , C , A -> Disable edit button for isDPDPA true 
+# 3. Get list of all actions upto 64
+# 4. Display list of actions with Sidebar of CF and Controls.
+# 5. Create functionality for upload button of each action
+6. Reference action with asset -> Scope and Control
+7. Upload function mapped with asset scope and control action
+8. Search and filter on all the tables
+# 9. Pagination on tables
+10. Role Creation 
+
+added criticality on controls , 
+
+
+https://mui.com/material-ui/all-components/
+https://ionicframework.com/docs/api/infinite-scroll
+
+
+
+
+
+control family mapping
+
+
+https://dribbble.com/shots/21569200-Profile-completion-indicator
+
+
+

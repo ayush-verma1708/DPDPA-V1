@@ -18,13 +18,38 @@ const upload = multer({ storage });
 export const uploadFile = upload.single('file');
 
 // Create evidence
+// export const createEvidence = async (req, res) => {
+//   try {
+//     const fileUrl = req.file ? `/uploads/${req.file.filename}` : '';
+//     const evidence = new Evidence({
+//       fileName: req.file.originalname,
+//       fileType: req.file.mimetype,
+//       fileSize: req.file.size,
+//       fileUrl: fileUrl,
+//       assetId: req.body.assetId || null,
+//       scopeId: req.body.scopeId || null,
+//       actionId: req.body.actionId || null,
+//       familyId: req.body.familyId || null,
+//       controlId: req.body.controlId || null,
+//       uploadedAt: new Date(), // Timestamp of upload
+//     });
+//     await evidence.save();
+//     res.status(201).json(evidence);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+// Create evidence
 export const createEvidence = async (req, res) => {
   try {
+    console.log('File:', req.file); // Log file details
+    console.log('Body:', req.body); // Log request body
+    
     const fileUrl = req.file ? `/uploads/${req.file.filename}` : '';
     const evidence = new Evidence({
-      fileName: req.file.originalname,
-      fileType: req.file.mimetype,
-      fileSize: req.file.size,
+      fileName: req.file ? req.file.originalname : '',
+      fileType: req.file ? req.file.mimetype : '',
+      fileSize: req.file ? req.file.size : 0,
       fileUrl: fileUrl,
       assetId: req.body.assetId || null,
       scopeId: req.body.scopeId || null,
@@ -32,6 +57,8 @@ export const createEvidence = async (req, res) => {
       familyId: req.body.familyId || null,
       controlId: req.body.controlId || null,
       uploadedAt: new Date(), // Timestamp of upload
+      username: req.body.username || '', // Include username
+
     });
     await evidence.save();
     res.status(201).json(evidence);
@@ -42,11 +69,12 @@ export const createEvidence = async (req, res) => {
 
 // Get all evidences
 export const getAllEvidences = async (req, res) => {
+  const { actionId, assetId, scopeId, controlId, familyId } = req.query;
   try {
-    const evidences = await Evidence.find();
-    res.status(200).json(evidences);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    const status = await Evidence.findOne({ actionId, assetId, scopeId, controlId, familyId });
+    res.status(200).json(status);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -62,6 +90,7 @@ export const getEvidenceById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Update evidence
 export const updateEvidence = async (req, res) => {

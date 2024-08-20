@@ -5,11 +5,12 @@ const evidenceSchema = new mongoose.Schema({
   fileType: { type: String, required: true },
   fileSize: { type: Number, required: true },
   fileUrl: { type: String, required: true },
-  asset: { type: mongoose.Schema.Types.ObjectId, ref: 'Asset' },
-  scope: { type: mongoose.Schema.Types.ObjectId, ref: 'Scope' },
-  action: { type: mongoose.Schema.Types.ObjectId, ref: 'Action' },
-  controlFamily: { type: mongoose.Schema.Types.ObjectId, ref: 'ControlFamily' },
-  control: { type: mongoose.Schema.Types.ObjectId, ref: 'Control' },
+  assetId: { type: mongoose.Schema.Types.ObjectId, ref: 'Asset' },
+  scopeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Scope' },
+  actionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Action' },
+  familyId: { type: mongoose.Schema.Types.ObjectId, ref: 'ControlFamily' },
+  controlId: { type: mongoose.Schema.Types.ObjectId, ref: 'Control' },
+  username: { type: String }, // Added username field
 }, { timestamps: true });
 
 export default mongoose.model('Evidence', evidenceSchema);
