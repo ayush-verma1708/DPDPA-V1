@@ -18,6 +18,7 @@ import assetDetailRouter from './routes/assetDetail.routes.js';
 import completionStatusRoutes from './routes/completionStatus.js'; // Import completion status routes
 import evidenceRoutes from './routes/evidenceRoutes.js';
 
+import completionRoutes from './routes/completionRoutes.js';
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use('/api/v1/assetDetails', assetDetailRouter);
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
 app.use('/api/evidence', evidenceRoutes);
 
+app.use('/api/v1', completionRoutes);
 
 // Global error handling middleware
 app.use((err, req, res, next) => {

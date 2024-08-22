@@ -6,9 +6,9 @@ const CompletionStatusSchema = new mongoose.Schema({
   scopeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Scope', required: false }, // Optional if scopeless
   controlId: { type: mongoose.Schema.Types.ObjectId, ref: 'Control', required: true },
   familyId: { type: mongoose.Schema.Types.ObjectId, ref: 'ControlFamily', required: true },
-  isCompleted: { type: Boolean, default: true },
+  isCompleted: { type: Boolean, default: false },
   completedAt: { type: Date, default: null },
-  username: { type: String, required: true }, // Added username field
+  username: { type: String }, // Added username field
 }, {
   timestamps: true, // This adds `createdAt` and `updatedAt` fields
 });
