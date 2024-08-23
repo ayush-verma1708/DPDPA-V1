@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate,} from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
@@ -31,6 +26,8 @@ const App = () => {
 
   const [selectedItem, setSelectedItem] = useState("Asset");
 
+  const [user, setUser] = useState(null);
+
   const handleSidebarClick = (title) => {
     setSelectedItem(title);
   };
@@ -38,11 +35,19 @@ const App = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setAuthToken(null);
+    localStorage.removeItem("user"); 
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) setAuthToken(token);
+  }, []);
+
+
+  useEffect(() => {
+    // Example: Fetch user info from local storage or an AP
+    const fetchedUser = JSON.parse(localStorage.getItem("user")); 
+    setUser(fetchedUser);
   }, []);
 
   return (
@@ -51,7 +56,8 @@ const App = () => {
         {authToken && <Sidebar onSelect={handleSidebarClick} />}
         <div className="main-content flex flex-col flex-grow">
           {authToken && (
-            <Header title={selectedItem} handleLogout={handleLogout} />
+            // <Header title={selectedItem} handleLogout={handleLogout} />
+            <Header title="Dashboard" user={user} handleLogout={handleLogout} />
           )}
           <div className="flex h-screen">
             <div className="flex flex-col flex-grow">

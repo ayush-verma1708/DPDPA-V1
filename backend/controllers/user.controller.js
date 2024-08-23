@@ -97,7 +97,37 @@ const deleteUser = AsyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, null, 'User deleted successfully.'));
 });
 
-export { createUser, getUsers, updateUser, deleteUser };
+// const getCurrentUser = AsyncHandler(async (req, res) => {
+//   // Check if the user is logged in and their information is in the session
+//   if (!req.session || !req.session.user) {
+//     throw new ApiError(401, 'Unauthorized. User not logged in.');
+//   }
+
+//   // Optionally, you could fetch the user from the database if you want fresh data
+//   const user = await User.findById(req.session.user._id).select('-password'); // Exclude password field
+
+//   if (!user) {
+//     throw new ApiError(404, 'User not found');
+//   }
+
+//   // Send the user data back to the client
+//   res.status(200).json(new ApiResponse(200, user, 'Current user retrieved successfully.'));
+// });
+
+const getCurrentUser = AsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).select('-password');
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+  res.status(200).json({
+    success: true,
+    data: user,
+    message: 'User information retrieved successfully',
+  });
+});
+
+
+export { createUser, getUsers, updateUser, deleteUser , getCurrentUser};
 
 // import User from '../models/User.js'; // Adjust the path if necessary
 // import {AsyncHandler} from '../utils/asyncHandler.js'; // Ensure this utility exists

@@ -4,7 +4,9 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import auth from '../middleware/auth.js';
 import adminAuth from '../middleware/adminAuth.js';
-import { login } from '../controllers/authController.js'; 
+import { login, getCurrentUser } from '../controllers/authController.js'; 
+
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = express.Router();
 
@@ -21,5 +23,7 @@ router.post('/create-user', auth, async (req, res) => {
       res.status(400).json({ msg: err.message });
   }
 });
+
+router.get('/me', authenticate, getCurrentUser);
 
 export default router;

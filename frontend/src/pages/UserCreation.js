@@ -192,7 +192,7 @@ const UserCreation = () => {
                 <MenuItem value="user">User</MenuItem>
               </Select>
             </FormControl>
-            <FormControl fullWidth margin="normal">
+            {/* <FormControl fullWidth margin="normal">
               <Typography variant="h6">Permissions</Typography>
               <FormControlLabel
                 control={
@@ -248,7 +248,7 @@ const UserCreation = () => {
                 }
                 label="Confirm Evidence"
               />
-            </FormControl>
+            </FormControl> */}
             <Button type="submit" variant="contained" color="primary">
               {isEditing ? 'Update User' : 'Create User'}
             </Button>
