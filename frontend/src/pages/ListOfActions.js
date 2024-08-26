@@ -35,6 +35,12 @@ const ListOfActions = () => {
 
   const [isTableVisible, setIsTableVisible] = useState(true);
 
+  const statusOptions = [
+    'Open', 'Delegated to IT Team', 'Evidence Ready', 
+    'Misconfigured', 'Audit Delegated', 'Audit Non-Confirm', 
+    'Audit Closed', 'Closed', 'Not Applicable', 'Risk Accepted'
+  ];
+
   const toggleTableVisibility = () => {
     setIsTableVisible(prevState => !prevState);
   };
@@ -283,6 +289,7 @@ const ListOfActions = () => {
           )
         }
       </TableCell>
+      
     );
   };
 
@@ -362,6 +369,26 @@ const ListOfActions = () => {
   const handleSnackbarClose = () => {
     setNotification({ message: '', severity: 'info' });
   };
+
+  const handleStatusChange = async (actionId, newStatus) => {
+    try {
+      // Update status in the backend
+      await axios.put(`/api/actions/${actionId}`, { status: newStatus });
+  
+      // Update status in local state
+      setActions(prevActions =>
+        prevActions.map(action =>
+          action._id === actionId ? { ...action, status: newStatus } : action
+        )
+      );
+      
+      setNotification({ message: 'Status updated successfully!', severity: 'success' });
+    } catch (error) {
+      setNotification({ message: 'Failed to update status. Please try again.', severity: 'error' });
+      console.error('Status Update Error:', error);
+    }
+  };
+  
 
   if (loading) {
     return <Loading />;
@@ -470,10 +497,12 @@ const ListOfActions = () => {
       <TableRow>
         <TableCell>Action</TableCell>
         <TableCell>Control Description</TableCell> {/* New column for control description */}
-        <TableCell>Status</TableCell> {/* New column for status */}
+        <TableCell>Evidence Confirmation Status</TableCell> {/* New column for status */}
         <TableCell>Completion Status</TableCell>
         <TableCell>Upload File</TableCell>
         <TableCell>Uploaded Evidence</TableCell> {/* New column for viewing evidence */}
+        <TableCell>Current Status</TableCell> {/* New column for viewing evidence */}
+
       </TableRow>
     </TableHead>
     <TableBody>
@@ -505,6 +534,19 @@ const ListOfActions = () => {
     'No evidence uploaded'
   )}
 </TableCell>
+<TableCell>
+              <Select
+                value={action.status}
+                onChange={(e) => handleStatusChange(action._id, e.target.value)}
+              >
+                {statusOptions.map(status => (
+                  <MenuItem key={status} value={status}>
+                    {status}
+                  </MenuItem>
+                ))}
+              </Select>
+            </TableCell>
+
              </TableRow>
       ))}
     </TableBody>

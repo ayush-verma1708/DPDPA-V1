@@ -63,3 +63,36 @@ export const getStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Controller for Compliance Team
+export async function delegateToIT(req, res) {
+  const { completionStatusId } = req.params;
+  await CompletionStatus.findByIdAndUpdate(completionStatusId, {
+    status: 'Delegated to IT Team',
+    action: 'Delegate to IT'
+  });
+  res.status(200).send('Delegated to IT Team');
+}
+
+// Controller for IT Team
+export async function delegateToAuditor(req, res) {
+  const { completionStatusId } = req.params;
+  await CompletionStatus.findByIdAndUpdate(completionStatusId, {
+    status: 'Audit Delegated',
+    action: 'Delegate to Auditor'
+  });
+  res.status(200).send('Delegated to Auditor');
+}
+
+// Controller for Auditor
+export async function confirmEvidence(req, res) {
+  const { completionStatusId } = req.params;
+  const { feedback } = req.body; // Optional feedback if evidence is not confirmed
+  const status = feedback ? 'Audit Non-Confirm' : 'Audit Closed';
+  await CompletionStatus.findByIdAndUpdate(completionStatusId, {
+    status,
+    action: feedback ? 'Return Evidence' : 'Confirm Evidence',
+    feedback // Only set if there's feedback
+  });
+  res.status(200).send('Evidence confirmed');
+}
