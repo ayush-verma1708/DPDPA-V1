@@ -20,8 +20,9 @@ const Login = ({ setAuthToken }) => {
 
       if (token) {
         // Log the full response and token
-        console.log('Full Response:', res.data);
-        console.log('Token:', token);
+        // console.log('Full Response:', res.data);
+        // console.log('Token:', token);
+        console.log('Fetched User Info:', res.data.data);
 
         // Update parent component state with the token
         setAuthToken(token);

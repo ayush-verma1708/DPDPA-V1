@@ -1,16 +1,28 @@
 import { useState, useEffect } from 'react';
-import { fetchCurrentUser } from '../api';
+import axios from 'axios';
 
-const useCurrentUser = (token) => {
+const useFetchUser = (token) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserInfo = async () => {
       try {
-        const userData = await fetchCurrentUser(token);
-        setUser(userData);
+        if (token) {
+          const res = await axios.get('http://localhost:8021/api/users/me', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.data?.data) {
+            setUser(res.data.data);
+          } else {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
       } catch (err) {
         setError(err);
       } finally {
@@ -18,12 +30,10 @@ const useCurrentUser = (token) => {
       }
     };
 
-    if (token) {
-      fetchUser();
-    }
+    fetchUserInfo();
   }, [token]);
 
   return { user, loading, error };
 };
 
-export default useCurrentUser;
+export default useFetchUser;
