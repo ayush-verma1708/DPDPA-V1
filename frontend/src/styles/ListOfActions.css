@@ -1,287 +1,38 @@
-/* NewPage.css
-
-.new-page {
+.EvidenceManagementContainer {
   display: flex;
-  padding: 20px;
-  font-family: 'Roboto', sans-serif;
+  flex-direction: column; /* Stack tables vertically or use row to align them horizontally */
+  gap: 20px; /* Space between the tables */
 }
 
-h1 {
-  color: #333;
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  text-align: center;
-  width: 100%;
+.table-container {
+  border: 1px solid #ddd; /* Light border for the table container */
+  border-radius: 8px; /* Rounded corners for the table container */
+  padding: 10px; /* Padding around the table */
+  overflow: auto; /* Handle overflow if content is too large */
 }
 
-.sidebar {
-  width: 250px;
-  margin-right: 20px;
+table {
+  width: 100%; /* Full width of the container */
+  border-collapse: collapse; /* Merge table borders */
 }
 
-.control-family {
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 0.3s ease;
+th, td {
+  border: 1px solid #ddd; /* Light border for table cells */
+  padding: 8px; /* Padding inside table cells */
+  text-align: left; /* Align text to the left */
 }
 
-.control-family-header {
-  cursor: pointer;
-  padding: 15px;
-  background-color: #f5f5f5;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s ease;
+th {
+  background-color: #f4f4f4; /* Background color for table headers */
 }
 
-.control-family-header:hover {
-  background-color: #e0e0e0;
+tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternating row colors for readability */
 }
 
-.controls {
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: #fff;
+tr:hover {
+  background-color: #e0e0e0; /* Highlight row on hover */
 }
-
-.control {
-  cursor: pointer;
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin-top: 5px;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.control:hover {
-  background-color: #f0f0f0;
-}
-
-.content {
-  flex: 1;
-}
-
-.action-table {
-  margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.error {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.action-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.action-table th,
-.action-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-}
-
-.action-table th {
-  background-color: #4caf50;
-  color: white;
-  text-transform: uppercase;
-}
-
-.action-table td select,
-.action-table td button,
-.action-table td input[type='file'] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.action-table td select {
-  background-color: #fff;
-}
-
-.action-table td button {
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-}
-
-.action-table td button:hover {
-  background-color: #45a049;
-}
-
-.action-table td input[type='file']::file-selector-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.action-table td input[type='file']::file-selector-button:hover {
-  background-color: #45a049;
-}
-
-.action-table a {
-  color: #4caf50;
-  text-decoration: none;
-}
-
-.action-table a:hover {
-  text-decoration: underline;
-}
-
-/* NewPage.css
-
-.new-page {
-  padding: 20px;
-  font-family: 'Roboto', sans-serif;
-}
-
-h1 {
-  color: #333;
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.control-family {
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.control-family-header {
-  cursor: pointer;
-  padding: 15px;
-  background-color: #f5f5f5;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-.control-family-header:hover {
-  background-color: #e0e0e0;
-}
-
-.controls {
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: #fff;
-}
-
-.control {
-  cursor: pointer;
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin-top: 5px;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.control:hover {
-  background-color: #f0f0f0;
-}
-
-.action-table {
-  margin-top: 20px;
-}
-
-.error {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.action-table table {
-  width: 100%;
-  border-collapse: collapse;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.action-table th, .action-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-}
-
-.action-table th {
-  background-color: #4CAF50;
-  color: white;
-  text-transform: uppercase;
-}
-
-.action-table td select, .action-table td button {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.action-table td select {
-  background-color: #fff;
-}
-
-.action-table td button {
-  background-color: #4CAF50;
-  color: white;
-  cursor: pointer;
-}
-
-.action-table td button:hover {
-  background-color: #45a049;
-}
-
-.action-table td input[type="file"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.action-table td input[type="file"]::file-selector-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.action-table td input[type="file"]::file-selector-button:hover {
-  background-color: #45a049;
-}
-
-.action-table a {
-  color: #4CAF50;
-  text-decoration: none;
-}
-
-.action-table a:hover {
-  text-decoration: underline;
-} */ 
-/* NewPage.css */
 
 body {
   margin: 0;
