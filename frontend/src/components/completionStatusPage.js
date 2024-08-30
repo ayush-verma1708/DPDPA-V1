@@ -9,10 +9,11 @@ import {
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, TableSortLabel, Button, TextField, Select, MenuItem, CircularProgress,
-  FormControl, InputLabel, TablePagination
+  FormControl, InputLabel, TablePagination ,Collapse, IconButton
 } from '@mui/material';
 
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 
 const CompletionStatusPage = () => {
@@ -58,6 +59,16 @@ const CompletionStatusPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+// New state to manage row expansion for history details
+const [openRows, setOpenRows] = useState({});
+
+const handleToggleRow = (statusId) => {
+  setOpenRows(prevOpenRows => ({
+    ...prevOpenRows,
+    [statusId]: !prevOpenRows[statusId]
+  }));
+};
+  
 
    // Pagination handlers
    const handleChangePage = (event, newPage) => {
@@ -193,6 +204,7 @@ const CompletionStatusPage = () => {
     } catch (error) {
       console.error('Error delegating to IT Team:', error);
     }
+    
   };
 
   const handleDelegateToAuditor = async (statusId) => {
@@ -350,77 +362,111 @@ const CompletionStatusPage = () => {
       </section>
 
       <section style={{ marginTop: '20px' }}>
-  <h2>Status Table</h2>
-  {loading ? (
-    <CircularProgress />
-  ) : (
-    <TableContainer component={Paper} style={{ maxHeight: 600, overflow: 'auto' }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Status ID</TableCell>
-            <TableCell>Assigned to</TableCell>
-            <TableCell>Action</TableCell>
-            <TableCell>Asset</TableCell>
-            <TableCell>Scope</TableCell>
-            <TableCell>Control</TableCell>
-            <TableCell>Family</TableCell>
-            <TableCell>Created At</TableCell>
-            <TableCell>Updated At</TableCell>
-            <TableCell>Feedback</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>History</TableCell>
-            <TableCell>Updates</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {paginatedData.map((status) => (
-            <TableRow key={status._id}>
-              <TableCell>{status._id}</TableCell>
-              <TableCell>{status.username}</TableCell>
-              <TableCell>{status.actionId?.fixed_id || 'N/A'}</TableCell>
-              <TableCell>{status.assetId?.name || 'N/A'}</TableCell>
-              <TableCell>{status.scopeId?.name || 'N/A'}</TableCell>
-              <TableCell>{status.controlId?.fixed_id || 'N/A'}</TableCell>
-              <TableCell>{status.familyId?.fixed_id || 'N/A'}</TableCell>
-              <TableCell>{status.createdAt}</TableCell>
-              <TableCell>{status.updatedAt}</TableCell>
-              <TableCell>{status.feedback || 'N/A'}</TableCell>
-              <TableCell>{status.status || 'N/A'}</TableCell>
-              <TableCell>
-                {/* Display history details here */}
-                {status.history ? status.history.join(', ') : 'N/A'}
-              </TableCell>
-              <TableCell>
-                {/* Display updates details here */}
-                {status.updates ? status.updates.join(', ') : 'N/A'}
-              </TableCell>
-              <TableCell>
-                <Button onClick={() => handleDelegateToIT(status._id)}>Delegate to IT</Button>
-                <Button onClick={() => handleDelegateToAuditor(status._id)}>Delegate to Auditor</Button>
-                <Button onClick={() => handleConfirmEvidence(status._id)}>Confirm Evidence</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={fetchedStatuses.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </TableContainer>
-  )}
-</section>
-
-    
-
-   
+        <h2>Status Table</h2>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <TableContainer component={Paper} style={{ maxHeight: 600, overflow: 'auto' }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell />
+                  <TableCell>Status ID</TableCell>
+                  <TableCell>Assigned to</TableCell>
+                  <TableCell>Action</TableCell>
+                  <TableCell>Asset</TableCell>
+                  <TableCell>Scope</TableCell>
+                  <TableCell>Control</TableCell>
+                  <TableCell>Family</TableCell>
+                  <TableCell>Created At</TableCell>
+                  <TableCell>Updated At</TableCell>
+                  <TableCell>Feedback</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedData.map((status) => (
+                  <React.Fragment key={status._id}>
+                    <TableRow>
+                      <TableCell>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleToggleRow(status._id)}
+                        >
+                          {openRows[status._id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>{status._id}</TableCell>
+                      <TableCell>{status.username}</TableCell>
+                      <TableCell>{status.actionId?.fixed_id || 'N/A'}</TableCell>
+                      <TableCell>{status.assetId?.name || 'N/A'}</TableCell>
+                      <TableCell>{status.scopeId?.name || 'N/A'}</TableCell>
+                      <TableCell>{status.controlId?.fixed_id || 'N/A'}</TableCell>
+                      <TableCell>{status.familyId?.fixed_id || 'N/A'}</TableCell>
+                      <TableCell>{status.createdAt}</TableCell>
+                      <TableCell>{status.updatedAt}</TableCell>
+                      <TableCell>{status.feedback || 'N/A'}</TableCell>
+                      <TableCell>{status.status || 'N/A'}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleDelegateToIT(status._id)}>Delegate to IT</Button>
+                        <Button onClick={() => handleDelegateToAuditor(status._id)}>Delegate to Auditor</Button>
+                        <Button onClick={() => handleConfirmEvidence(status._id)}>Confirm Evidence</Button>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={13}>
+                        <Collapse in={openRows[status._id]} timeout="auto" unmountOnExit>
+                          <div style={{ margin: '10px' }}>
+                            <h3>History</h3>
+                            {status.history && status.history.length > 0 ? (
+                              <Table size="small" aria-label="history">
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell>Modified At</TableCell>
+                                    <TableCell>Modified By</TableCell>
+                                    <TableCell>Changes</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {status.history.map((change, index) => (
+                                    <TableRow key={index}>
+                                      <TableCell>{new Date(change.modifiedAt).toLocaleString()}</TableCell>
+                                      <TableCell>{change.modifiedBy}</TableCell>
+                                      <TableCell>
+                                        <ul>
+                                          {Object.entries(change.changes).map(([key, value]) => (
+                                            <li key={key}>{`${key}: ${value}`}</li>
+                                          ))}
+                                        </ul>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            ) : (
+                              <p>No history available.</p>
+                            )}
+                          </div>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                  </React.Fragment>
+                ))}
+              </TableBody>
+            </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={fetchedStatuses.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        )}
+      </section>
     </div>
   );
 };
