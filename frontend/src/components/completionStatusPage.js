@@ -62,6 +62,8 @@ const CompletionStatusPage = () => {
 // New state to manage row expansion for history details
 const [openRows, setOpenRows] = useState({});
 
+
+
 const handleToggleRow = (statusId) => {
   setOpenRows(prevOpenRows => ({
     ...prevOpenRows,
@@ -82,6 +84,49 @@ const handleToggleRow = (statusId) => {
 
   // Slice the data to show on the current page
   const paginatedData = fetchedStatuses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+
+  useEffect(() => {
+    handleFetchStatus(); // Fetch data on component mount
+  }, [query]); // Also refetch data when query changes
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      const [statusResponse, actionResponse, assetResponse, scopeResponse, controlResponse, familyResponse] = await Promise.all([
+        getStatus({}),
+        // fetchActions(),
+        debugFetchActions(),
+        // fetch('/api/v1/actions').then(res => res.json()),
+        fetch('/api/v1/assets').then(res => res.json()),
+        fetch('/api/v1/scoped').then(res => res.json()),
+        fetch('/api/v1/controls').then(res => res.json()),
+        fetch('/api/v1/control-families').then(res => res.json())
+      ]);
+
+      const statuses = Array.isArray(statusResponse) ? statusResponse : [statusResponse];
+      
+      setFetchedStatuses(statuses);
+      // setActions(actionResponse);
+      setAssets(assetResponse);
+      setScopes(scopeResponse);
+      setControls(controlResponse);
+      setFamilies(familyResponse);
+
+      // Set options for dropdowns
+      setActionOptions(actionResponse);
+      // setAssetOptions(assetResponse);
+      setScopeOptions(scopeResponse);
+      setControlOptions(controlResponse);
+      setFamilyOptions(familyResponse);
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     
@@ -201,6 +246,7 @@ const handleToggleRow = (statusId) => {
       const response = await delegateToIT(statusId);
       console.log('Delegated to IT Team:', response);
       updateStatusInList(statusId, 'Delegated to IT Team', 'Delegate to IT');
+      await handleFetchStatus(); // Refetch data after action
     } catch (error) {
       console.error('Error delegating to IT Team:', error);
     }
@@ -212,6 +258,7 @@ const handleToggleRow = (statusId) => {
       const response = await delegateToAuditor(statusId);
       console.log('Delegated to Auditor:', response);
       updateStatusInList(statusId, 'Audit Delegated', 'Delegate to Auditor');
+      await handleFetchStatus(); // Refetch data after action
     } catch (error) {
       console.error('Error delegating to Auditor:', error);
     }
@@ -220,6 +267,7 @@ const handleToggleRow = (statusId) => {
   const handleConfirmEvidence = async (statusId) => {
     try {
       const feedback = prompt('Enter feedback if the evidence is not confirmed (leave blank if confirmed):');
+      await handleFetchStatus(); // Refetch data after action
       const response = await confirmEvidence(statusId, feedback);
       console.log('Evidence status updated:', response);
       updateStatusInList(statusId, feedback ? 'Audit Non-Confirm' : 'Audit Closed', feedback ? 'Return Evidence' : 'Confirm Evidence', feedback);
@@ -611,7 +659,7 @@ export default CompletionStatusPage;
 //       }
 //     };
 
-//     fetchData();
+//     handleFetchStatus();
 //   }, []);
 
 //   const handleInputChange = (e) => {
