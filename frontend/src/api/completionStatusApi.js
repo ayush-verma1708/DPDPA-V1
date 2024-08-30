@@ -1,87 +1,80 @@
 import axios from 'axios';
 
-// Base URL for API requests
-const API_BASE_URL = '/api/v1/completion-status';
+const API_BASE_URL = 'http://localhost:8021/api/v1'; // Update this URL based on your backend setup
 
-// Function to create or update completion status
-export const createOrUpdateCompletionStatus = async (statusData) => {
+// Create or Update Completion Status
+export const createOrUpdateStatus = async (statusData) => {
   try {
-    const response = await axios.put(API_BASE_URL, statusData);
+    const response = await axios.post(`${API_BASE_URL}/completion-status`, statusData);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'Failed to create or update status');
+    console.error('Error in createOrUpdateStatus:', error);
+    throw error;
   }
 };
 
-// Function to fetch completion status by criteria
-export const fetchCompletionStatus = async (query) => {
+// Get Completion Status by Criteria
+export const getStatus = async (queryParams) => {
   try {
-    const response = await axios.get(API_BASE_URL, { params: query });
+    const response = await axios.get(`${API_BASE_URL}/completion-status`, { params: queryParams });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'Failed to fetch status');
+    console.error('Error in getStatus:', error);
+    throw error;
   }
 };
 
-// Function to delegate to IT Team
+// Update Specific Completion Status by ID
+export const updateStatus = async (completionStatusId, updateData) => {
+  try {
+    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}`, updateData);
+    return response.data;
+  } catch (error) {
+    console.error('Error in updateStatus:', error);
+    throw error;
+  }
+};
+
+// Delete Completion Status by ID
+export const deleteStatus = async (completionStatusId) => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/completion-status/${completionStatusId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error in deleteStatus:', error);
+    throw error;
+  }
+};
+
+// Delegate to IT Team
 export const delegateToIT = async (completionStatusId) => {
   try {
-    const response = await axios.post(`/api/v1/completion-status/delegate-to-it/${completionStatusId}`);
+    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/delegate-it`);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'Failed to delegate to IT Team');
+    console.error('Error in delegateToIT:', error);
+    throw error;
   }
 };
 
-// Function to delegate to Auditor
+// Delegate to Auditor
 export const delegateToAuditor = async (completionStatusId) => {
   try {
-    const response = await axios.post(`/api/v1/completion-status/delegate-to-auditor/${completionStatusId}`);
+    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/delegate-auditor`);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'Failed to delegate to Auditor');
+    console.error('Error in delegateToAuditor:', error);
+    throw error;
   }
 };
 
-// Function to confirm evidence
+// Confirm Evidence or Return Evidence
 export const confirmEvidence = async (completionStatusId, feedback) => {
   try {
-    const response = await axios.post(`/api/v1/completion-status/confirm-evidence/${completionStatusId}`, { feedback });
+    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/confirm-evidence`, { feedback });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'Failed to confirm evidence');
+    console.error('Error in confirmEvidence:', error);
+    throw error;
   }
 };
-
-// import axios from 'axios';
-
-// // Base URL for API requests
-// const API_BASE_URL = '/api/v1/completion-status';
-
-// // Function to create or update completion status
-// export const createOrUpdateCompletionStatus = async (statusData) => {
-//   try {
-//     // Sending a POST request to the completion status endpoint
-//     const response = await axios.post(API_BASE_URL, statusData);
-
-//     // Returning the response data
-//     return response.data;
-//   } catch (error) {
-//     // Throwing an error if the request fails
-//     throw new Error(error.response?.data?.error || 'Failed to update status');
-//   }
-// };
-
-// // Function to fetch completion status by criteria
-// export const fetchCompletionStatus = async (query) => {
-//   try {
-//     // Sending a GET request to the completion status endpoint with query parameters
-//     const response = await axios.get(API_BASE_URL, { params: query });
-
-//     // Returning the response data
-//     return response.data;
-//   } catch (error) {
-//     // Throwing an error if the request fails
-//     throw new Error(error.response?.data?.error || 'Failed to fetch status');
-//   }
-// };

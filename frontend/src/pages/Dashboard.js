@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import StepsComponent from '../components/StepsComponent';
+import CompletionStatusPage from '../components/completionStatusPage';
 
 const Dashboard = () => {
   const [showSteps, setShowSteps] = useState(true);
@@ -17,28 +18,7 @@ const Dashboard = () => {
       {showSteps ? (
         <StepsComponent onClose={toggleSteps} />
       ) : (
-        <div>
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Task Assigned to User</h3>
-            <ul>
-              <li>Task 1: Description of task 1</li>
-              <li>Task 2: Description of task 2</li>
-              <li>Task 3: Description of task 3</li>
-            </ul>
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Compliance Score</h3>
-            <p>Your compliance score is 85%</p>
-          </div>
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Asset Health List</h3>
-            <ul>
-              <li>Asset 1: Healthy</li>
-              <li>Asset 2: Needs attention</li>
-              <li>Asset 3: Critical</li>
-            </ul>
-          </div>
-        </div>
+        <CompletionStatusPage />
       )}
     </div>
   );

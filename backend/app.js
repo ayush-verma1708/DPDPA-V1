@@ -20,7 +20,7 @@ import evidenceRoutes from './routes/evidenceRoutes.js';
 
 import completionRoutes from './routes/completionRoutes.js';
 
-
+import TaskManager from './models/taskManager.js';
 
 
 const app = express();
@@ -52,6 +52,7 @@ app.use('/api/v1/actions', actionRoutes); // Add action routes
 app.use('/api/v1/assetDetails', assetDetailRouter);
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
 app.use('/api/evidence', evidenceRoutes);
+app.use('/api/task', TaskManager);
 
 app.use('/api/v1', completionRoutes);
 
