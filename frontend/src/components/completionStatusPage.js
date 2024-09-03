@@ -42,6 +42,10 @@ const CompletionStatusPage = () => {
   });
 
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
+ 
+  const [assetOptions, setAssetOptions] = useState([]);
+  const [filteredAssets, setFilteredAssets] = useState([]);
+ 
   const [actions, setActions] = useState([]);
   const [assets, setAssets] = useState([]);
   const [scopes, setScopes] = useState([]);
@@ -50,16 +54,15 @@ const CompletionStatusPage = () => {
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const [loading, setLoading] = useState(true);
   const [actionOptions, setActionOptions] = useState([]);
-  const [assetOptions, setAssetOptions] = useState([]);
   const [scopeOptions, setScopeOptions] = useState([]);
   const [controlOptions, setControlOptions] = useState([]);
   const [familyOptions, setFamilyOptions] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState([]);
-const [userOptions, setUserOptions] = useState([]);
-const [assetId, setAssetId] = useState(null);
-const [usernames, setUsernames] = useState({});
+  const [userOptions, setUserOptions] = useState([]);
+  const [assetId, setAssetId] = useState(null);
+  const [usernames, setUsernames] = useState({});
 
   
 
@@ -92,6 +95,30 @@ useEffect(() => {
 
   fetchAllUsernames();
 }, [fetchedStatuses]);
+
+useEffect(() => {
+  const fetchAssets = async () => {
+    try {
+      setLoading(true);
+      const assetsResponse = await getAssets();
+      setAssetOptions(assetsResponse);
+      setFilteredAssets(assetsResponse); // Set initial filtered options
+    } catch (error) {
+      console.error('Error fetching assets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchAssets();
+}, []);
+
+useEffect(() => {
+  const filtered = assetOptions.filter(asset =>
+    asset.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  setFilteredAssets(filtered);
+}, [searchTerm, assetOptions]);
 
 const getUsername = (userId) => {
   return usernames[userId] || 'N/A';
@@ -149,44 +176,6 @@ const handleToggleRow = (statusId) => {
     handleFetchStatus(); // Fetch data on component mount
   }, [query]); // Also refetch data when query changes
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-
-      const [statusResponse, actionResponse, assetResponse, scopeResponse, controlResponse, familyResponse] = await Promise.all([
-        getStatus({}),
-        // fetchActions(),
-        debugFetchActions(),
-        // fetch('/api/v1/actions').then(res => res.json()),
-
-        fetch('/api/v1/assets').then(res => res.json()),
-        fetch('/api/v1/scoped').then(res => res.json()),
-        fetch('/api/v1/controls').then(res => res.json()),
-        fetch('/api/v1/control-families').then(res => res.json())
-      ]);
-
-      const statuses = Array.isArray(statusResponse) ? statusResponse : [statusResponse];
-      
-      setFetchedStatuses(statuses);
-      // setActions(actionResponse);
-      setAssets(assetResponse);
-      setScopes(scopeResponse);
-      setControls(controlResponse);
-      setFamilies(familyResponse);
-
-      // Set options for dropdowns
-      setActionOptions(actionResponse);
-      // setAssetOptions(assetResponse);
-      setScopeOptions(scopeResponse);
-      setControlOptions(controlResponse);
-      setFamilyOptions(familyResponse);
-      
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     
@@ -409,8 +398,10 @@ const handleToggleRow = (statusId) => {
       console.error('Error fetching actions:', error);
     }
   };
+  
 
   
+
   return (
     <div style={{ padding: '20px' }}>
       <h1>Task and Status Management</h1>
@@ -441,6 +432,30 @@ const handleToggleRow = (statusId) => {
             )}
           </Select>
 </FormControl>
+
+<FormControl fullWidth style={{ marginBottom: '10px' }}>
+          <InputLabel>Asset</InputLabel>
+          <Select
+            name="assetId"
+            value={query.assetId}
+            onChange={handleQueryChange}
+            label="Asset"
+            disabled={loading} // Disable while loading
+            fullWidth
+          >
+            {loading ? (
+              <MenuItem disabled>Loading...</MenuItem>
+            ) : filteredAssets.length > 0 ? (
+              filteredAssets.map(asset => (
+                <MenuItem key={asset._id} value={asset._id}>
+                  {asset.name} {/* Use appropriate field */}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>No assets available</MenuItem>
+            )}
+          </Select>
+        </FormControl>
 
     
         <Button variant="contained" color="primary" onClick={handleFetchStatus}>Search</Button>
