@@ -5,11 +5,33 @@ import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
 // Create a new user
-const createUser = AsyncHandler(async (req, res) => {
-  const { username, password, role, permissions } = req.body;
+// const createUser = AsyncHandler(async (req, res) => {
+//   const { username, password, role, permissions } = req.body;
 
-  if (!username || !password) {
-    throw new ApiError(400, 'Username and password are required.');
+//   if (!username || !password) {
+//     throw new ApiError(400, 'Username and password are required.');
+//   }
+
+//   const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
+//   if (role && !validRoles.includes(role)) {
+//     throw new ApiError(400, 'Invalid role.');
+//   }
+
+//   const user = new User({ username, password, role, permissions });
+//   const createdUser = await user.save();
+//   res.status(201).json(new ApiResponse(201, createdUser, 'User created successfully.'));
+// });
+const createUser = AsyncHandler(async (req, res) => {
+  const { username, email, password, role, permissions } = req.body;
+
+  if (!username || !email || !password) {
+    throw new ApiError(400, 'Username, email, and password are required.');
+  }
+
+  // Validate email format
+  const emailRegex = /\S+@\S+\.\S+/;
+  if (!emailRegex.test(email)) {
+    throw new ApiError(400, 'Invalid email format.');
   }
 
   const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
@@ -17,10 +39,65 @@ const createUser = AsyncHandler(async (req, res) => {
     throw new ApiError(400, 'Invalid role.');
   }
 
-  const user = new User({ username, password, role, permissions });
+  const user = new User({ username, email, password, role, permissions });
   const createdUser = await user.save();
   res.status(201).json(new ApiResponse(201, createdUser, 'User created successfully.'));
 });
+
+
+// Update an existing user
+// const updateUser = AsyncHandler(async (req, res) => {
+//   const { id } = req.params;
+//   const { username, password, role, permissions } = req.body;
+
+//   const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
+//   if (role && !validRoles.includes(role)) {
+//     throw new ApiError(400, 'Invalid role.');
+//   }
+
+//   const user = await User.findById(id);
+//   if (!user) {
+//     throw new ApiError(404, 'User not found');
+//   }
+
+//   if (username) user.username = username;
+//   if (password) user.password = password; // Handle password hashing in the model
+//   if (role) user.role = role;
+//   if (permissions) user.permissions = permissions;
+
+//   const updatedUser = await user.save();
+//   res.status(200).json(new ApiResponse(200, updatedUser, 'User updated successfully.'));
+// });
+const updateUser = AsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { username, email, password, role, permissions } = req.body;
+
+  const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
+  if (role && !validRoles.includes(role)) {
+    throw new ApiError(400, 'Invalid role.');
+  }
+
+  // Validate email format if provided
+  const emailRegex = /\S+@\S+\.\S+/;
+  if (email && !emailRegex.test(email)) {
+    throw new ApiError(400, 'Invalid email format.');
+  }
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  if (username) user.username = username;
+  if (email) user.email = email;
+  if (password) user.password = password; // Handle password hashing in the model
+  if (role) user.role = role;
+  if (permissions) user.permissions = permissions;
+
+  const updatedUser = await user.save();
+  res.status(200).json(new ApiResponse(200, updatedUser, 'User updated successfully.'));
+});
+
 
 // Get all users with pagination
 const getUsers = AsyncHandler(async (req, res) => {
@@ -39,29 +116,6 @@ const getUsers = AsyncHandler(async (req, res) => {
   });
 });
 
-// Update an existing user
-const updateUser = AsyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { username, password, role, permissions } = req.body;
-
-  const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
-  if (role && !validRoles.includes(role)) {
-    throw new ApiError(400, 'Invalid role.');
-  }
-
-  const user = await User.findById(id);
-  if (!user) {
-    throw new ApiError(404, 'User not found');
-  }
-
-  if (username) user.username = username;
-  if (password) user.password = password; // Handle password hashing in the model
-  if (role) user.role = role;
-  if (permissions) user.permissions = permissions;
-
-  const updatedUser = await user.save();
-  res.status(200).json(new ApiResponse(200, updatedUser, 'User updated successfully.'));
-});
 
 // Delete a user by ID
 const deleteUser = AsyncHandler(async (req, res) => {
@@ -88,8 +142,24 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
   });
 });
 
+// Controller to get all user info by ID
+const getUserById = async (req, res) => {
+  const userId = req.params.id;
 
-export { createUser, getUsers, updateUser, deleteUser, getCurrentUser };
+  try {
+    const user = await User.findById(userId); // Fetch the entire user document
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+export { createUser, getUsers, updateUser, deleteUser, getCurrentUser, getUserById };
 
 // import User from '../models/User.js';
 // import { AsyncHandler } from '../utils/asyncHandler.js';

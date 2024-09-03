@@ -1,6 +1,6 @@
 // backend/routes/userRoutes.js
 import { Router } from 'express';
-import { createUser, getUsers, updateUser, deleteUser, getCurrentUser } from '../controllers/user.controller.js';
+import { createUser, getUsers, updateUser, deleteUser, getCurrentUser, getUserById } from '../controllers/user.controller.js';
 import authenticateToken from '../middleware/authenticateToken.js';
 
 const router = Router();
@@ -10,7 +10,7 @@ router.post('/', createUser); // Create a new user
 router.put('/:id', updateUser); // Update user by ID
 router.delete('/:id', deleteUser); // Delete user by ID
 router.get('/me', authenticateToken, getCurrentUser); // Get current user info
-
+router.get('/:id', getUserById);
 export default router;
 
 // import { Router } from 'express';

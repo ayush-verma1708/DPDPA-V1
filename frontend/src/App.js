@@ -5,13 +5,13 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
-import AddCompany from "./pages/AddCompany";
+// import AddCompany from "./pages/AddCompany";
 import Dashboard from "./pages/Dashboard";
 import UserCreation from "./pages/UserCreation";
 import Login from "./pages/Login";
 import AssetList from "./pages/asset/AssetsList";
 import ListOfActions from "./pages/ListOfActions";
-import AlertManagement from "./pages/AlertManagement";
+// import AlertManagement from "./pages/AlertManagement";
 import ControlFamiliesPage from "./pages/ControlFamiliesPage";
 import ControlsPage from "./pages/ControlsPage";
 import ActionsPage from "./pages/ActionsPage";
@@ -90,12 +90,12 @@ const App = () => {
                 <Routes>
                   <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
                   <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                  <Route path="/add-company" element={<PrivateRoute><AddCompany /></PrivateRoute>} />
+                  {/* <Route path="/add-company" element={<PrivateRoute><AddCompany /></PrivateRoute>} /> */}
                   <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                   <Route path="/user-creation" element={<PrivateRoute><UserCreation /></PrivateRoute>} />
                   <Route path="/asset-management" element={<PrivateRoute><AssetList /></PrivateRoute>} />
                   <Route path="/list-of-actions" element={<PrivateRoute><ListOfActions /></PrivateRoute>} />
-                  <Route path="/alert-management" element={<PrivateRoute><AlertManagement /></PrivateRoute>} />
+                  {/* <Route path="/alert-management" element={<PrivateRoute><AlertManagement /></PrivateRoute>} /> */}
                   <Route path="/control-families" element={<PrivateRoute><ControlFamiliesPage /></PrivateRoute>} />
                   <Route path="/controls" element={<PrivateRoute><ControlsPage /></PrivateRoute>} />
                   <Route path="/actions" element={<PrivateRoute><ActionsPage /></PrivateRoute>} />
