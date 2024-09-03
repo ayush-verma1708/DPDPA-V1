@@ -13,7 +13,10 @@ import {
 } from '@mui/material';
 
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
+import { getAssets } from '../api/assetApi';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
+import {getUserById} from '../api/userApi';
 
 
 const CompletionStatusPage = () => {
@@ -54,7 +57,11 @@ const CompletionStatusPage = () => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState([]);
+const [userOptions, setUserOptions] = useState([]);
+const [assetId, setAssetId] = useState(null);
+const [usernames, setUsernames] = useState({});
 
+  
 
   // Pagination state
   const [page, setPage] = useState(0);
@@ -63,31 +70,57 @@ const CompletionStatusPage = () => {
 // New state to manage row expansion for history details
 const [openRows, setOpenRows] = useState({});
 
-const fetchUsers = async () => {
-  try {
-    const response = await fetch('/api/users');
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
-    const contentType = response.headers.get('Content-Type');
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      setUsers(data.users);
-    } else {
-      throw new Error('Received non-JSON response');
-    }
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
-};
-
 
 
 useEffect(() => {
-  fetchUsers();
-}, []);
+  const fetchAllUsernames = async () => {
+    const uniqueUserIds = [...new Set(fetchedStatuses.map(status => status.username))];
+    const newUsernames = {};
 
+    await Promise.all(uniqueUserIds.map(async userId => {
+      if (userId !== 'yourUsername' && !usernames[userId]) {
+        const username = await handleFetchUsername(userId);
+        newUsernames[userId] = username;
+      }
+    }));
+
+    setUsernames(prevUsernames => ({
+      ...prevUsernames,
+      ...newUsernames,
+    }));
+  };
+
+  fetchAllUsernames();
+}, [fetchedStatuses]);
+
+const getUsername = (userId) => {
+  return usernames[userId] || 'N/A';
+};
+
+const handleFetchUsername = async (userId) => {
+  // if (usernames[userId]) {
+  //   return usernames[userId]; // Return cached username if it exists
+  // }
+  if (userId === 'yourUsername') {
+    return 'N/A'; // Return a default value if userId is 'yourusername'
+  }
+
+  try {
+    const userData = await getUserById(userId);
+    const username = userData.username;
+    
+    // // Cache the username to avoid redundant API calls
+    // setUsernames((prevUsernames) => ({
+    //   ...prevUsernames,
+    //   [userId]: username,
+    // }));
+
+    return username;
+  } catch (error) {
+    console.error('Error fetching username:', error);
+    return 'N/A';
+  }
+};
 
 
 const handleToggleRow = (statusId) => {
@@ -125,6 +158,7 @@ const handleToggleRow = (statusId) => {
         // fetchActions(),
         debugFetchActions(),
         // fetch('/api/v1/actions').then(res => res.json()),
+
         fetch('/api/v1/assets').then(res => res.json()),
         fetch('/api/v1/scoped').then(res => res.json()),
         fetch('/api/v1/controls').then(res => res.json()),
@@ -222,6 +256,9 @@ const handleToggleRow = (statusId) => {
     setFilteredOptions(filtered);
   }, [searchTerm, actionOptions]);
 
+  const updateAssetId = (id) => {
+    setAssetId(id);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -233,17 +270,25 @@ const handleToggleRow = (statusId) => {
     setQuery({ ...query, [name]: value });
   };
 
+
   const handleFetchStatus = async () => {
     try {
       setLoading(true);
+      console.log('Fetching status with query:', query);
+      
       const response = await getStatus(query);
+      // console.log('Fetched status response:', response);
+      
       setFetchedStatuses(Array.isArray(response) ? response : [response]);
+      // console.log('Updated fetchedStatuses:', fetchedStatuses);
     } catch (error) {
       console.error('Error fetching status:', error);
     } finally {
       setLoading(false);
+      // console.log('Loading complete.');
     }
   };
+  
 
   const handleSort = (key) => {
     let direction = 'asc';
@@ -267,17 +312,47 @@ const handleToggleRow = (statusId) => {
     setFetchedStatuses(sortedData);
   };
 
-  const handleDelegateToIT = async (statusId) => {
+ 
+  const onDelegateButtonClick = (statusId, assetId) => {
+    console.log('Button clicked with statusId:', statusId);
+    console.log('Button clicked with assetId:', assetId);
+    handleDelegateToIT(statusId, assetId);
+  };
+  
+
+ 
+  const handleDelegateToIT = async (statusId, assetId) => {
     try {
-      const response = await delegateToIT(statusId);
+      // Fetch asset details
+      const assetDetails = await getAssetDetails();
+      console.log('Fetched Asset Details:', assetDetails);
+  
+      // Find the asset detail by assetId
+      const assetDetail = assetDetails.find(detail => detail.asset._id === assetId);
+      
+      if (!assetDetail) {
+        console.log('No asset detail found for assetId:', assetId);
+        return;
+      }
+  
+      // Get the IT owner username from the asset details
+      const itOwnerUsername = assetDetail.itOwnerName; // Adjust field name if needed
+      console.log('IT Owner Username:', itOwnerUsername);
+  
+      // Update the status with the IT owner username
+      const response = await delegateToIT(statusId, itOwnerUsername);
       console.log('Delegated to IT Team:', response);
-      updateStatusInList(statusId, 'Delegated to IT Team', 'Delegate to IT');
+  
+      // Update status in the list
+      updateStatusInList(statusId, 'Delegated to IT Team', 'Delegate to IT', itOwnerUsername); // Pass IT owner's username
       await handleFetchStatus(); // Refetch data after action
+  
     } catch (error) {
       console.error('Error delegating to IT Team:', error);
     }
-    
   };
+  
+  
 
   const handleDelegateToAuditor = async (statusId) => {
     try {
@@ -302,11 +377,12 @@ const handleToggleRow = (statusId) => {
     }
   };
 
-  const updateStatusInList = (statusId, newStatus, action, feedback = '') => {
+  const updateStatusInList = (statusId, newStatus, action, assignedTo, feedback = '') => {
     setFetchedStatuses(fetchedStatuses.map(status => 
-      status._id === statusId ? { ...status, status: newStatus, action, feedback } : status
+      status._id === statusId ? { ...status, status: newStatus, action, assignedTo, feedback } : status
     ));
   };
+  
 
   const getDescriptionById = (id, list) => {
 
@@ -324,9 +400,6 @@ const handleToggleRow = (statusId) => {
     return 'N/A';
   };
 
-  const logActionOptions = () => {
-    // console.log('Fetched Action Options:', actionOptions);
-  };
   const debugFetchActions = async () => {
     try {
       const actionsResponse = await fetchActions();
@@ -337,36 +410,14 @@ const handleToggleRow = (statusId) => {
     }
   };
 
-  const handleUserChange = async (statusId, userId) => {
-    try {
-      const updatedStatus = { ...statusData, assignedUser: userId };
-      await createOrUpdateStatus(statusId, updatedStatus);
-      updateStatusInList(statusId, updatedStatus.status, 'Update', updatedStatus.feedback);
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
   
-
   return (
     <div style={{ padding: '20px' }}>
       <h1>Task and Status Management</h1>
 
       <section>
         <h2>Search Status</h2>
-        {/* <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Action</InputLabel>
-          <Select
-            name="actionId"
-            value={query.actionId}
-            onChange={handleQueryChange}
-            label="Action"
-          >
-            {actionOptions.map(action => (
-              <MenuItem key={action._id} value={action._id}>{action.variable_id}</MenuItem>
-            ))}
-          </Select>
-        </FormControl> */}
+      
        <FormControl fullWidth style={{ marginBottom: '10px' }}>
   <InputLabel>Action</InputLabel>
   <Select
@@ -391,58 +442,7 @@ const handleToggleRow = (statusId) => {
           </Select>
 </FormControl>
 
-        <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Asset</InputLabel>
-          <Select
-            name="assetId"
-            value={query.assetId}
-            onChange={handleQueryChange}
-            label="Asset"
-          >
-            {assetOptions.map(asset => (
-              <MenuItem key={asset._id} value={asset._id}>{asset.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Scope</InputLabel>
-          <Select
-            name="scopeId"
-            value={query.scopeId}
-            onChange={handleQueryChange}
-            label="Scope"
-          >
-            {scopeOptions.map(scope => (
-              <MenuItem key={scope._id} value={scope._id}>{scope.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Control</InputLabel>
-          <Select
-            name="controlId"
-            value={query.controlId}
-            onChange={handleQueryChange}
-            label="Control"
-          >
-            {controlOptions.map(control => (
-              <MenuItem key={control._id} value={control._id}>{control.variable_id}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Family</InputLabel>
-          <Select
-            name="familyId"
-            value={query.familyId}
-            onChange={handleQueryChange}
-            label="Family"
-          >
-            {familyOptions.map(family => (
-              <MenuItem key={family._id} value={family._id}>{family.section}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+    
         <Button variant="contained" color="primary" onClick={handleFetchStatus}>Search</Button>
       </section>
 
@@ -457,7 +457,7 @@ const handleToggleRow = (statusId) => {
                 <TableRow>
                   <TableCell />
                   <TableCell>Status ID</TableCell>
-                  {/* <TableCell>Assigned to</TableCell> */}
+                  <TableCell>Assigned to</TableCell>
                   <TableCell>Action</TableCell>
                   <TableCell>Asset</TableCell>
                   <TableCell>Scope</TableCell>
@@ -471,94 +471,6 @@ const handleToggleRow = (statusId) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-  {paginatedData.map((status) => (
-    <React.Fragment key={status._id}>
-      <TableRow>
-        <TableCell>
-          <IconButton
-            size="small"
-            onClick={() => handleToggleRow(status._id)}
-          >
-            {openRows[status._id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
-        </TableCell>
-        <TableCell>{status._id}</TableCell>
-        {/* <TableCell>{status.username}</TableCell> */}
-        <TableCell>{status.actionId?.fixed_id || 'N/A'}</TableCell>
-        <TableCell>{status.assetId?.name || 'N/A'}</TableCell>
-        <TableCell>{status.scopeId?.name || 'N/A'}</TableCell>
-        <TableCell>{status.controlId?.fixed_id || 'N/A'}</TableCell>
-        <TableCell>{status.familyId?.fixed_id || 'N/A'}</TableCell>
-        <TableCell>{status.createdAt}</TableCell>
-        <TableCell>{status.updatedAt}</TableCell>
-        <TableCell>{status.feedback || 'N/A'}</TableCell>
-        <TableCell>{status.status || 'N/A'}</TableCell>
-        <TableCell>
-          <FormControl fullWidth>
-            <InputLabel>User</InputLabel>
-            <Select
-              value={status.assignedUser || ''}
-              onChange={(e) => handleUserChange(status._id, e.target.value)}
-              label="User"
-            >
-              {users.map(user => (
-                <MenuItem key={user._id} value={user._id}>
-                  {user.name} ({user.role})
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </TableCell>
-        <TableCell>
-          <Button onClick={() => handleDelegateToIT(status._id)}>Delegate to IT</Button>
-          <Button onClick={() => handleDelegateToAuditor(status._id)}>Delegate to Auditor</Button>
-          <Button onClick={() => handleConfirmEvidence(status._id)}>Confirm Evidence</Button>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={13}>
-          <Collapse in={openRows[status._id]} timeout="auto" unmountOnExit>
-            <div style={{ margin: '10px' }}>
-              <h3>History</h3>
-              {status.history && status.history.length > 0 ? (
-                <Table size="small" aria-label="history">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Modified At</TableCell>
-                      <TableCell>Modified By</TableCell>
-                      <TableCell>Changes</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {status.history.map((change, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{new Date(change.modifiedAt).toLocaleString()}</TableCell>
-                        <TableCell>{change.modifiedBy}</TableCell>
-                        <TableCell>
-                          <ul>
-                            {Object.entries(change.changes).map(([key, value]) => (
-                              <li key={key}>{`${key}: ${value}`}</li>
-                            ))}
-                          </ul>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <p>No history available.</p>
-              )}
-            </div>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  ))}
-</TableBody>
-
-
-
-              {/* <TableBody>
                 {paginatedData.map((status) => (
                   <React.Fragment key={status._id}>
                     <TableRow>
@@ -571,7 +483,9 @@ const handleToggleRow = (statusId) => {
                         </IconButton>
                       </TableCell>
                       <TableCell>{status._id}</TableCell>
-                      <TableCell>{status.username}</TableCell>
+                      <TableCell>{getUsername(status.username)}</TableCell>
+                      
+                      {/* <TableCell>{status.username}</TableCell> */}
                       <TableCell>{status.actionId?.fixed_id || 'N/A'}</TableCell>
                       <TableCell>{status.assetId?.name || 'N/A'}</TableCell>
                       <TableCell>{status.scopeId?.name || 'N/A'}</TableCell>
@@ -582,7 +496,7 @@ const handleToggleRow = (statusId) => {
                       <TableCell>{status.feedback || 'N/A'}</TableCell>
                       <TableCell>{status.status || 'N/A'}</TableCell>
                       <TableCell>
-                        <Button onClick={() => handleDelegateToIT(status._id)}>Delegate to IT</Button>
+                        <Button onClick={() => onDelegateButtonClick(status._id, status.assetId._id)}>Delegate to IT</Button>
                         <Button onClick={() => handleDelegateToAuditor(status._id)}>Delegate to Auditor</Button>
                         <Button onClick={() => handleConfirmEvidence(status._id)}>Confirm Evidence</Button>
                       </TableCell>
@@ -626,7 +540,7 @@ const handleToggleRow = (statusId) => {
                     </TableRow>
                   </React.Fragment>
                 ))}
-              </TableBody> */}
+              </TableBody>
             </Table>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}

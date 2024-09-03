@@ -159,8 +159,36 @@ export const deleteStatus = async (req, res) => {
 };
 
 // Controller for Compliance Team: Delegate to IT Team
+// export const delegateToIT = async (req, res) => {
+//   const { completionStatusId } = req.params;
+
+//   try {
+//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ error: 'CompletionStatus not found' });
+//     }
+
+//     const changes = {
+//       status: 'Delegated to IT Team',
+//       action: 'Delegate to IT'
+//     };
+    
+//     Object.assign(completionStatus, changes);
+//     logHistory(completionStatus, changes, req.body.username);
+
+//     await completionStatus.save();
+
+//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
+//   } catch (err) {
+//     console.error('Error in delegateToIT:', err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+// Controller for Compliance Team: Delegate to IT Team
 export const delegateToIT = async (req, res) => {
   const { completionStatusId } = req.params;
+  const { itOwnerUsername } = req.body;
 
   try {
     let completionStatus = await CompletionStatus.findById(completionStatusId);
@@ -171,7 +199,8 @@ export const delegateToIT = async (req, res) => {
 
     const changes = {
       status: 'Delegated to IT Team',
-      action: 'Delegate to IT'
+      action: 'Delegate to IT',
+      username: itOwnerUsername  // Update the username field
     };
     
     Object.assign(completionStatus, changes);
@@ -185,6 +214,8 @@ export const delegateToIT = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
 
 // Controller for IT Team: Delegate to Auditor
 export const delegateToAuditor = async (req, res) => {
