@@ -1,0 +1,30 @@
+// emailService.js
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Modify your email service to use environment variables
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+export const sendEmail = async (to, subject, text) => {
+  try {
+    const mailOptions = {
+      from: 'your-email@gmail.com',
+      to,
+      subject,
+      text, // You can also use html for rich content
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+};

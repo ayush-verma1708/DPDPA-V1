@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import StepsComponent from '../components/StepsComponent';
 import CompletionStatusPage from '../components/completionStatusPage';
 import Scoreboard from '../components/Scoreboard';
-
+import EmailNotificationForm from '../components/EmailNotificationForm';
 
 const Dashboard = () => {
   const [showSteps, setShowSteps] = useState(true);
@@ -20,8 +20,8 @@ const Dashboard = () => {
     {showSteps ? (
       <StepsComponent onClose={toggleSteps} />
     ) : (
-      <Scoreboard />
-
+      // <Scoreboard />
+      <EmailNotificationForm />
       // <CompletionStatusPage />
     )}
   </div>

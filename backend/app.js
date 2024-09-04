@@ -23,6 +23,16 @@ import completionRoutes from './routes/completionRoutes.js';
 import TaskManager from './models/taskManager.js';
 
 
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Define __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+
+
 const app = express();
 
 
@@ -35,6 +45,9 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
+
+
 
 // routes declaration
 app.use("/api/v1/companies", companyRoutes);
@@ -55,6 +68,11 @@ app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
 
 app.use('/api/v1', completionRoutes);
+
+
+// Use __dirname for serving static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Global error handling middleware
 app.use((err, req, res, next) => {

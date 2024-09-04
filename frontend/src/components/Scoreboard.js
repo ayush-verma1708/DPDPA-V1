@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Progress,
@@ -25,63 +25,89 @@ const Scoreboard = () => {
   const [scopes, setScopes] = useState([]);
   const [controlFamilies, setControlFamilies] = useState([]);
   const [statuses, setStatuses] = useState([]);
-  const [filters, setFilters] = useState({ asset: '', scope: '', controlFamily: '', status: '' });
+  // const [criticalIssues, setCriticalIssues] = useState([]);
+  const [filters, setFilters] = useState({ asset: '', controlFamily: '', status: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState({
-    asset: false, scope: false, controlFamily: false, status: false
+    asset: false,controlFamily: false, status: false
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Parallel API calls
-        const [assetsData, actionsData, scopesData, controlFamiliesData, statusesData] = await Promise.all([
-          fetchAssets(),
-          fetchActions(),
-          fetchScopes(),
-          fetchControlFamilies(),
+        await Promise.all([
+          fetchAssets(), 
+          fetchActions(), 
+          // fetchScopes(), 
+          fetchControlFamilies(), 
           fetchStatuses(),
+          // fetchCriticalIssues()
         ]);
-        setAssets(assetsData);
-        setActions(actionsData);
-        setFilteredActions(actionsData);  // Initialize filtered actions
-        setScopes(scopesData);
-        setControlFamilies(controlFamiliesData);
-        setStatuses(statusesData);
       } catch (err) {
         setError('Failed to load data.');
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
   const fetchAssets = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/assets');
-    return response.data;
+    try {
+      const response = await axios.get('http://localhost:8021/api/v1/assets');
+      setAssets(response.data);
+    } catch (err) {
+      setError('Failed to fetch assets.');
+    }
   };
 
   const fetchActions = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/actions');
-    return response.data;
+    try {
+      const response = await axios.get('http://localhost:8021/api/v1/actions');
+      setActions(response.data);
+      setFilteredActions(response.data);
+    } catch (err) {
+      setError('Failed to fetch actions.');
+    }
   };
 
-  const fetchScopes = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/scoped');
-    return response.data;
-  };
+  // const fetchScopes = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8021/api/v1/scoped');
+  //     setScopes(response.data);
+  //   } catch (err) {
+  //     setError('Failed to fetch scopes.');
+  //   }
+  // };
 
   const fetchControlFamilies = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/control-families');
-    return response.data;
+    try {
+      const response = await axios.get('http://localhost:8021/api/v1/control-families');
+      setControlFamilies(response.data);
+    } catch (err) {
+      setError('Failed to fetch control families.');
+    }
   };
 
   const fetchStatuses = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/completion-status');
-    return response.data;
+    try {
+      const response = await axios.get('http://localhost:8021/api/v1/completion-status');
+      setStatuses(response.data);
+    } catch (err) {
+      setError('Failed to fetch statuses.');
+    }
   };
+
+  // const fetchCriticalIssues = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8021/api/v1/criticalIssues');
+  //     setCriticalIssues(response.data);
+  //   } catch (err) {
+  //     setError('Failed to fetch critical issues.');
+  //   }
+  // };
 
   const handleFilterChange = (filter, value) => {
     const updatedFilters = { ...filters, [filter]: value };
@@ -89,15 +115,24 @@ const Scoreboard = () => {
     applyFilters(updatedFilters);
   };
 
-  // Memoize filtered actions to avoid unnecessary re-renders
-  const applyFilters = useCallback((filters) => {
-    setFilteredActions(actions.filter(action => {
-      return (!filters.asset || action.assetId === filters.asset) &&
-             (!filters.scope || action.scopeId === filters.scope) &&
-             (!filters.controlFamily || action.familyId === filters.controlFamily) &&
-             (!filters.status || action.status === filters.status);
-    }));
-  }, [actions]);
+  const applyFilters = (filters) => {
+    let updatedActions = actions;
+
+    if (filters.asset) {
+      updatedActions = updatedActions.filter(action => action.assetId === filters.asset);
+    }
+    // if (filters.scope) {
+    //   updatedActions = updatedActions.filter(action => action.scopeId === filters.scope);
+    // }
+    if (filters.controlFamily) {
+      updatedActions = updatedActions.filter(action => action.familyId === filters.controlFamily);
+    }
+    if (filters.status) {
+      updatedActions = updatedActions.filter(action => action.status === filters.status);
+    }
+
+    setFilteredActions(updatedActions);
+  };
 
   const calculateProgress = (actionsArray) => {
     if (!actionsArray.length) return 0;
@@ -166,9 +201,9 @@ const Scoreboard = () => {
         <Col md={3}>
           {renderDropdown('Asset', 'asset', assets)}
         </Col>
-        <Col md={3}>
+        {/* <Col md={3}>
           {renderDropdown('Scope', 'scope', scopes)}
-        </Col>
+        </Col> */}
         <Col md={3}>
           {renderDropdown('Control Family', 'controlFamily', controlFamilies)}
         </Col>
@@ -206,7 +241,7 @@ const Scoreboard = () => {
               <td>{action.actionName}</td>
               <td>{action.controlName}</td>
               <td>
-                <Badge color={getStatusBadgeColor(action.isCompleted)}>{action.isCompleted ? 'Completed' : 'Incomplete'}</Badge>
+                <Badge color={getStatusBadgeColor(action.isCompleted)}>{action.isCompleted ? 'true' : 'false'}</Badge>
               </td>
               <td>{action.username}</td>
               <td>{action.completedAt ? new Date(action.completedAt).toLocaleDateString() : 'N/A'}</td>
@@ -216,7 +251,6 @@ const Scoreboard = () => {
         </tbody>
       </Table>
 
-      {/* Uncomment and modify if you want to include critical issues */}
       {/* <Row className="important-info mt-4">
         <Col>
           <Card>
