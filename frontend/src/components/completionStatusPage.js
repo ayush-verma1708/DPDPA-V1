@@ -17,7 +17,7 @@ import { getAssets } from '../api/assetApi';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
 import {getUserById} from '../api/userApi';
-
+import { fetchCurrentUser } from '../api/userApi';
 
 const CompletionStatusPage = () => {
   const [statusData, setStatusData] = useState({
@@ -63,7 +63,8 @@ const CompletionStatusPage = () => {
   const [userOptions, setUserOptions] = useState([]);
   const [assetId, setAssetId] = useState(null);
   const [usernames, setUsernames] = useState({});
-
+  const [currentUsername, setCurrentUsername] = useState(null); // Store current username
+ 
   
 
   // Pagination state
@@ -73,6 +74,27 @@ const CompletionStatusPage = () => {
 // New state to manage row expansion for history details
 const [openRows, setOpenRows] = useState({});
 
+
+useEffect(() => {
+  const fetchCurrentUserData = async () => {
+    try {
+      const token = 'yourAuthToken'; // Replace with actual token
+      const userData = await fetchCurrentUser(token);
+      setCurrentUsername(userData.username); // Set current username
+    } catch (error) {
+      console.error('Error fetching current user data:', error);
+    }
+  };
+
+  fetchCurrentUserData();
+}, []);
+
+useEffect(() => {
+  if (currentUsername) {
+    const filteredStatuses = fetchedStatuses.filter(status => status.username === currentUsername);
+    setFetchedStatuses(filteredStatuses);
+  }
+}, [currentUsername, fetchedStatuses]);
 
 
 useEffect(() => {
