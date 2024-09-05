@@ -544,7 +544,9 @@ const ListOfActions = () => {
             actions={actions}
             handleFileChange={handleFileChange}
             handleUploadEvidence={handleUploadEvidence}
+            handleStatusChange={handleStatusChange}
             ActionCompletionCell={ActionCompletionCell}
+            statusOptions={statusOptions}
           />
       )}
       
