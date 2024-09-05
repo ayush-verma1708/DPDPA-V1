@@ -19,26 +19,16 @@ const Login = ({ setAuthToken }) => {
       const token = res.data?.data.token;
 
       if (token) {
-        // Log the full response and token
-        // console.log('Full Response:', res.data);
-        // console.log('Token:', token);
         console.log('Fetched User Info:', res.data.data);
-
-        // Update parent component state with the token
         setAuthToken(token);
-
-        // Store token in localStorage
         localStorage.setItem('token', token);
         console.log('Token stored in localStorage:', localStorage.getItem('token'));
-
-        // Redirect after logging and storing token
         navigate('/');
       } else {
         setError('Login failed');
         console.warn('No token found in response');
       }
     } catch (err) {
-      // Log detailed error information
       console.error('Login error:', err.response ? err.response.data : err.message);
       setError('Invalid credentials');
     }
