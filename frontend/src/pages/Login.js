@@ -1,7 +1,8 @@
 // src/pages/Login.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
+import "./Login.css";
 
 const Login = ({ setAuthToken }) => {
   const [username, setUsername] = useState('');
@@ -35,8 +36,11 @@ const Login = ({ setAuthToken }) => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded shadow-lg">
+    <div className="flex items-start pt-[5rem] justify-between w-full px-[5rem] min-h-screen bg__login-page bg-gray-100 ">
+      
+      <h1 className="font-bold w-fit">DPDPA Software</h1>
+
+      <div className="p-8 space-y-8 bg-white rounded shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-900">Login</h2>
         {error && <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded">{error}</div>}
         <form onSubmit={handleLogin} className="space-y-6">
@@ -76,6 +80,8 @@ const Login = ({ setAuthToken }) => {
           </div>
         </form>
       </div>
+
+      
     </div>
   );
 };

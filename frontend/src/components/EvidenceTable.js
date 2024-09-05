@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Select, MenuItem } from '@mui/material';
+import axios from 'axios';
 
-const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handleStatusChange, ActionCompletionCell, statusOptions }) => {
+const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handleStatusChange, ActionCompletionCell, statusOptions, expandedFamilyId,
+  selectedControlId,
+  selectedAssetId,
+  selectedScopeId, }) => {
+
+
+  const [evidenceUrl,setEvidenceUrl] = useState('');
+
+  const handleViewEvidence = async (actionId) => {
+    
+    try {
+      console.log({assetId:selectedAssetId, scopeId:selectedScopeId,actionId, familyId:expandedFamilyId,  controlId:selectedControlId})
+      const res = await axios.post(`http://localhost:8021/api/evidence/params`,{assetId:selectedAssetId, scopeId:selectedScopeId,actionId, familyId:expandedFamilyId,  controlId:selectedControlId})
+      console.log(res.data);
+      window.location.href=`http://localhost:8021${res.data.fileUrl.substr(res.data.fileUrl.lastIndexOf('/'))}`
+    }
+    catch {
+
+    }
+  }
+
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -34,9 +56,9 @@ const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handle
               </TableCell>
               <TableCell>
                 {action.evidenceUrl ? (
-                  <a href={action.evidenceUrl} target="_blank" rel="noopener noreferrer">
+                  <button onClick={()=>handleViewEvidence(action._id)}>
                     View Evidence
-                  </a>
+                  </button>
                 ) : (
                   'No evidence uploaded'
                 )}

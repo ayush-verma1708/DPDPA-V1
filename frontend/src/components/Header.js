@@ -11,7 +11,7 @@ const Header = ({ title, handleLogout }) => {
   const { user, loading, error } = useFetchUser(token);
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#f5f5f5" }}>
+    <AppBar  position="static" sx= { { marginBottom : "2rem" , backgroundColor: "#f5f5f5" }}>
       <Toolbar>
         <Box display="flex" justifyContent="space-between" width="100%">
           <Typography variant="body1" className="text-indigo-950">

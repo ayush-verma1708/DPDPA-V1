@@ -6,6 +6,7 @@ import {
   getEvidenceById,
   updateEvidence,
   deleteEvidence,
+  getEvidenceByParams,
 } from '../controllers/evidenceController.js';
 
 const router = express.Router();
@@ -24,5 +25,8 @@ router.put('/:id', updateEvidence);
 
 // Route to delete evidence by ID
 router.delete('/:id', deleteEvidence);
+
+
+router.post('/params', getEvidenceByParams);
 
 export default router;

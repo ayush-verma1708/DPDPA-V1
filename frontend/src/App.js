@@ -85,7 +85,7 @@ const App = () => {
           )}
           <div className="flex h-screen">
             <div className="flex flex-col flex-grow">
-              <main className="flex-grow p-4">
+              <main className="flex-grow ">
                 {error && <div className="error-message">{error}</div>}
                 <Routes>
                   <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />

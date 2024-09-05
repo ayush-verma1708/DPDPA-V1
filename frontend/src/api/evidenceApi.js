@@ -39,7 +39,6 @@ export const getAllEvidences = async () => {
 };
 
 
-
 // Function to update evidence by ID
 export const updateEvidence = async (id, updatedData) => {
   try {
@@ -60,6 +59,7 @@ export const deleteEvidence = async (id) => {
     throw error;
   }
 };
+
 
 // import axios from 'axios';
 

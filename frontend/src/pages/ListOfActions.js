@@ -547,6 +547,10 @@ const ListOfActions = () => {
             handleStatusChange={handleStatusChange}
             ActionCompletionCell={ActionCompletionCell}
             statusOptions={statusOptions}
+            expandedFamilyId={expandedFamilyId} 
+  selectedControlId={selectedControlId} 
+  selectedAssetId={selectedAssetId} 
+  selectedScopeId={selectedScopeId} 
           />
       )}
       

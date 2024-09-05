@@ -121,3 +121,30 @@ export const deleteEvidence = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getEvidenceByParams = async(req,res) =>{
+    const { assetId, scopeId,actionId, familyId,  controlId } = req.body;
+  let statuses;
+    try {
+  
+     if(scopeId==""){
+       statuses = await Evidence.findOne({
+        $and:[
+          {assetId},{actionId},{familyId},{controlId}
+        ]
+      })
+     }
+     else{
+     statuses = await Evidence.findOne({
+        $and:[
+          {assetId},{scopeId},{actionId},{familyId},{controlId}
+        ]
+      })
+     }
+  
+      return res.status(200).json(statuses);
+    } catch (err) {
+      console.error('Error in getStatus:', err);
+      return res.status(500).json({ error: 'An error occurred while fetching completion statuses.' });
+  };
+}

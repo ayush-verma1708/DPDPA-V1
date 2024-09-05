@@ -7,5 +7,9 @@
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "mui": "^0.0.1"
+  },
+  "scripts": {
+    "front":"cd .\\frontend\\ && pnpm start", 
+    "back":"cd .\\backend\\ && pnpm run dev" 
   }
 }

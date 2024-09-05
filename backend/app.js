@@ -22,6 +22,8 @@ import completionRoutes from './routes/completionRoutes.js';
 
 import TaskManager from './models/taskManager.js';
 
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 
@@ -34,6 +36,7 @@ app.use(cors({
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
+app.use(express.static("uploads"));
 app.use(cookieParser());
 
 // routes declaration
@@ -53,6 +56,14 @@ app.use('/api/v1/assetDetails', assetDetailRouter);
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
 app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
+
+
+app.get("/:filename",async(req,res)=>{
+  const{filename}=req.params
+  const filepath = path.join('uploads',filename)
+  return res.download(filepath)
+  // return res.send(filepath)
+}),
 
 app.use('/api/v1', completionRoutes);
 

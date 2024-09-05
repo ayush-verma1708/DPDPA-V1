@@ -38,3 +38,9 @@ src/pages/Login.css
     margin-bottom: 10px;
   }
   
+  .bg__login-page{
+    background-image: url("../../public/assets/DPDPAImage.png") !important;
+    background-position: center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+  }
