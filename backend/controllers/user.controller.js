@@ -4,18 +4,19 @@ import { AsyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
-
 // Check if user has completed the company form
 export const checkFormCompletion = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ hasCompletedCompanyForm: user.hasCompletedCompanyForm });
+    res
+      .status(200)
+      .json({ hasCompletedCompanyForm: user.hasCompletedCompanyForm });
   } catch (error) {
     console.error('Error checking form completion:', error);
     res.status(500).json({ message: 'Error checking form completion', error });
@@ -37,7 +38,9 @@ export const updateFormCompletionStatus = async (req, res) => {
     res.status(200).json({ message: 'Form completion status updated' });
   } catch (error) {
     console.error('Error updating form completion status:', error);
-    res.status(500).json({ message: 'Error updating form completion status', error });
+    res
+      .status(500)
+      .json({ message: 'Error updating form completion status', error });
   }
 };
 // Create a new user
@@ -58,7 +61,7 @@ export const updateFormCompletionStatus = async (req, res) => {
 //   res.status(201).json(new ApiResponse(201, createdUser, 'User created successfully.'));
 // });
 const createUser = AsyncHandler(async (req, res) => {
-  const { username, email, password, role, permissions } = req.body;
+  const { username, email, password, role, permissions, company } = req.body;
 
   if (!username || !email || !password) {
     throw new ApiError(400, 'Username, email, and password are required.');
@@ -70,16 +73,31 @@ const createUser = AsyncHandler(async (req, res) => {
     throw new ApiError(400, 'Invalid email format.');
   }
 
-  const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
+  const validRoles = [
+    'Admin',
+    'Executive',
+    'Compliance Team',
+    'IT Team',
+    'Auditor',
+    'user',
+  ];
   if (role && !validRoles.includes(role)) {
     throw new ApiError(400, 'Invalid role.');
   }
 
-  const user = new User({ username, email, password, role, permissions });
+  const user = new User({
+    username,
+    email,
+    password,
+    role,
+    permissions,
+    company,
+  });
   const createdUser = await user.save();
-  res.status(201).json(new ApiResponse(201, createdUser, 'User created successfully.'));
+  res
+    .status(201)
+    .json(new ApiResponse(201, createdUser, 'User created successfully.'));
 });
-
 
 // Update an existing user
 // const updateUser = AsyncHandler(async (req, res) => {
@@ -106,9 +124,16 @@ const createUser = AsyncHandler(async (req, res) => {
 // });
 const updateUser = AsyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { username, email, password, role, permissions } = req.body;
+  const { username, email, password, role, permissions, company } = req.body;
 
-  const validRoles = ['Admin', 'Executive', 'Compliance Team', 'IT Team', 'Auditor', 'user'];
+  const validRoles = [
+    'Admin',
+    'Executive',
+    'Compliance Team',
+    'IT Team',
+    'Auditor',
+    'user',
+  ];
   if (role && !validRoles.includes(role)) {
     throw new ApiError(400, 'Invalid role.');
   }
@@ -131,9 +156,10 @@ const updateUser = AsyncHandler(async (req, res) => {
   if (permissions) user.permissions = permissions;
 
   const updatedUser = await user.save();
-  res.status(200).json(new ApiResponse(200, updatedUser, 'User updated successfully.'));
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, 'User updated successfully.'));
 });
-
 
 // Get all users with pagination
 const getUsers = AsyncHandler(async (req, res) => {
@@ -152,7 +178,6 @@ const getUsers = AsyncHandler(async (req, res) => {
   });
 });
 
-
 // Delete a user by ID
 const deleteUser = AsyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -163,11 +188,16 @@ const deleteUser = AsyncHandler(async (req, res) => {
   }
 
   await user.deleteOne();
-  res.status(200).json(new ApiResponse(200, null, 'User deleted successfully.'));
+  res
+    .status(200)
+    .json(new ApiResponse(200, null, 'User deleted successfully.'));
 });
 
 const getCurrentUser = AsyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id).select('-password');
+  const user = await User.findById(req.user.id)
+    .select('-password')
+    .populate('company');
+  console.log(user);
   if (!user) {
     throw new ApiError(404, 'User not found');
   }
@@ -194,8 +224,14 @@ const getUserById = async (req, res) => {
   }
 };
 
-
-export { createUser, getUsers, updateUser, deleteUser, getCurrentUser, getUserById };
+export {
+  createUser,
+  getUsers,
+  updateUser,
+  deleteUser,
+  getCurrentUser,
+  getUserById,
+};
 
 // import User from '../models/User.js';
 // import { AsyncHandler } from '../utils/asyncHandler.js';
@@ -312,7 +348,6 @@ export { createUser, getUsers, updateUser, deleteUser, getCurrentUser, getUserBy
 // //   // Send the user data back to the client
 // //   res.status(200).json(new ApiResponse(200, user, 'Current user retrieved successfully.'));
 // // });
-
 
 // export { createUser, getUsers, updateUser, deleteUser , getCurrentUser};
 

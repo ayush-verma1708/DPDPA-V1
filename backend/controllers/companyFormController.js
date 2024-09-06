@@ -3,7 +3,15 @@ import { CompanyForm } from '../models/CompanyForm.js';
 // Create a new company form entry
 export const createCompanyForm = async (req, res) => {
   try {
-    const { userId, phoneNumber, organizationName, industryType, customIndustryType, numberOfEmployees, otp } = req.body;
+    const {
+      userId,
+      phoneNumber,
+      organizationName,
+      industryType,
+      customIndustryType,
+      numberOfEmployees,
+      otp,
+    } = req.body;
 
     const newCompanyForm = new CompanyForm({
       userId,
@@ -12,12 +20,22 @@ export const createCompanyForm = async (req, res) => {
         organizationName,
         industryType,
         customIndustryType,
-        numberOfEmployees
+        numberOfEmployees,
       },
-      otp
+      otp,
     });
 
-    const savedForm = await newCompanyForm.save();
+    const companyWithUserExists = await CompanyForm.find({
+      userId,
+    });
+
+    if (companyWithUserExists.length > 0) {
+      return res.status(500).json({
+        error: 'One user can be associated with only one company.',
+        code: '1U1O',
+      });
+    }
+
     res.status(201).json(savedForm);
   } catch (error) {
     console.error('Error creating company form:', error);
@@ -30,7 +48,7 @@ export const getCompanyFormById = async (req, res) => {
   try {
     const { id } = req.params;
     const companyForm = await CompanyForm.findById(id).populate('userId');
-    
+
     if (!companyForm) {
       return res.status(404).json({ message: 'Company form not found' });
     }
@@ -46,7 +64,13 @@ export const getCompanyFormById = async (req, res) => {
 export const updateCompanyForm = async (req, res) => {
   try {
     const { id } = req.params;
-    const { phoneNumber, organizationName, industryType, customIndustryType, numberOfEmployees } = req.body;
+    const {
+      phoneNumber,
+      organizationName,
+      industryType,
+      customIndustryType,
+      numberOfEmployees,
+    } = req.body;
 
     const updatedForm = await CompanyForm.findByIdAndUpdate(
       id,
@@ -56,8 +80,8 @@ export const updateCompanyForm = async (req, res) => {
           organizationName,
           industryType,
           customIndustryType,
-          numberOfEmployees
-        }
+          numberOfEmployees,
+        },
       },
       { new: true }
     );
