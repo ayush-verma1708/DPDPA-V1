@@ -60,21 +60,7 @@ const Sidebar = ({onSelect}) => {
             </ListItemIcon>
             {open && <ListItemText primary="Home" sx={{color: 'white'}} />}
           </ListItem>
-          <ListItem
-            button
-            component={Link}
-            to="/add-company"
-            className={clsx({ 'active': activePath === '/add-company' })}
-            aria-label="Add Company"
-            onClick={() => onSelect('Add Company')}
-            sx={{ width: '100%' }}
-            >
-                <ListItemIcon>
-                <AddOutlinedIcon  sx={{color: 'white'}}/>
-              </ListItemIcon>
-              {open && <ListItemText primary="Add Company" sx={{color: 'white'}} />}
-          </ListItem>
-          <ListItem
+         <ListItem
             button
             component={Link}
             to="/dashboard"

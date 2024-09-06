@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import companyRoutes from './routes/company.routes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js'; // Ensure the path is correct
 
@@ -21,7 +20,6 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-app.use('/api/v1/companies', companyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes); // Ensure this matches your userRoutes file
 

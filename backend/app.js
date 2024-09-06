@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 // Import routes
-import companyRoutes from './routes/company.routes.js';
+
 import assetRouter from './routes/asset.routes.js';
 import scopedRouter from './routes/scoped.routes.js';
 import coverageRouter from './routes/coverage.routes.js';
@@ -40,13 +40,11 @@ app.use(express.static("uploads"));
 app.use(cookieParser());
 
 // routes declaration
-app.use("/api/v1/companies", companyRoutes);
 app.use("/api/v1/assets", assetRouter);
 app.use("/api/v1/scoped", scopedRouter);
 app.use("/api/v1/coverage", coverageRouter);
 app.use("/api/v1/business", businessRouter);
 app.use("/api/v1/it", itRouter);
-app.use("/api/v1/companies", companyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/v1/control-families', controlFamiliesRoutes); // Add this line to handle control families

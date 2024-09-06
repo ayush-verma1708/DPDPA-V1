@@ -4,8 +4,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
-import Home from "./pages/Home";
-// import AddCompany from "./pages/AddCompany";
 import Dashboard from "./pages/Dashboard";
 import UserCreation from "./pages/UserCreation";
 import Login from "./pages/Login";
@@ -90,7 +88,6 @@ const App = () => {
                 <Routes>
                   <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
                   <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                  {/* <Route path="/add-company" element={<PrivateRoute><AddCompany /></PrivateRoute>} /> */}
                   <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
                   <Route path="/user-creation" element={<PrivateRoute><UserCreation /></PrivateRoute>} />
                   <Route path="/asset-management" element={<PrivateRoute><AssetList /></PrivateRoute>} />
@@ -100,7 +97,6 @@ const App = () => {
                   <Route path="/controls" element={<PrivateRoute><ControlsPage /></PrivateRoute>} />
                   <Route path="/actions" element={<PrivateRoute><ActionsPage /></PrivateRoute>} />
                   <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
-                  <Route path="/home" element={<Home />} />
                 </Routes>
               </main>
               <Footer />
