@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     uploadEvidence: { type: Boolean, default: false },
     confirmEvidence: { type: Boolean, default: false },
   },
+  hasCompletedCompanyForm: {
+    type: Boolean,
+    default: false
+  },
 }, { collection: 'users' });
 
 /// Hash password before saving

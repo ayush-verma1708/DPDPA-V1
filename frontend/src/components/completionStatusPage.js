@@ -78,7 +78,7 @@ const [openRows, setOpenRows] = useState({});
 useEffect(() => {
   const fetchCurrentUserData = async () => {
     try {
-      const token = 'yourAuthToken'; // Replace with actual token
+      const token = window.localStorage.getItem("token"); // Replace with actual token
       const userData = await fetchCurrentUser(token);
       setCurrentUsername(userData.username); // Set current username
     } catch (error) {

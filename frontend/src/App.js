@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import axios from "axios";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
@@ -14,6 +19,7 @@ import ControlFamiliesPage from "./pages/ControlFamiliesPage";
 import ControlsPage from "./pages/ControlsPage";
 import ActionsPage from "./pages/ActionsPage";
 import UploadPage from "./pages/UploadPage";
+import PostLoginOnboarding from "./pages/PostLoginOnboarding";
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -40,71 +46,236 @@ const App = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (token) {
           // console.log('Token found:', token);
-  
-          const res = await axios.get('http://localhost:8021/api/users/me', {
+
+          const res = await axios.get("http://localhost:8021/api/users/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
-  
+
           // console.log('API response:', res);
-  
+
           if (res.data?.data) {
             setUser(res.data.data);
             // console.log('User data set:', res.data.data);
           } else {
-            console.warn('No user data found in response:', res.data);
+            console.warn("No user data found in response:", res.data);
             setUser(null);
           }
         } else {
-          console.warn('No token found, user is not authenticated');
+          console.warn("No token found, user is not authenticated");
           setUser(null);
         }
       } catch (err) {
-        console.error('Failed to fetch user info:', err.response?.data || err.message);
+        console.error(
+          "Failed to fetch user info:",
+          err.response?.data || err.message
+        );
         setUser(null);
       }
     };
-  
+
     fetchUserInfo();
   }, []); // Empty dependency array ensures this runs only once
-  
-  
+
   return (
     <Router>
-      <div className="flex h-screen bg-gray-100">
-        {authToken && <Sidebar onSelect={handleSidebarClick} />}
-        <div className="main-content flex flex-col flex-grow">
-          {authToken && (
-            <Header title={selectedItem} user={user} handleLogout={handleLogout} />
-          )}
-          <div className="flex h-screen">
-            <div className="flex flex-col flex-grow">
-              <main className="flex-grow ">
-                {error && <div className="error-message">{error}</div>}
-                <Routes>
-                  <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
-                  <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                  <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-                  <Route path="/user-creation" element={<PrivateRoute><UserCreation /></PrivateRoute>} />
-                  <Route path="/asset-management" element={<PrivateRoute><AssetList /></PrivateRoute>} />
-                  <Route path="/list-of-actions" element={<PrivateRoute><ListOfActions /></PrivateRoute>} />
-                  {/* <Route path="/alert-management" element={<PrivateRoute><AlertManagement /></PrivateRoute>} /> */}
-                  <Route path="/control-families" element={<PrivateRoute><ControlFamiliesPage /></PrivateRoute>} />
-                  <Route path="/controls" element={<PrivateRoute><ControlsPage /></PrivateRoute>} />
-                  <Route path="/actions" element={<PrivateRoute><ActionsPage /></PrivateRoute>} />
-                  <Route path="/upload" element={<PrivateRoute><UploadPage /></PrivateRoute>} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
+      <Routes>
+        <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
+        <Route path="/onboarding" element={<PostLoginOnboarding />} />
+        <Route
+          path="/"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/user-creation"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <UserCreation />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/asset-management"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <AssetList />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/list-of-actions"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <ListOfActions />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        {/* <Route path="/alert-management" element={<PrivateRoute><AlertManagement /></PrivateRoute>} /> */}
+        <Route
+          path="/control-families"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <ControlFamiliesPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/controls"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <ControlsPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/actions"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <ActionsPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path="/upload"
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <UploadPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+      </Routes>
+    </Router>
+  );
+};
+
+const MiscLayout = ({
+  children,
+  handleSidebarClick,
+  authToken,
+  selectedItem,
+  user,
+  handleLogout,
+  error,
+}) => {
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {authToken && <Sidebar onSelect={handleSidebarClick} />}
+      <div className="main-content flex flex-col flex-grow">
+        {authToken && (
+          <Header
+            title={selectedItem}
+            user={user}
+            handleLogout={handleLogout}
+          />
+        )}
+        {children}
+        <div className="flex h-screen">
+          <div className="flex flex-col flex-grow">
+            <main className="flex-grow ">
+              {error && <div className="error-message">{error}</div>}
+            </main>
+            <Footer />
           </div>
         </div>
       </div>
-    </Router>
+    </div>
   );
 };
 

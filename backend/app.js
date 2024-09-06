@@ -20,6 +20,9 @@ import evidenceRoutes from './routes/evidenceRoutes.js';
 
 import completionRoutes from './routes/completionRoutes.js';
 
+import companyFormRoutes from './routes/companyFormRoutes.js';
+
+
 import TaskManager from './models/taskManager.js';
 
 import path from 'path';
@@ -46,7 +49,10 @@ app.use("/api/v1/coverage", coverageRouter);
 app.use("/api/v1/business", businessRouter);
 app.use("/api/v1/it", itRouter);
 app.use('/api/auth', authRoutes);
+
 app.use('/api/users', userRoutes);
+
+
 app.use('/api/v1/control-families', controlFamiliesRoutes); // Add this line to handle control families
 app.use('/api/v1/controls', controlRoutes); // Add control routes
 app.use('/api/v1/actions', actionRoutes); // Add action routes
@@ -54,6 +60,10 @@ app.use('/api/v1/assetDetails', assetDetailRouter);
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
 app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
+
+
+// Use the company form routes
+app.use('/api/company-form', companyFormRoutes);
 
 
 app.get("/:filename",async(req,res)=>{

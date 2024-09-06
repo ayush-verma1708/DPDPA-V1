@@ -4,6 +4,42 @@ import { AsyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
+
+// Check if user has completed the company form
+export const checkFormCompletion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ hasCompletedCompanyForm: user.hasCompletedCompanyForm });
+  } catch (error) {
+    console.error('Error checking form completion:', error);
+    res.status(500).json({ message: 'Error checking form completion', error });
+  }
+};
+
+export const updateFormCompletionStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.hasCompletedCompanyForm = true;
+    await user.save();
+
+    res.status(200).json({ message: 'Form completion status updated' });
+  } catch (error) {
+    console.error('Error updating form completion status:', error);
+    res.status(500).json({ message: 'Error updating form completion status', error });
+  }
+};
 // Create a new user
 // const createUser = AsyncHandler(async (req, res) => {
 //   const { username, password, role, permissions } = req.body;
@@ -144,10 +180,10 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
 
 // Controller to get all user info by ID
 const getUserById = async (req, res) => {
-  const userId = req.params.id;
+  const id = req.params.id;
 
   try {
-    const user = await User.findById(userId); // Fetch the entire user document
+    const user = await User.findById(id); // Fetch the entire user document
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
