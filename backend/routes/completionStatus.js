@@ -1,5 +1,13 @@
 import express from 'express';
-import { createOrUpdateStatus, getStatus, updateStatus, deleteStatus, delegateToIT, delegateToAuditor, confirmEvidence } from '../controllers/completionStatusController.js';
+import {
+  createOrUpdateStatus,
+  getStatus,
+  updateStatus,
+  deleteStatus,
+  delegateToIT,
+  delegateToAuditor,
+  confirmEvidence,
+} from '../controllers/completionStatusController.js';
 
 const router = express.Router();
 
@@ -29,7 +37,6 @@ export default router;
 // import express from 'express';
 // const router = express.Router();
 // import * as completionStatusController from '../controllers/completionStatusController.js';
-
 
 // // Create or update completion status
 // // router.post('/', completionStatusController.createOrUpdateStatus);
