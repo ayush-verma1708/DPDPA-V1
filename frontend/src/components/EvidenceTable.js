@@ -8,19 +8,22 @@ const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handle
   selectedScopeId, }) => {
 
 
-  const [evidenceUrl,setEvidenceUrl] = useState('');
 
   const handleViewEvidence = async (actionId) => {
-    
-    try {
-      console.log({assetId:selectedAssetId, scopeId:selectedScopeId,actionId, familyId:expandedFamilyId,  controlId:selectedControlId})
-      const res = await axios.post(`http://localhost:8021/api/evidence/params`,{assetId:selectedAssetId, scopeId:selectedScopeId,actionId, familyId:expandedFamilyId,  controlId:selectedControlId})
-      console.log(res.data);
-      window.location.href=`http://localhost:8021${res.data.fileUrl.substr(res.data.fileUrl.lastIndexOf('/'))}`
-    }
-    catch {
 
+    try{
+
+      console.log({ assetId: selectedAssetId, scopeId: selectedScopeId, actionId, familyId: expandedFamilyId, controlId: selectedControlId })
+      const res = await axios.post(`http://localhost:8021/api/evidence/params`, { assetId: selectedAssetId, scopeId: selectedScopeId, actionId, familyId: expandedFamilyId, controlId: selectedControlId })
+      console.log(res.data);
+      return res.data.fileUrl.substr(res.data.fileUrl.lastIndexOf('/')) 
     }
+    catch{
+      return null;
+    }
+  
+
+   
   }
 
 
@@ -39,15 +42,14 @@ const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handle
           </TableRow>
         </TableHead>
         <TableBody>
-          {actions.map(action => (
-            <TableRow key={action._id}>
+          {actions.map(action => {
+            let evidenceUrl = handleViewEvidence(action._id).then((Url)=>{
+              return Url
+                            }) 
+            return <TableRow key={action._id}>
               <TableCell>{action.variable_id}</TableCell>
               <TableCell>{action.controlDescription}</TableCell> {/* Display control description */}
-              {/* <TableCell>{action.isCompleted ? "Completed" : "Pending"}</TableCell> */}
-              {/* <ActionCompletionCell
-                action={action}
-                // Pass any additional props if needed
-              /> */}
+
               <TableCell>
                 <input type="file" onChange={handleFileChange} />
                 <Button variant="contained" color="primary" onClick={() => handleUploadEvidence(action._id)}>
@@ -56,9 +58,14 @@ const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handle
               </TableCell>
               <TableCell>
                 {action.evidenceUrl ? (
-                  <button onClick={()=>handleViewEvidence(action._id)}>
+                  <a onClick={ async () => {
+                  handleViewEvidence(action._id).then((Url)=>{
+      window.location.href = `http://localhost:8021${Url}`
+                    }) 
+
+                  }}>
                     View Evidence
-                  </button>
+                  </a>
                 ) : (
                   'No evidence uploaded'
                 )}
@@ -76,7 +83,10 @@ const EvidenceTable = ({ actions, handleFileChange, handleUploadEvidence, handle
                 </Select>
               </TableCell>
             </TableRow>
-          ))}
+
+          }
+
+          )}
         </TableBody>
       </Table>
     </TableContainer>
