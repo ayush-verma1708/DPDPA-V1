@@ -1,87 +1,67 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Progress,
   Table,
-  Badge,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Spinner,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  CircularProgress,
   Alert,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardTitle
-} from 'reactstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+  TablePagination,
+} from '@mui/material';
 
 const Scoreboard = () => {
-  const [assets, setAssets] = useState([]);
-  const [actions, setActions] = useState([]);
-  const [filteredActions, setFilteredActions] = useState([]);
-  const [scopes, setScopes] = useState([]);
-  const [controlFamilies, setControlFamilies] = useState([]);
   const [statuses, setStatuses] = useState([]);
-  const [filters, setFilters] = useState({ asset: '', scope: '', controlFamily: '', status: '' });
+  const [filteredActions, setFilteredActions] = useState([]);
+  const [filters, setFilters] = useState({
+    asset: '',
+    controlFamily: '',
+    status: '',
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState({
-    asset: false, scope: false, controlFamily: false, status: false
-  });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [uniqueAssets, setUniqueAssets] = useState([]);
+  const [uniqueControlFamilies, setUniqueControlFamilies] = useState([]);
+  const [uniqueStatuses, setUniqueStatuses] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchStatuses = async () => {
       try {
-        // Parallel API calls
-        const [assetsData, actionsData, scopesData, controlFamiliesData, statusesData] = await Promise.all([
-          fetchAssets(),
-          fetchActions(),
-          fetchScopes(),
-          fetchControlFamilies(),
-          fetchStatuses(),
-        ]);
-        setAssets(assetsData);
-        setActions(actionsData);
-        setFilteredActions(actionsData);  // Initialize filtered actions
-        setScopes(scopesData);
-        setControlFamilies(controlFamiliesData);
-        setStatuses(statusesData);
+        const response = await axios.get(
+          'http://localhost:8021/api/v1/completion-status'
+        );
+        const data = response.data;
+        setStatuses(data);
+        setFilteredActions(data); // Initially set all data as filtered
+        setLoading(false);
+
+        // Extract unique values for filters
+        const assets = [...new Set(data.map((action) => action.assetId?.name))];
+        const controlFamilies = [
+          ...new Set(data.map((action) => action.familyId?.fixed_id)),
+        ];
+        const statuses = [...new Set(data.map((action) => action.status))];
+
+        setUniqueAssets(assets);
+        setUniqueControlFamilies(controlFamilies);
+        setUniqueStatuses(statuses);
       } catch (err) {
-        setError('Failed to load data.');
-      } finally {
+        setError('Failed to fetch statuses.');
         setLoading(false);
       }
     };
-    fetchData();
+    fetchStatuses();
   }, []);
-
-  const fetchAssets = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/assets');
-    return response.data;
-  };
-
-  const fetchActions = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/actions');
-    return response.data;
-  };
-
-  const fetchScopes = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/scoped');
-    return response.data;
-  };
-
-  const fetchControlFamilies = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/control-families');
-    return response.data;
-  };
-
-  const fetchStatuses = async () => {
-    const response = await axios.get('http://localhost:8021/api/v1/completion-status');
-    return response.data;
-  };
 
   const handleFilterChange = (filter, value) => {
     const updatedFilters = { ...filters, [filter]: value };
@@ -89,165 +69,182 @@ const Scoreboard = () => {
     applyFilters(updatedFilters);
   };
 
-  // Memoize filtered actions to avoid unnecessary re-renders
-  const applyFilters = useCallback((filters) => {
-    setFilteredActions(actions.filter(action => {
-      return (!filters.asset || action.assetId === filters.asset) &&
-             (!filters.scope || action.scopeId === filters.scope) &&
-             (!filters.controlFamily || action.familyId === filters.controlFamily) &&
-             (!filters.status || action.status === filters.status);
-    }));
-  }, [actions]);
+  const applyFilters = (filters) => {
+    let updatedActions = statuses;
+
+    if (filters.asset) {
+      updatedActions = updatedActions.filter(
+        (action) => action.assetId?.name === filters.asset
+      );
+    }
+
+    if (filters.controlFamily) {
+      updatedActions = updatedActions.filter(
+        (action) => action.familyId?.fixed_id === filters.controlFamily
+      );
+    }
+
+    if (filters.status) {
+      updatedActions = updatedActions.filter(
+        (action) => action.status === filters.status
+      );
+    }
+
+    setFilteredActions(updatedActions);
+  };
 
   const calculateProgress = (actionsArray) => {
     if (!actionsArray.length) return 0;
-    const completed = actionsArray.filter(action => action.isCompleted).length;
+    const completed = actionsArray.filter(
+      (action) => action.isCompleted
+    ).length;
     return (completed / actionsArray.length) * 100;
   };
 
-  const toggleDropdown = (dropdown) => setDropdownOpen(prevState => ({
-    ...prevState,
-    [dropdown]: !prevState[dropdown]
-  }));
-
-  const renderDropdown = (label, filterKey, items) => (
-    <Dropdown isOpen={dropdownOpen[filterKey]} toggle={() => toggleDropdown(filterKey)}>
-      <DropdownToggle caret>{label}</DropdownToggle>
-      <DropdownMenu>
-        <DropdownItem onClick={() => handleFilterChange(filterKey, '')}>All {label}s</DropdownItem>
-        {items.map(item => (
-          <DropdownItem key={item._id} onClick={() => handleFilterChange(filterKey, item._id)}>
-            {item.name}
-          </DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
-  );
-
-  const getStatusBadgeColor = (isCompleted) => {
-    return isCompleted ? 'success' : 'danger';
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  if (loading) return <Spinner color="primary" />;
-  if (error) return <Alert color="danger">{error}</Alert>;
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const getStatusBadgeColor = (isCompleted) => {
+    return isCompleted ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Alert severity='error'>{error}</Alert>;
+
+  const tableData = filteredActions.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
-    <div>
-      <h2>Scoreboard</h2>
+    <div className='p-5 w-full'>
+      <h2 className='text-2xl font-bold mb-6'>Scoreboard</h2>
 
-      <Row className="overview mb-4">
-        <Col md={4}>
-          <Card>
-            <CardBody>
-              <CardTitle tag="h5">Total Assets</CardTitle>
-              <div>{assets.length}</div>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card>
-            <CardBody>
-              <CardTitle tag="h5">Total Actions</CardTitle>
-              <div>{actions.length}</div>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card>
-            <CardBody>
-              <CardTitle tag="h5">Completion Status</CardTitle>
-              <Progress value={calculateProgress(filteredActions)} />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row className="filters mb-4">
-        <Col md={3}>
-          {renderDropdown('Asset', 'asset', assets)}
-        </Col>
-        <Col md={3}>
-          {renderDropdown('Scope', 'scope', scopes)}
-        </Col>
-        <Col md={3}>
-          {renderDropdown('Control Family', 'controlFamily', controlFamilies)}
-        </Col>
-        <Col md={3}>
-          {renderDropdown('Status', 'status', statuses)}
-        </Col>
-      </Row>
-
-      <div className="progress-bars mb-4">
-        <h4>Overall Progress</h4>
-        <Progress value={calculateProgress(filteredActions)} />
-
-        {assets.map(asset => (
-          <div key={asset._id}>
-            <h5>{asset.name}</h5>
-            <Progress value={calculateProgress(filteredActions.filter(action => action.assetId === asset._id))} />
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
+        <div className='p-4 bg-white shadow rounded'>
+          <h3 className='font-semibold'>Total Actions</h3>
+          <div className='text-2xl'>{statuses.length}</div>
+        </div>
+        <div className='p-4 bg-white shadow rounded'>
+          <h3 className='font-semibold'>Completion Status</h3>
+          <div className='w-full bg-gray-200 rounded-full h-4'>
+            <div
+              className='bg-blue-500 h-4 rounded-full'
+              style={{ width: `${calculateProgress(filteredActions)}%` }}
+            ></div>
           </div>
-        ))}
+        </div>
       </div>
 
-      <Table striped responsive>
-        <thead>
-          <tr>
-            <th>Action</th>
-            <th>Control</th>
-            <th>Status</th>
-            <th>Owner</th>
-            <th>Completion Date</th>
-            <th>Feedback</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredActions.map(action => (
-            <tr key={action._id}>
-              <td>{action.actionName}</td>
-              <td>{action.controlName}</td>
-              <td>
-                <Badge color={getStatusBadgeColor(action.isCompleted)}>{action.isCompleted ? 'Completed' : 'Incomplete'}</Badge>
-              </td>
-              <td>{action.username}</td>
-              <td>{action.completedAt ? new Date(action.completedAt).toLocaleDateString() : 'N/A'}</td>
-              <td>{action.feedback || 'N/A'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
+        <FormControl fullWidth className='mb-4'>
+          <InputLabel>Asset</InputLabel>
+          <Select
+            value={filters.asset}
+            onChange={(e) => handleFilterChange('asset', e.target.value)}
+            label='Asset'
+          >
+            <MenuItem value=''>All Assets</MenuItem>
+            {uniqueAssets.map((asset, index) => (
+              <MenuItem key={index} value={asset}>
+                {asset}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      {/* Uncomment and modify if you want to include critical issues */}
-      {/* <Row className="important-info mt-4">
-        <Col>
-          <Card>
-            <CardBody>
-              <CardTitle tag="h4">Alerts</CardTitle>
-              {criticalIssues.length ? (
-                <ul>
-                  {criticalIssues.map(issue => (
-                    <li key={issue._id}>
-                      <strong>{issue.title}</strong>: {issue.description}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div>No critical issues to report.</div>
-              )}
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
+        <FormControl fullWidth className='mb-4'>
+          <InputLabel>Control Family</InputLabel>
+          <Select
+            value={filters.controlFamily}
+            onChange={(e) =>
+              handleFilterChange('controlFamily', e.target.value)
+            }
+            label='Control Family'
+          >
+            <MenuItem value=''>All Control Families</MenuItem>
+            {uniqueControlFamilies.map((family, index) => (
+              <MenuItem key={index} value={family}>
+                {family}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <Row className="history mt-4">
-        <Col>
-          <Card>
-            <CardBody>
-              <CardTitle tag="h4">Recent Changes</CardTitle>
-              {/* Add logic to display recent updates */}
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+        <FormControl fullWidth className='mb-4'>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={filters.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+            label='Status'
+          >
+            <MenuItem value=''>All Statuses</MenuItem>
+            {uniqueStatuses.map((status, index) => (
+              <MenuItem key={index} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Asset</TableCell>
+              <TableCell>Action</TableCell>
+              <TableCell>Control Description</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Last Updated By</TableCell>
+              <TableCell>Completion Date</TableCell>
+              <TableCell>Feedback</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableData.map((action) => (
+              <TableRow key={action._id}>
+                <TableCell>{action.assetId?.name}</TableCell>
+                <TableCell>{action.actionId?.variable_id}</TableCell>
+                <TableCell>{action.controlId?.section_main_desc}</TableCell>
+                <TableCell>
+                  <span
+                    className={`px-2 py-1 rounded ${getStatusBadgeColor(
+                      action.isCompleted
+                    )}`}
+                  >
+                    {action.isCompleted ? 'Completed' : 'Pending'}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  {action.username === 'yourUsername' ? '' : action.username}
+                </TableCell>
+                <TableCell>
+                  {action.completedAt
+                    ? new Date(action.completedAt).toLocaleDateString()
+                    : 'N/A'}
+                </TableCell>
+                <TableCell>{action.feedback || 'N/A'}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component='div'
+          count={filteredActions.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
     </div>
   );
 };

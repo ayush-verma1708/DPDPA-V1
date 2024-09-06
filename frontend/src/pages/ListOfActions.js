@@ -28,6 +28,8 @@ import ControlFamilyStatus from '../components/ControlFamilyStatus'; // Adjust t
 import EvidenceTable from '../components/EvidenceTable'; // Import the new component
 import StatusCheckTable from '../components/StatusCheckTable'; // Import the new component
 
+import CompletionStatusPage from '../components/completionStatusPage';
+
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
   const [controls, setControls] = useState([]);
@@ -646,7 +648,7 @@ const ListOfActions = () => {
           Show Control Status
         </Button>
         <Button onClick={() => showComponent('ControlFamilyStatus')}>
-          Show Control Family Status
+          Show Task Assignment Status
         </Button>
 
         {/* <Button variant="contained" color="primary" onClick={toggleTableVisibility}>
@@ -678,36 +680,8 @@ const ListOfActions = () => {
             handleMarkAsCompleted={handleMarkAsCompleted}
           />
         )}
-
-        {visibleComponent === 'ControlStatus' && (
-          <ControlStatus
-            selectedAssetId={selectedAssetId}
-            selectedScopeId={selectedScopeId}
-          />
-        )}
-
-        {visibleComponent === 'ControlFamilyStatus' && (
-          <ControlFamilyStatus
-            selectedAssetId={selectedAssetId}
-            selectedScopeId={selectedScopeId}
-          />
-        )}
-
         {visibleComponent === 'StatusCheckTable' && (
           <StatusCheckTable
-            // controlFamilies={controlFamilies}
-            // expandedFamilyId={expandedFamilyId}
-            // selectedControlId={selectedControlId}
-            // actions={actions}
-            // onFamilyClick={handleFamilyClick}
-            // onControlClick={handleControlClick}
-            // handleMarkAsCompleted={handleMarkAsCompleted}
-            // // actions={actions}
-            // handleFileChange={handleFileChange}
-            // handleUploadEvidence={handleUploadEvidence}
-            // //  handleStatusChange={handleStatusChange}
-            // ActionCompletionCell={ActionCompletionCell}
-            // statusOptions={statusOptions}
             actions={actions}
             handleFileChange={handleFileChange}
             handleUploadEvidence={handleUploadEvidence}
@@ -721,6 +695,15 @@ const ListOfActions = () => {
             handleMarkAsCompleted={handleMarkAsCompleted}
           />
         )}
+        {visibleComponent === 'ControlStatus' && (
+          <ControlStatus
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
+          />
+        )}
+
+        {visibleComponent === 'ControlFamilyStatus' && <CompletionStatusPage />}
+
         {/* {isControlStatusVisible && (
   <ControlStatus selectedAssetId={selectedAssetId} selectedScopeId={selectedScopeId} />
 )}

@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.0.2",
+    "@mui/x-data-grid": "^7.16.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
@@ -9,7 +13,13 @@
     "mui": "^0.0.1"
   },
   "scripts": {
-    "front":"cd .\\frontend\\ && pnpm start", 
-    "back":"cd .\\backend\\ && pnpm run dev" 
+    "front": "cd .\\frontend\\ && pnpm start",
+    "back": "cd .\\backend\\ && pnpm run dev"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react": "^7.35.2",
+    "globals": "^15.9.0"
   }
 }

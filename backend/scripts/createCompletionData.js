@@ -14,37 +14,49 @@ async function createCompletionData(username) {
   try {
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useNewUrlParser: false,
+      useUnifiedTopology: false,
     });
 
     console.log('Connected to MongoDB successfully.');
 
     // Fetch all asset details (from AssetDetails model)
     const assetDetails = await AssetDetails.find().populate('asset');
-    const assetDetailsNames = new Set(assetDetails.map(detail => detail.asset.name));
-    console.log(`Asset Details Names: ${Array.from(assetDetailsNames).join(', ')}`);
+    const assetDetailsNames = new Set(
+      assetDetails.map((detail) => detail.asset.name)
+    );
+    console.log(
+      `Asset Details Names: ${Array.from(assetDetailsNames).join(', ')}`
+    );
 
     // Fetch all control families
     const controlFamilies = await ControlFamily.find();
     console.log(`Control Families: ${controlFamilies.length}`);
 
     for (const family of controlFamilies) {
-      console.log(`Processing Control Family: ${family.variable_id} (${family._id})`);
+      console.log(
+        `Processing Control Family: ${family.variable_id} (${family._id})`
+      );
 
       // Fetch controls associated with this control family
       const controls = await Control.find({ control_Family_Id: family._id });
-      console.log(`Found ${controls.length} controls for Control Family ${family.variable_id}.`);
+      console.log(
+        `Found ${controls.length} controls for Control Family ${family.variable_id}.`
+      );
 
       for (const control of controls) {
         console.log(`Processing Control: ${control.section} (${control._id})`);
 
         // Fetch actions associated with this control
         const actions = await Action.find({ control_Id: control._id });
-        console.log(`Found ${actions.length} actions for Control ${control.section}.`);
+        console.log(
+          `Found ${actions.length} actions for Control ${control.section}.`
+        );
 
         for (const action of actions) {
-          console.log(`Processing Action: ${action.variable_id} (${action._id})`);
+          console.log(
+            `Processing Action: ${action.variable_id} (${action._id})`
+          );
 
           // Fetch all assets
           const assets = await Asset.find();
@@ -58,7 +70,9 @@ async function createCompletionData(username) {
               if (asset.isScoped) {
                 // If asset is scoped, fetch all scopes associated with this asset
                 const scopes = await Scoped.find({ asset: asset._id });
-                console.log(`Found ${scopes.length} scopes for Asset ${asset.name}.`);
+                console.log(
+                  `Found ${scopes.length} scopes for Asset ${asset.name}.`
+                );
 
                 for (const scope of scopes) {
                   // Check if CompletionStatus entry already exists
@@ -78,23 +92,27 @@ async function createCompletionData(username) {
                       scopeId: scope._id,
                       controlId: control._id,
                       familyId: family._id,
-                      isCompleted: true,
+                      isCompleted: false,
                       username: username,
-                      history: [{
-                        modifiedAt: new Date(),
-                        modifiedBy: username,
-                        changes: new Map([
-                          ['actionId', action._id.toString()],
-                          ['assetId', asset._id.toString()],
-                          ['scopeId', scope._id.toString()],
-                          ['controlId', control._id.toString()],
-                          ['familyId', family._id.toString()],
-                          ['isCompleted', 'true']
-                        ])
-                      }]
+                      history: [
+                        {
+                          modifiedAt: new Date(),
+                          modifiedBy: username,
+                          changes: new Map([
+                            ['actionId', action._id.toString()],
+                            ['assetId', asset._id.toString()],
+                            ['scopeId', scope._id.toString()],
+                            ['controlId', control._id.toString()],
+                            ['familyId', family._id.toString()],
+                            ['isCompleted', 'false'],
+                          ]),
+                        },
+                      ],
                     });
                   } else {
-                    console.log(`CompletionStatus entry already exists for Action ${action._id}, Asset ${asset._id}, Scope ${scope._id}, Control ${control._id}, Family ${family._id}`);
+                    console.log(
+                      `CompletionStatus entry already exists for Action ${action._id}, Asset ${asset._id}, Scope ${scope._id}, Control ${control._id}, Family ${family._id}`
+                    );
                   }
                 }
               } else {
@@ -113,26 +131,32 @@ async function createCompletionData(username) {
                     assetId: asset._id,
                     controlId: control._id,
                     familyId: family._id,
-                    isCompleted: true,
+                    isCompleted: false,
                     username: username,
-                    history: [{
-                      modifiedAt: new Date(),
-                      modifiedBy: username,
-                      changes: new Map([
-                        ['actionId', action._id.toString()],
-                        ['assetId', asset._id.toString()],
-                        ['controlId', control._id.toString()],
-                        ['familyId', family._id.toString()],
-                        ['isCompleted', 'true']
-                      ])
-                    }]
+                    history: [
+                      {
+                        modifiedAt: new Date(),
+                        modifiedBy: username,
+                        changes: new Map([
+                          ['actionId', action._id.toString()],
+                          ['assetId', asset._id.toString()],
+                          ['controlId', control._id.toString()],
+                          ['familyId', family._id.toString()],
+                          ['isCompleted', 'false'],
+                        ]),
+                      },
+                    ],
                   });
                 } else {
-                  console.log(`CompletionStatus entry already exists for Action ${action._id}, Asset ${asset._id}, Control ${control._id}, Family ${family._id}`);
+                  console.log(
+                    `CompletionStatus entry already exists for Action ${action._id}, Asset ${asset._id}, Control ${control._id}, Family ${family._id}`
+                  );
                 }
               }
             } else {
-              console.log(`Asset ${asset.name} is not in assetDetails and will be ignored.`);
+              console.log(
+                `Asset ${asset.name} is not in assetDetails and will be ignored.`
+              );
             }
           }
         }
