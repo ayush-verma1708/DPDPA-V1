@@ -29,6 +29,7 @@ import EvidenceTable from '../components/EvidenceTable'; // Import the new compo
 import StatusCheckTable from '../components/StatusCheckTable'; // Import the new component
 
 import CompletionStatusPage from '../components/completionStatusPage';
+import { fetchCurrentUser } from '../api/userApi';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -63,6 +64,10 @@ const ListOfActions = () => {
   const [isTableVisible, setIsTableVisible] = useState(true);
 
   const [visibleComponent, setVisibleComponent] = useState(''); // State to track which component is visible
+  const [usernames, setUsernames] = useState({});
+  const [currentUsername, setCurrentUsername] = useState(null); // Store current username
+  const [fetchedStatuses, setFetchedStatuses] = useState([]);
+  const [role, setRole] = useState(''); // To store the role from userData
 
   const statusOptions = [
     'Open',
@@ -163,6 +168,23 @@ const ListOfActions = () => {
       console.error('Fetch Evidences Error:', error);
     }
   };
+
+  // Fetch current user data
+  useEffect(() => {
+    const fetchCurrentUserData = async () => {
+      try {
+        const token = window.localStorage.getItem('token'); // Replace with actual token
+        const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
+        setCurrentUsername(userData.username); // Set current username
+        setRole(userData.data.role); // Set role from user data
+        console.log('user data ', userData.data.role);
+      } catch (error) {
+        console.error('Error fetching current user data:', error);
+      }
+    };
+
+    fetchCurrentUserData(); // Call the async function inside useEffect
+  }, []); // Empty dependency array means it runs once after the component mounts
 
   // Fetch evidences when the component mounts
   useEffect(() => {
@@ -493,25 +515,6 @@ const ListOfActions = () => {
     setNotification({ message: '', severity: 'info' });
   };
 
-  // const handleStatusChange = async (actionId, newStatus) => {
-  //   try {
-  //     // Update status in the backend
-  //     await axios.put(`/api/actions/${actionId}`, { status: newStatus });
-
-  //     // Update status in local state
-  //     setActions(prevActions =>
-  //       prevActions.map(action =>
-  //         action._id === actionId ? { ...action, status: newStatus } : action
-  //       )
-  //     );
-
-  //     setNotification({ message: 'Status updated successfully!', severity: 'success' });
-  //   } catch (error) {
-  //     setNotification({ message: 'Failed to update status. Please try again.', severity: 'error' });
-  //     console.error('Status Update Error:', error);
-  //   }
-  // };
-
   if (loading) {
     return <Loading />;
   }
@@ -638,32 +641,31 @@ const ListOfActions = () => {
       </div>
 
       <div className='content'>
-        <Button onClick={() => showComponent('EvidenceTable')}>
-          Show Evidence Table
-        </Button>
-        <Button onClick={() => showComponent('StatusCheckTable')}>
-          Show Status Check Table
-        </Button>
-        <Button onClick={() => showComponent('ControlStatus')}>
-          Show Control Status
-        </Button>
-        <Button onClick={() => showComponent('ControlFamilyStatus')}>
-          Show Task Assignment Status
-        </Button>
+        {role === 'IT Team' ||
+          ('Admin' && (
+            <Button onClick={() => showComponent('EvidenceTable')}>
+              Show Evidence Table
+            </Button>
+          ))}
+        {role === 'Auditor' ||
+          ('Admin' && (
+            <Button onClick={() => showComponent('StatusCheckTable')}>
+              Show Status Check Table
+            </Button>
+          ))}
+        {/* {role === '' ||
+          ('Admin' && (
+            <Button onClick={() => showComponent('ControlStatus')}>
+              Show Control Status
+            </Button>
+          ))} */}
 
-        {/* <Button variant="contained" color="primary" onClick={toggleTableVisibility}>
-          {isTableVisible ? 'Hide Evidence Table' : 'Show Evidence Table'}
-        </Button>
-
-        <Button variant="contained" color="primary" onClick={toggleControlStatusVisibility}>
-          {isControlStatusVisible ? 'Hide Control Status Info' : 'Show Control Status Info'}
-        </Button>
-        <Button variant="contained" color="primary" onClick={toggleControlFamilyStatusVisibility}>
-          {isControlFamilyStatusVisible ? 'Hide Control Family Status Info' : 'Show Control Family Status Info'}
-        </Button>
-        <Button variant="contained" color="primary"  onClick={toggleStatusCheckTableVisibility}>
-        {isStatusCheckTableVisible ? 'Hide Status Check Table' : 'Show Status Check Table'}
-      </Button> */}
+        {role === 'Compliance Team' ||
+          ('Admin' && (
+            <Button onClick={() => showComponent('ControlFamilyStatus')}>
+              Show Task Assignment Status
+            </Button>
+          ))}
 
         {visibleComponent === 'EvidenceTable' && (
           <EvidenceTable
@@ -703,23 +705,6 @@ const ListOfActions = () => {
         )}
 
         {visibleComponent === 'ControlFamilyStatus' && <CompletionStatusPage />}
-
-        {/* {isControlStatusVisible && (
-  <ControlStatus selectedAssetId={selectedAssetId} selectedScopeId={selectedScopeId} />
-)}
-
-{isControlFamilyStatusVisible && (
-  <ControlFamilyStatus selectedAssetId={selectedAssetId} selectedScopeId={selectedScopeId} />
-)}
-
-{isStatusCheckTableVisible && (
-        <StatusCheckTable actions={actions}
-        handleFileChange={handleFileChange}
-        handleUploadEvidence={handleUploadEvidence}
-        handleStatusChange={handleStatusChange}
-        ActionCompletionCell={ActionCompletionCell}
-        statusOptions={statusOptions} /> // Render the StatusCheckTable component
-      )} */}
       </div>
 
       {error && (

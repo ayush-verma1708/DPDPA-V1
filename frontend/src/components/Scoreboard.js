@@ -16,6 +16,7 @@ import {
   Alert,
   TablePagination,
 } from '@mui/material';
+import { getUserById } from '../api/userApi';
 
 const Scoreboard = () => {
   const [statuses, setStatuses] = useState([]);
@@ -25,6 +26,7 @@ const Scoreboard = () => {
     controlFamily: '',
     status: '',
   });
+  const [nameLoading, setNameLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
@@ -208,31 +210,34 @@ const Scoreboard = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableData.map((action) => (
-              <TableRow key={action._id}>
-                <TableCell>{action.assetId?.name}</TableCell>
-                <TableCell>{action.actionId?.variable_id}</TableCell>
-                <TableCell>{action.controlId?.section_main_desc}</TableCell>
-                <TableCell>
-                  <span
-                    className={`px-2 py-1 rounded ${getStatusBadgeColor(
-                      action.isCompleted
-                    )}`}
-                  >
-                    {action.isCompleted ? 'Completed' : 'Pending'}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {action.username === 'yourUsername' ? '' : action.username}
-                </TableCell>
-                <TableCell>
-                  {action.completedAt
-                    ? new Date(action.completedAt).toLocaleDateString()
-                    : 'N/A'}
-                </TableCell>
-                <TableCell>{action.feedback || 'N/A'}</TableCell>
-              </TableRow>
-            ))}
+            {tableData.map((action) => {
+              return (
+                <TableRow key={action._id}>
+                  <TableCell>{action.assetId?.name}</TableCell>
+                  <TableCell>{action.actionId?.variable_id}</TableCell>
+                  <TableCell>{action.controlId?.section_main_desc}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded ${getStatusBadgeColor(
+                        action.isCompleted
+                      )}`}
+                    >
+                      {action.isCompleted ? 'Completed' : 'Pending'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {/* !!! Populate action.username with the actual user !!! */}
+                    {action.username != 'yourUsername' && action.username}
+                  </TableCell>
+                  <TableCell>
+                    {action.completedAt
+                      ? new Date(action.completedAt).toLocaleDateString()
+                      : 'N/A'}
+                  </TableCell>
+                  <TableCell>{action.feedback || 'N/A'}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
         <TablePagination

@@ -10,8 +10,6 @@ const Header = ({ title, handleLogout }) => {
   const token = localStorage.getItem('token');
   const { user, loading, error } = useFetchUser(token);
 
-  console.log(user);
-
   window.localStorage.setItem('company', user?.company._id);
   window.localStorage.setItem('username', user?.username);
 
