@@ -22,36 +22,38 @@ import completionRoutes from './routes/completionRoutes.js';
 
 import companyFormRoutes from './routes/companyFormRoutes.js';
 
-
 import TaskManager from './models/taskManager.js';
 
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
-}));
-
-app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.static("public"));
-app.use(express.static("uploads"));
+app.use(express.json({ limit: '16kb' }));
+app.use(express.urlencoded({ extended: true, limit: '16kb' }));
+app.use(express.static('public'));
+app.use(express.static('uploads'));
 app.use(cookieParser());
 
 // routes declaration
-app.use("/api/v1/assets", assetRouter);
-app.use("/api/v1/scoped", scopedRouter);
-app.use("/api/v1/coverage", coverageRouter);
-app.use("/api/v1/business", businessRouter);
-app.use("/api/v1/it", itRouter);
+app.use('/api/v1/assets', assetRouter);
+app.use('/api/v1/scoped', scopedRouter);
+app.use('/api/v1/coverage', coverageRouter);
+app.use('/api/v1/business', businessRouter);
+app.use('/api/v1/it', itRouter);
 app.use('/api/auth', authRoutes);
 
 app.use('/api/users', userRoutes);
-
 
 app.use('/api/v1/control-families', controlFamiliesRoutes); // Add this line to handle control families
 app.use('/api/v1/controls', controlRoutes); // Add control routes
@@ -61,26 +63,24 @@ app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion 
 app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
 
-
 // Use the company form routes
 app.use('/api/company-form', companyFormRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-app.get("/:filename",async(req,res)=>{
-  const{filename}=req.params
-  const filepath = path.join('uploads',filename)
-  return res.download(filepath)
+app.get('/:filename', async (req, res) => {
+  const { filename } = req.params;
+  const filepath = path.join('uploads', filename);
+  return res.download(filepath);
   // return res.send(filepath)
 }),
-
-app.use('/api/v1', completionRoutes);
+  app.use('/api/v1', completionRoutes);
 
 // Global error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.statusCode || 500).json({
     message: err.message || 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err : {}
+    error: process.env.NODE_ENV === 'development' ? err : {},
   });
 });
 
