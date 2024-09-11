@@ -4,7 +4,9 @@ import axios from 'axios';
 
 export const getAssetDetails = async () => {
   try {
-    const response = await axios.get('http://localhost:8021/api/v1/assetDetails');
+    const response = await axios.get(
+      'http://localhost:8021/api/v1/assetDetails'
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching asset details:', error);
@@ -12,18 +14,35 @@ export const getAssetDetails = async () => {
   }
 };
 export const getScopedInAsset = async (assetId) => {
-  const response = await axios.get(`http://localhost:8021/api/v1/assetDetails/scoped/${assetId}`);
+  const response = await axios.get(
+    `http://localhost:8021/api/v1/assetDetails/scoped/${assetId}`
+  );
   return response.data;
 };
 
 // Fetch asset details by asset ID
 export const getAssetDetailsByAssetId = async (assetId) => {
   try {
-    const response = await axios.get(`http://localhost:8021/api/v1/assetDetails/assetDetails/${assetId}`);
+    const response = await axios.get(
+      `http://localhost:8021/api/v1/assetDetails/${assetId}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching asset details by asset ID:', error);
     throw error;
+  }
+};
+
+// Fetch asset details by assetDetails ID
+export const getAssetDetailsById = async (id) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8021/api/v1/assetDetails/assetDetails/${id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching asset details:', error);
+    throw error; // Optionally handle or re-throw the error
   }
 };
 

@@ -20,7 +20,7 @@ import Loading from '../components/Loading';
 import '../styles/ListOfActions.css';
 import axios from 'axios';
 
-import { getAssetDetails } from '../api/assetDetailsApi';
+import { getAssetDetails, getAssetDetailsById } from '../api/assetDetailsApi';
 import { getAllEvidences, uploadEvidence } from '../api/evidenceApi';
 
 import ControlStatus from '../components/ControlStatus'; // Adjust the path as needed
@@ -46,6 +46,9 @@ const ListOfActions = () => {
   // const [notification, setNotification] = useState({ message: '', severity: 'info' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [evidences, setEvidences] = useState([]);
+
+  const [SendingAsset, setSendingAsset] = useState([]);
+  const [SendingScope, setSendingScope] = useState([]);
 
   const [actions, setActions] = useState([]);
 
@@ -117,7 +120,7 @@ const ListOfActions = () => {
 
     try {
       const evidenceData = {
-        assetId: selectedAssetId,
+        assetId: SendingAsset,
         scopeId: selectedScopeId,
         actionId: actionId,
         controlId: selectedControlId,
@@ -332,6 +335,21 @@ const ListOfActions = () => {
 
   const handleAssetChange = (event) => {
     setSelectedAssetId(event.target.value);
+    sendingAssetDetails();
+  };
+
+  const sendingAssetDetails = async () => {
+    try {
+      const response = await getAssetDetailsById(selectedAssetId);
+      console.log('sending asset details', response.asset._id);
+      console.log('sending scope details', selectedScopeId);
+      setSendingAsset(response.asset._id);
+      setSendingScope(selectedScopeId);
+
+      console.log('set asset', SendingAsset);
+    } catch (error) {
+      console.error('Error fetching asset details:', error);
+    }
   };
 
   const handleScopeChange = (event) => {
@@ -732,7 +750,7 @@ const ListOfActions = () => {
             statusOptions={statusOptions}
             expandedFamilyId={expandedFamilyId}
             selectedControlId={selectedControlId}
-            selectedAssetId={selectedAssetId}
+            selectedAssetId={SendingAsset}
             selectedScopeId={selectedScopeId}
             handleMarkAsCompleted={handleMarkAsCompleted}
           />
@@ -747,21 +765,21 @@ const ListOfActions = () => {
             statusOptions={statusOptions}
             expandedFamilyId={expandedFamilyId}
             selectedControlId={selectedControlId}
-            selectedAssetId={selectedAssetId}
+            selectedAssetId={SendingAsset}
             selectedScopeId={selectedScopeId}
             handleMarkAsCompleted={handleMarkAsCompleted}
           />
         )}
         {visibleComponent === 'ControlStatus' && (
           <ControlStatus
-            selectedAssetId={selectedAssetId}
+            selectedAssetId={SendingAsset}
             selectedScopeId={selectedScopeId}
           />
         )}
         {visibleComponent === 'ControlFamilyStatus' && (
           <CompletionStatusPage
             expandedFamilyId={expandedFamilyId}
-            selectedAssetId={selectedAssetId}
+            selectedAssetId={SendingAsset}
             selectedScopeId={selectedScopeId}
           />
         )}

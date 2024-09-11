@@ -28,6 +28,14 @@ const EvidenceTable = ({
 }) => {
   const [evidenceUrls, setEvidenceUrls] = useState({});
 
+  // Function to log all parameters
+  const logParams = () => {
+    console.log('Selected Asset ID:', selectedAssetId);
+    console.log('Selected Scope ID:', selectedScopeId);
+    console.log('Expanded Family ID:', expandedFamilyId);
+    console.log('Selected Control ID:', selectedControlId);
+  };
+
   // Function to fetch all evidence URLs for the current actions
   const fetchEvidenceUrls = async () => {
     const urls = {};
@@ -39,6 +47,8 @@ const EvidenceTable = ({
   };
   const handleViewEvidence = async (actionId) => {
     try {
+      logParams(); // Log parameters before making the request
+
       const res = await axios.post(
         `http://localhost:8021/api/evidence/params`,
         {

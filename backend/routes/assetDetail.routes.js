@@ -1,24 +1,26 @@
 // routes/assetDetails.js
 import { Router } from 'express';
-import { 
+import {
   getAssetDetailsByAssetId,
-  addAssetDetails, 
-  deleteAssetDetails, 
-  getAssetDetails, 
-  getAssetsInAssetDetails, 
-  getScopedInSAssetdDetails, 
-  updateAssetDetails 
+  addAssetDetails,
+  deleteAssetDetails,
+  getAssetDetails,
+  getAssetsInAssetDetails,
+  getScopedInSAssetdDetails,
+  updateAssetDetails,
+  getAssetDetailsById,
 } from '../controllers/assetDetails.controller.js';
 
 const assetDetailRouter = Router();
 
-assetDetailRouter.route("/").get(getAssetDetails);
-assetDetailRouter.route("/add").post(addAssetDetails);
+assetDetailRouter.route('/').get(getAssetDetails);
+assetDetailRouter.route('/add').post(addAssetDetails);
 assetDetailRouter.route('/:id').put(updateAssetDetails);
 assetDetailRouter.route('/:id').delete(deleteAssetDetails);
-assetDetailRouter.route("/assets/").get(getAssetsInAssetDetails);
-assetDetailRouter.route("/scoped/:asset").get(getScopedInSAssetdDetails);
+assetDetailRouter.route('/assets/').get(getAssetsInAssetDetails);
+assetDetailRouter.route('/scoped/:asset').get(getScopedInSAssetdDetails);
 assetDetailRouter.route('/:assetId').get(getAssetDetailsByAssetId);
+assetDetailRouter.route('/assetDetails/:id').get(getAssetDetailsById);
 
 export default assetDetailRouter;
 
@@ -34,7 +36,6 @@ export default assetDetailRouter;
 // assetDetailRouter.route("/assets/").get(getAssetsInAssetDetails);
 // assetDetailRouter.route("/scoped/:asset").get(getScopedInSAssetdDetails);
 // assetDetailRouter.route('/assetDetails/:assetId', getAssetDetailsByAssetId);
-
 
 // export default assetDetailRouter;
 
@@ -54,7 +55,6 @@ export default assetDetailRouter;
 // // assetDetailRouter.route("/:id").put(updateAssetDetails).delete(deleteAssetDetails);
 // // assetDetailRouter.route("/scoped/:assetId").get(getScopedInAsset);
 // // // assetDetailRouter.route("/scopes/:assetId").get(getScopesByAsset);
-
 
 // // export default assetDetailRouter;
 
