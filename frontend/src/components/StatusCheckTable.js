@@ -67,6 +67,7 @@ const StatusCheckTable = ({
       fetchEvidenceUrls(); // Fetch URLs whenever actions prop changes
     }
   }, [actions]);
+  console.log(actions);
   return (
     <TableContainer component={Paper}>
       <Table>
