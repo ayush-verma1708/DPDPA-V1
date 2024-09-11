@@ -63,14 +63,15 @@ export const getControlFamilies = async (req, res) => {
   try {
     const { id } = req.query; // Use query parameter to fetch by ID
     if (id) {
-      // Fetch single control family by ID
       const controlFamily = await ControlFamily.findById(id);
+
+      console.log(controlFamily);
+
       if (!controlFamily) {
         return res.status(404).json({ message: 'Control family not found' });
       }
       res.json(controlFamily);
     } else {
-      // Fetch all control families
       const controlFamilies = await ControlFamily.find();
       const result = [];
 
@@ -93,11 +94,12 @@ export const getControlFamilies = async (req, res) => {
   }
 };
 
-
 // Function to generate the next FixedID
 const generateNextFixedID = async () => {
   try {
-    const lastControlFamily = await ControlFamily.findOne().sort({ 'fixed_id': -1 }).limit(1);
+    const lastControlFamily = await ControlFamily.findOne()
+      .sort({ fixed_id: -1 })
+      .limit(1);
     if (lastControlFamily && lastControlFamily.fixed_id) {
       const lastFixedID = lastControlFamily.fixed_id;
       const numericPart = parseInt(lastFixedID.replace('CF', ''));
@@ -115,14 +117,16 @@ export const createControlFamily = async (req, res) => {
     const FixedID = await generateNextFixedID();
     const controlFamily = new ControlFamily({
       fixed_id: FixedID,
-      variable_id: req.body.variable_id
+      variable_id: req.body.variable_id,
     });
 
     await controlFamily.save();
     res.status(201).json(controlFamily);
   } catch (error) {
     console.error('Error details:', error);
-    res.status(400).json({ message: 'Error creating control family', error: error.message });
+    res
+      .status(400)
+      .json({ message: 'Error creating control family', error: error.message });
   }
 };
 
@@ -162,10 +166,16 @@ export const updateControlFamily = async (req, res) => {
     }
 
     if (controlFamily.isDPDPA) {
-      return res.status(403).json({ message: 'Cannot edit a control family with isDPDPA set to 1' });
+      return res.status(403).json({
+        message: 'Cannot edit a control family with isDPDPA set to 1',
+      });
     }
 
-    const updatedControlFamily = await ControlFamily.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedControlFamily = await ControlFamily.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
 
     if (updatedControlFamily) {
       // await updateControlFamilyInfo(id);
@@ -174,8 +184,16 @@ export const updateControlFamily = async (req, res) => {
       res.status(404).json({ message: 'Control family not found' });
     }
   } catch (error) {
-    console.error('Error updating control family:', error.message, error.stack, error.name, error.code);
-    res.status(400).json({ message: 'Error updating control family', error: error.message });
+    console.error(
+      'Error updating control family:',
+      error.message,
+      error.stack,
+      error.name,
+      error.code
+    );
+    res
+      .status(400)
+      .json({ message: 'Error updating control family', error: error.message });
   }
 };
 
@@ -189,15 +207,24 @@ export const deleteControlFamily = async (req, res) => {
     }
 
     if (controlFamily.isDPDPA) {
-      return res.status(403).json({ message: 'Cannot delete a control family with isDPDPA set to 1' });
+      return res.status(403).json({
+        message: 'Cannot delete a control family with isDPDPA set to 1',
+      });
     }
 
     await Control.deleteMany({ control_Family_Id: id });
-    await Action.deleteMany({ control_Id: { $in: (await Control.find({ control_Family_Id: id })).map(c => c._id) } });
+    await Action.deleteMany({
+      control_Id: {
+        $in: (await Control.find({ control_Family_Id: id })).map((c) => c._id),
+      },
+    });
 
     await ControlFamily.findByIdAndDelete(id);
 
-    res.json({ message: 'Control family and related controls and actions deleted successfully' });
+    res.json({
+      message:
+        'Control family and related controls and actions deleted successfully',
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting control family' });
   }
@@ -263,7 +290,6 @@ export const deleteControlFamily = async (req, res) => {
 // //   }
 // // };
 
-
 // const generateNextFixedID = async () => {
 //   try {
 //     // Fetch the last control family
@@ -299,8 +325,6 @@ export const deleteControlFamily = async (req, res) => {
 //     res.status(400).json({ message: 'Error creating control family', error: error.message });
 //   }
 // };
-
-
 
 // export const updateControlFamily = async (req, res) => {
 //   try {
@@ -359,7 +383,6 @@ export const deleteControlFamily = async (req, res) => {
 //     res.status(500).json({ message: 'Error deleting control family' });
 //   }
 // };
-
 
 // // // controllers/controlFamilyController.js
 // // import ControlFamily from '../models/controlFamily.js';
@@ -555,10 +578,7 @@ export const deleteControlFamily = async (req, res) => {
 // // //   }
 // // // };
 
-
-// // // /// Updated file 
-
-
+// // // /// Updated file
 
 // // // // // controllers/controlFamilyController.js
 // // // // import ControlFamily from '../models/controlFamily.js';
@@ -742,4 +762,3 @@ export const deleteControlFamily = async (req, res) => {
 // // // // //     res.status(500).json({ message: 'Error deleting control family' });
 // // // // //   }
 // // // // // };
-

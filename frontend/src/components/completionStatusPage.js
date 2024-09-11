@@ -34,7 +34,12 @@ import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as 
 import { getUserById } from '../api/userApi';
 import { fetchCurrentUser } from '../api/userApi';
 
-const CompletionStatusPage = () => {
+const CompletionStatusPage = (
+  expandedFamilyId,
+
+  selectedAssetId,
+  selectedScopeId
+) => {
   const [statusData, setStatusData] = useState({
     actionId: '',
     assetId: '',
@@ -55,6 +60,16 @@ const CompletionStatusPage = () => {
     controlId: '',
     familyId: '',
   });
+
+  useEffect(() => {
+    if (expandedFamilyId) {
+      setQuery((prevQuery) => ({
+        ...prevQuery,
+        familyId: expandedFamilyId.expandedFamilyId,
+      }));
+    }
+    console.log('family', expandedFamilyId);
+  }, [expandedFamilyId]);
 
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
@@ -307,9 +322,11 @@ const CompletionStatusPage = () => {
     setFilteredOptions(filtered);
   }, [searchTerm, actionOptions]);
 
-  const updateAssetId = (id) => {
-    setAssetId(id);
-  };
+  useEffect(() => {
+    if (selectedAssetId) {
+      setAssetId(selectedAssetId);
+    }
+  }, [selectedAssetId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -337,15 +354,6 @@ const CompletionStatusPage = () => {
       setLoading(false);
       // console.log('Loading complete.');
     }
-  };
-
-  const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-    sortData(key, direction);
   };
 
   const sortData = (key, direction) => {
@@ -450,21 +458,6 @@ const CompletionStatusPage = () => {
     );
   };
 
-  const getDescriptionById = (id, list) => {
-    const item = list.find((el) => el._id === id);
-    if (!item) return 'N/A';
-
-    if (item.name) return item.name;
-    if (item.variable_id) return item.variable_id;
-    if (item.desc) return item.desc;
-    if (item.fixed_id) return item.fixed_id;
-    if (item.section) return item.section;
-    if (item.section_main_desc) return item.section_main_desc;
-    if (item.section_desc) return item.section_desc;
-
-    return 'N/A';
-  };
-
   const debugFetchActions = async () => {
     try {
       const actionsResponse = await fetchActions();
@@ -477,78 +470,19 @@ const CompletionStatusPage = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Task and Status Management</h1>
-
-      <section>
-        <h2>Search Status</h2>
-
-        <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Action</InputLabel>
-          <Select
-            name='actionId'
-            value={query.actionId}
-            onChange={handleQueryChange}
-            label='Action'
-            disabled={loading} // Disable while loading
-            fullWidth
-          >
-            {loading ? (
-              <MenuItem disabled>Loading...</MenuItem>
-            ) : filteredOptions.length > 0 ? (
-              filteredOptions.map((action) => (
-                <MenuItem key={action._id} value={action._id}>
-                  {action.variable_id} {/* Use appropriate field */}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>No actions available</MenuItem>
-            )}
-          </Select>
-        </FormControl>
-
-        <FormControl fullWidth style={{ marginBottom: '10px' }}>
-          <InputLabel>Asset</InputLabel>
-          <Select
-            name='assetId'
-            value={query.assetId}
-            onChange={handleQueryChange}
-            label='Asset'
-            disabled={loading} // Disable while loading
-            fullWidth
-          >
-            {loading ? (
-              <MenuItem disabled>Loading...</MenuItem>
-            ) : filteredAssets.length > 0 ? (
-              filteredAssets.map((asset) => (
-                <MenuItem key={asset._id} value={asset._id}>
-                  {asset.name} {/* Use appropriate field */}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem disabled>No assets available</MenuItem>
-            )}
-          </Select>
-        </FormControl>
-
-        <Button variant='contained' color='primary' onClick={handleFetchStatus}>
-          Search
-        </Button>
-      </section>
-
       <section style={{ marginTop: '20px' }}>
-        <h2>Status Table</h2>
         {loading ? (
           <CircularProgress />
         ) : (
           <TableContainer
             component={Paper}
-            style={{ maxHeight: 600, overflow: 'auto' }}
+            style={{ maxHeight: 700, overflow: 'auto' }}
           >
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell />
-                  <TableCell>Status ID</TableCell>
+
                   <TableCell>Assigned to</TableCell>
                   <TableCell>Action</TableCell>
                   <TableCell>Asset</TableCell>
@@ -560,6 +494,7 @@ const CompletionStatusPage = () => {
                   <TableCell>Feedback</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Actions</TableCell>
+                  <TableCell>TO do </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -578,10 +513,9 @@ const CompletionStatusPage = () => {
                           )}
                         </IconButton>
                       </TableCell>
-                      <TableCell>{status._id}</TableCell>
+
                       <TableCell>{getUsername(status.username)}</TableCell>
 
-                      {/* <TableCell>{status.username}</TableCell> */}
                       <TableCell>
                         {status.actionId?.fixed_id || 'N/A'}
                       </TableCell>

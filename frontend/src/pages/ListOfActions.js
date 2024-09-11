@@ -297,6 +297,7 @@ const ListOfActions = () => {
         const response = await getAssetDetails();
         if (Array.isArray(response)) {
           setAssets(response);
+          console.log(response);
         } else {
           throw new Error('Failed to fetch asset details');
         }
@@ -596,7 +597,13 @@ const ListOfActions = () => {
         </Snackbar>
       </div>
 
-      <div className='sidebar'>
+      {/* <div className='sidebar'>
+        <div className={` hover:bg-[white] bg-[white]`}>
+          <div data-disabled className={`control-family-header font-[400]`}>
+            Chapter 1
+          </div>
+        </div>
+
         {controlFamilies.map((family) => (
           <div
             key={family._id}
@@ -614,8 +621,8 @@ const ListOfActions = () => {
                 Chapter {family.variable_id}
               </div>
             </Tooltip>
-            {expandedFamilyId === family._id && (
-              <div className='controls'>
+            {/* {expandedFamilyId === family._id && (
+              <div className='controls'></div>
                 {family.controls.map((control) => (
                   <Tooltip
                     key={control._id}
@@ -635,38 +642,86 @@ const ListOfActions = () => {
                   </Tooltip>
                 ))}
               </div>
-            )}
+            )} */}
+      <div className='sidebar'>
+        <div className='hover:bg-[white] bg-[white]'>
+          <div data-disabled className='control-family-header font-[400]'>
+            Chapter 1
           </div>
-        ))}
+        </div>
+
+        {controlFamilies
+          .sort((a, b) => a.variable_id - b.variable_id) // Sort control families by variable_id
+          .map((family) => (
+            <div
+              key={family._id}
+              className={`control-family ${
+                expandedFamilyId === family._id ? 'expanded' : ''
+              }`}
+            >
+              <Tooltip title={family.description} placement='right'>
+                <div
+                  className={`control-family-header ${
+                    expandedFamilyId === family._id ? 'expanded' : ''
+                  } ${
+                    expandedFamilyId === family._id ? 'selected-family' : ''
+                  }`}
+                  onClick={() => handleFamilyClick(family._id)}
+                >
+                  Chapter {family.variable_id}
+                </div>
+              </Tooltip>
+
+              {expandedFamilyId === family._id && (
+                <div className='controls'>
+                  {family.controls
+                    .sort((a, b) => a.section.localeCompare(b.section))
+                    .map((control) => (
+                      <Tooltip
+                        key={control._id}
+                        title={control.section_main_desc}
+                        placement='right'
+                      >
+                        <div
+                          className={`control ${
+                            selectedControlId === control._id
+                              ? 'selected-control'
+                              : ''
+                          }`}
+                          onClick={() => handleControlClick(control._id)}
+                        >
+                          {control.section_main_desc} - {control.section}
+                        </div>
+                      </Tooltip>
+                    ))}
+                </div>
+              )}
+            </div>
+          ))}
       </div>
 
       <div className='content'>
+        <Button onClick={() => showComponent('ControlFamilyStatus')}>
+          Show Task Assignment Status
+        </Button>
+
         {role === 'IT Team' ||
           ('Admin' && (
             <Button onClick={() => showComponent('EvidenceTable')}>
               Show Evidence Table
             </Button>
           ))}
-        {role === 'Auditor' ||
-          ('Admin' && (
-            <Button onClick={() => showComponent('StatusCheckTable')}>
-              Show Status Check Table
-            </Button>
-          ))}
+
+        <Button onClick={() => showComponent('StatusCheckTable')}>
+          Show Status Check Table
+        </Button>
+
         {/* {role === '' ||
           ('Admin' && (
             <Button onClick={() => showComponent('ControlStatus')}>
               Show Control Status
             </Button>
           ))} */}
-
-        {role === 'Compliance Team' ||
-          ('Admin' && (
-            <Button onClick={() => showComponent('ControlFamilyStatus')}>
-              Show Task Assignment Status
-            </Button>
-          ))}
-
         {visibleComponent === 'EvidenceTable' && (
           <EvidenceTable
             actions={actions}
@@ -703,8 +758,13 @@ const ListOfActions = () => {
             selectedScopeId={selectedScopeId}
           />
         )}
-
-        {visibleComponent === 'ControlFamilyStatus' && <CompletionStatusPage />}
+        {visibleComponent === 'ControlFamilyStatus' && (
+          <CompletionStatusPage
+            expandedFamilyId={expandedFamilyId}
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
+          />
+        )}
       </div>
 
       {error && (
