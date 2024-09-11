@@ -6,21 +6,38 @@ const logHistory = (completionStatus, changes, username) => {
     completionStatus.history.push({
       modifiedAt: new Date(),
       modifiedBy: username || 'Unknown',
-      changes
+      changes,
     });
   }
 };
 
 // Create or Update Completion Status
 export const createOrUpdateStatus = async (req, res) => {
-  const { actionId, assetId, scopeId, controlId, familyId, isCompleted, username, status, action, feedback } = req.body;
+  const {
+    actionId,
+    assetId,
+    scopeId,
+    controlId,
+    familyId,
+    isCompleted,
+    username,
+    status,
+    action,
+    feedback,
+  } = req.body;
 
   try {
     if (!actionId || !assetId || !controlId || !familyId) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    let completionStatus = await CompletionStatus.findOne({ actionId, assetId, scopeId, controlId, familyId });
+    let completionStatus = await CompletionStatus.findOne({
+      actionId,
+      assetId,
+      scopeId,
+      controlId,
+      familyId,
+    });
     const changes = {};
 
     if (completionStatus) {
@@ -32,7 +49,9 @@ export const createOrUpdateStatus = async (req, res) => {
       if (feedback) changes.feedback = feedback;
 
       Object.assign(completionStatus, changes);
-      completionStatus.completedAt = isCompleted ? new Date() : completionStatus.completedAt;
+      completionStatus.completedAt = isCompleted
+        ? new Date()
+        : completionStatus.completedAt;
       logHistory(completionStatus, changes, username);
       await completionStatus.save();
     } else {
@@ -95,14 +114,12 @@ export const updateStatus = async (req, res) => {
 };
 
 export const getStatus = async (req, res) => {
-  const { actionId, assetId, scopeId, controlId, familyId } = req.query;
+  const { assetId, scopeId, familyId } = req.query;
 
   try {
     const query = {};
-    if (actionId) query.actionId = actionId;
     if (assetId) query.assetId = assetId;
     if (scopeId) query.scopeId = scopeId;
-    if (controlId) query.controlId = controlId;
     if (familyId) query.familyId = familyId;
 
     const statuses = await CompletionStatus.find(query)
@@ -119,7 +136,9 @@ export const getStatus = async (req, res) => {
     return res.status(200).json(statuses);
   } catch (err) {
     console.error('Error in getStatus:', err);
-    return res.status(500).json({ error: 'An error occurred while fetching completion statuses.' });
+    return res
+      .status(500)
+      .json({ error: 'An error occurred while fetching completion statuses.' });
   }
 };
 
@@ -127,7 +146,9 @@ export const getStatusWithHistory = async (req, res) => {
   const { completionStatusId } = req.params;
 
   try {
-    const completionStatus = await CompletionStatus.findById(completionStatusId);
+    const completionStatus = await CompletionStatus.findById(
+      completionStatusId
+    );
 
     if (!completionStatus) {
       return res.status(404).json({ error: 'CompletionStatus not found' });
@@ -145,7 +166,9 @@ export const deleteStatus = async (req, res) => {
   const { completionStatusId } = req.params;
 
   try {
-    const deletedStatus = await CompletionStatus.findByIdAndDelete(completionStatusId);
+    const deletedStatus = await CompletionStatus.findByIdAndDelete(
+      completionStatusId
+    );
 
     if (!deletedStatus) {
       return res.status(404).json({ error: 'CompletionStatus not found' });
@@ -173,7 +196,7 @@ export const deleteStatus = async (req, res) => {
 //       status: 'Delegated to IT Team',
 //       action: 'Delegate to IT'
 //     };
-    
+
 //     Object.assign(completionStatus, changes);
 //     logHistory(completionStatus, changes, req.body.username);
 
@@ -200,9 +223,9 @@ export const delegateToIT = async (req, res) => {
     const changes = {
       status: 'Delegated to IT Team',
       action: 'Delegate to IT',
-      username: itOwnerUsername  // Update the username field
+      username: itOwnerUsername, // Update the username field
     };
-    
+
     Object.assign(completionStatus, changes);
     logHistory(completionStatus, changes, req.body.username);
 
@@ -214,8 +237,6 @@ export const delegateToIT = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-
 
 // Controller for IT Team: Delegate to Auditor
 export const delegateToAuditor = async (req, res) => {
@@ -230,7 +251,7 @@ export const delegateToAuditor = async (req, res) => {
 
     const changes = {
       status: 'Audit Delegated',
-      action: 'Delegate to Auditor'
+      action: 'Delegate to Auditor',
     };
 
     Object.assign(completionStatus, changes);
@@ -260,7 +281,7 @@ export const confirmEvidence = async (req, res) => {
     const changes = {
       status: feedback ? 'Audit Non-Confirm' : 'Audit Closed',
       action: feedback ? 'Return Evidence' : 'Confirm Evidence',
-      feedback: feedback || null
+      feedback: feedback || null,
     };
 
     if (!feedback) {
@@ -326,7 +347,6 @@ export const confirmEvidence = async (req, res) => {
 //   }
 // };
 
-
 // export const updateStatus = async (req, res) => {
 //   const { completionStatusId } = req.params;
 //   const { status, action, feedback, username } = req.body;
@@ -370,7 +390,6 @@ export const confirmEvidence = async (req, res) => {
 //     res.status(500).json({ error: err.message });
 //   }
 // };
-
 
 // export const getStatus = async (req, res) => {
 //   const { actionId, assetId, scopeId, controlId, familyId } = req.query;
@@ -421,7 +440,6 @@ export const confirmEvidence = async (req, res) => {
 //     res.status(500).json({ error: err.message });
 //   }
 // };
-
 
 // // Delete Completion Status by ID
 // export const deleteStatus = async (req, res) => {

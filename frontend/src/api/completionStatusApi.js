@@ -5,7 +5,10 @@ const API_BASE_URL = 'http://localhost:8021/api/v1'; // Update this URL based on
 // Create or Update Completion Status
 export const createOrUpdateStatus = async (statusData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/completion-status`, statusData);
+    const response = await axios.post(
+      `${API_BASE_URL}/completion-status`,
+      statusData
+    );
     return response.data;
   } catch (error) {
     console.error('Error in createOrUpdateStatus:', error);
@@ -16,7 +19,10 @@ export const createOrUpdateStatus = async (statusData) => {
 // Get Completion Status by Criteria
 export const getStatus = async (queryParams) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/completion-status`, { params: queryParams });
+    const response = await axios.get(
+      `http://localhost:8021/api/v1/completion-status`,
+      { params: queryParams }
+    );
     return response.data;
   } catch (error) {
     console.error('Error in getStatus:', error);
@@ -27,7 +33,10 @@ export const getStatus = async (queryParams) => {
 // Update Specific Completion Status by ID
 export const updateStatus = async (completionStatusId, updateData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}`, updateData);
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}`,
+      updateData
+    );
     return response.data;
   } catch (error) {
     console.error('Error in updateStatus:', error);
@@ -38,7 +47,9 @@ export const updateStatus = async (completionStatusId, updateData) => {
 // Delete Completion Status by ID
 export const deleteStatus = async (completionStatusId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/completion-status/${completionStatusId}`);
+    const response = await axios.delete(
+      `${API_BASE_URL}/completion-status/${completionStatusId}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error in deleteStatus:', error);
@@ -59,9 +70,12 @@ export const deleteStatus = async (completionStatusId) => {
 
 export const delegateToIT = async (completionStatusId, itOwnerUsername) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/delegate-it`, {
-      itOwnerUsername
-    });
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-it`,
+      {
+        itOwnerUsername,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Error in delegateToIT:', error);
@@ -72,7 +86,9 @@ export const delegateToIT = async (completionStatusId, itOwnerUsername) => {
 // Delegate to Auditor
 export const delegateToAuditor = async (completionStatusId) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/delegate-auditor`);
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-auditor`
+    );
     return response.data;
   } catch (error) {
     console.error('Error in delegateToAuditor:', error);
@@ -83,7 +99,10 @@ export const delegateToAuditor = async (completionStatusId) => {
 // Confirm Evidence or Return Evidence
 export const confirmEvidence = async (completionStatusId, feedback) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/confirm-evidence`, { feedback });
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/confirm-evidence`,
+      { feedback }
+    );
     return response.data;
   } catch (error) {
     console.error('Error in confirmEvidence:', error);

@@ -30,6 +30,7 @@ import StatusCheckTable from '../components/StatusCheckTable'; // Import the new
 
 import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
+import { getAssetNameById } from '../api/assetApi';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -46,9 +47,6 @@ const ListOfActions = () => {
   // const [notification, setNotification] = useState({ message: '', severity: 'info' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [evidences, setEvidences] = useState([]);
-
-  const [SendingAsset, setSendingAsset] = useState([]);
-  const [SendingScope, setSendingScope] = useState([]);
 
   const [actions, setActions] = useState([]);
 
@@ -85,6 +83,16 @@ const ListOfActions = () => {
     'Risk Accepted',
   ];
 
+  const [assetName, setAssetName] = useState('');
+
+  useEffect(() => {
+    const fetchName = async () => {
+      let _assetName = await getAssetNameById(selectedAssetId);
+      setAssetName(_assetName.name);
+    };
+    fetchName();
+  }, [selectedAssetId]);
+
   const toggleTableVisibility = () => {
     setIsTableVisible((prevState) => !prevState);
   };
@@ -120,8 +128,8 @@ const ListOfActions = () => {
 
     try {
       const evidenceData = {
-        assetId: SendingAsset,
-        scopeId: SendingScope,
+        assetId: selectedAssetId,
+        scopeId: selectedScopeId,
         actionId: actionId,
         controlId: selectedControlId,
         familyId: expandedFamilyId,
@@ -129,7 +137,6 @@ const ListOfActions = () => {
 
       // Upload the file and get the response
       const response = await uploadEvidence(selectedFile, evidenceData);
-      console.log('API Response:', response); // Log the response to check its structure
 
       // Check if the URL is present in the response
       const evidenceUrl = response.fileUrl; // Optional chaining to prevent undefined errors
@@ -148,8 +155,6 @@ const ListOfActions = () => {
           action._id === actionId ? { ...action, evidenceUrl } : action
         )
       );
-
-      console.log('Evidence uploaded');
     } catch (error) {
       setNotification({
         message: 'Failed to upload file. Please try again.',
@@ -180,7 +185,6 @@ const ListOfActions = () => {
         const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
         setCurrentUsername(userData.username); // Set current username
         setRole(userData.data.role); // Set role from user data
-        console.log('user data ', userData.data.role);
       } catch (error) {
         console.error('Error fetching current user data:', error);
       }
@@ -298,6 +302,7 @@ const ListOfActions = () => {
       setLoading(true);
       try {
         const response = await getAssetDetails();
+
         if (Array.isArray(response)) {
           setAssets(response);
         } else {
@@ -316,9 +321,10 @@ const ListOfActions = () => {
   // Update scopes based on selected asset
   useEffect(() => {
     if (selectedAssetId) {
-      const selectedAsset = assets.find(
-        (asset) => asset._id === selectedAssetId
-      );
+      const selectedAsset = assets.find((asset) => {
+        return asset.asset._id === selectedAssetId;
+      });
+      console.log(selectedAsset);
       if (selectedAsset && selectedAsset.asset.isScoped) {
         setScopes([selectedAsset.scoped]);
         setSelectedScopeId(selectedAsset.scoped._id);
@@ -333,26 +339,12 @@ const ListOfActions = () => {
   }, [selectedAssetId, assets]);
 
   const handleAssetChange = (event) => {
+    console.log('asset info', event.target.value);
     setSelectedAssetId(event.target.value);
-    sendingAssetDetails();
-  };
-
-  const sendingAssetDetails = async () => {
-    try {
-      const response = await getAssetDetailsById(selectedAssetId);
-      console.log('sending asset details', response.asset._id);
-      console.log('sending scope details', response.scoped._id);
-      setSendingAsset(response.asset);
-      setSendingScope(response.scoped);
-
-      console.log('set asset', SendingAsset);
-    } catch (error) {
-      console.error('Error fetching asset details:', error);
-    }
   };
 
   const handleScopeChange = (event) => {
-    setSendingScope(event.target.value);
+    setSelectedScopeId(event.target.value);
   };
 
   const handleFamilyClick = (familyId) => {
@@ -475,8 +467,8 @@ const ListOfActions = () => {
         username: window.localStorage.getItem('username'), // Replace with actual username if needed
         familyId: expandedFamilyId,
         controlId: selectedControlId,
-        assetId: SendingAsset._id,
-        ...(SendingScope._id && { scopeId: SendingScope._id }),
+        assetId: selectedAssetId,
+        ...(selectedScopeId && { scopeId: selectedScopeId }),
         actionId: actionId,
         isCompleted: true, // Ensure the status is set to true for completion
       };
@@ -544,38 +536,34 @@ const ListOfActions = () => {
           {/* Dropdown for Assets */}
           <Select
             value={selectedAssetId}
-            onChange={handleAssetChange}
+            onChange={(e) => setSelectedAssetId(e.target.value)}
             displayEmpty
             renderValue={(value) =>
-              value
-                ? `Asset: ${
-                    assets.find((asset) => asset._id === value).name
-                    // SendingAsset.name
-                  }`
-                : 'Select Asset'
+              value ? `Asset:${assetName}` : 'Select Asset'
             }
           >
-            {assets.map((asset) => (
-              <MenuItem key={asset._id} value={asset._id}>
-                {asset.name}
-              </MenuItem>
-            ))}
+            {assets.map((asset) => {
+              return (
+                <MenuItem key={asset.asset._id} value={asset.asset._id}>
+                  {asset.asset.name}
+                </MenuItem>
+              );
+            })}
           </Select>
         </div>
 
         <div className='Scope-container'>
           {/* Dropdown for Scopes */}
           <Select
-            value={SendingScope._id}
+            value={selectedScopeId}
             onChange={handleScopeChange}
             displayEmpty
             renderValue={(value) =>
-              // value
-              // ? `Scope: ${scopes.find((scope) => scope._id === value)?.name}`
-              // : 'Select Scope'
-              SendingScope.name
+              value
+                ? `Scope: ${scopes.find((scope) => scope._id === value)?.name}`
+                : 'Select Scope'
             }
-            disabled={!SendingAsset || scopes.length === 0}
+            disabled={scopes.length === 0}
           >
             {scopes.map((scope) => (
               <MenuItem key={scope._id} value={scope._id}>
@@ -634,7 +622,7 @@ const ListOfActions = () => {
                 Chapter {family.variable_id}
               </div>
             </Tooltip>
-            {expandedFamilyId === family._id && (
+            {/* {expandedFamilyId === family._id && (
               <div className='controls'>
                 {family.controls.map((control) => (
                   <Tooltip
@@ -655,7 +643,7 @@ const ListOfActions = () => {
                   </Tooltip>
                 ))}
               </div>
-            )}
+            )} */}
           </div>
         ))}
       </div>
@@ -697,8 +685,8 @@ const ListOfActions = () => {
             statusOptions={statusOptions}
             expandedFamilyId={expandedFamilyId}
             selectedControlId={selectedControlId}
-            selectedAssetId={SendingAsset._id}
-            selectedScopeId={SendingScope._id}
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
             handleMarkAsCompleted={handleMarkAsCompleted}
           />
         )}
@@ -712,22 +700,22 @@ const ListOfActions = () => {
             statusOptions={statusOptions}
             expandedFamilyId={expandedFamilyId}
             selectedControlId={selectedControlId}
-            selectedAssetId={SendingAsset._id}
-            selectedScopeId={SendingScope._id}
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
             handleMarkAsCompleted={handleMarkAsCompleted}
           />
         )}
         {visibleComponent === 'ControlStatus' && (
           <ControlStatus
-            selectedAssetId={SendingAsset._id}
-            selectedScopeId={SendingScope._id}
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
           />
         )}
-
         {visibleComponent === 'ControlFamilyStatus' && (
           <CompletionStatusPage
-            selectedAssetId={SendingAsset._id}
-            selectedScopeId={SendingScope._id}
+            expandedFamilyId={expandedFamilyId}
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
           />
         )}
       </div>

@@ -1,7 +1,7 @@
-import { Asset } from "../models/asset.model.js";
-import { Scoped } from "../models/scoped.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { AsyncHandler } from "../utils/asyncHandler.js";
+import { Asset } from '../models/asset.model.js';
+import { Scoped } from '../models/scoped.model.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+import { AsyncHandler } from '../utils/asyncHandler.js';
 
 const getAssets = AsyncHandler(async (req, res) => {
   try {
@@ -13,32 +13,31 @@ const getAssets = AsyncHandler(async (req, res) => {
 });
 
 const getAssetById = AsyncHandler(async (req, res) => {
-  const asset = await Asset.findById(req.params.id).populate("coverages");
+  const asset = await Asset.findById(req.params.id);
   if (asset) {
     res.json(asset);
   } else {
     res.status(404);
-    throw new Error("Asset not found");
+    throw new Error('Asset not found');
   }
 });
 
 const createAsset = AsyncHandler(async (req, res) => {
-  const {
-    name, type, desc, isScoped } = req.body;
+  const { name, type, desc, isScoped } = req.body;
 
   try {
     const newAsset = new Asset({
       name,
       type,
       desc,
-      isScoped
+      isScoped,
     });
 
     const createdAsset = await newAsset.save();
 
     res
       .status(201)
-      .json(new ApiResponse(201, createdAsset, "Created Asset Successfully"));
+      .json(new ApiResponse(201, createdAsset, 'Created Asset Successfully'));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -57,7 +56,7 @@ const updateAsset = AsyncHandler(async (req, res) => {
       res.json(updatedAsset);
     } else {
       res.status(404);
-      throw new Error("Asset not found");
+      throw new Error('Asset not found');
     }
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -69,10 +68,10 @@ const deleteAsset = AsyncHandler(async (req, res) => {
 
   if (asset) {
     await asset.remove();
-    res.json({ message: "Asset removed" });
+    res.json({ message: 'Asset removed' });
   } else {
     res.status(404);
-    throw new Error("Asset not found");
+    throw new Error('Asset not found');
   }
 });
 
