@@ -59,9 +59,7 @@ app.use('/api/v1/control-families', controlFamiliesRoutes); // Add this line to 
 app.use('/api/v1/controls', controlRoutes); // Add control routes
 app.use('/api/v1/actions', actionRoutes); // Add action routes
 app.use('/api/v1/assetDetails', assetDetailRouter);
-
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
-
 app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
 
