@@ -1,0 +1,16 @@
+{
+  "_id": {
+    "$oid": "66dad46337102bd7a7ced19c"
+  },
+  "userId": "66d2b72f9561977c7f364ea8",
+  "phoneNumber": "9876543210",
+  "companyDetails": {
+    "organizationName": "New Company",
+    "industryType": "Finance",
+    "customIndustryType": "",
+    "numberOfEmployees": "10-100"
+  },
+  "otp": "9999",
+  "createdAt": "2024-09-07T12:34:56Z",
+  "updatedAt": "2024-09-07T12:34:56Z"
+}

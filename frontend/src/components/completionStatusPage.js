@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import axios from 'axios';
 import {
@@ -35,6 +35,9 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
 import { getUserById } from '../api/userApi';
 import { fetchCurrentUser } from '../api/userApi';
+import EvidenceTableCell from './EvidenceTableCell';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import ActionCompletionCell from '../components/ActionCompletionCell'; // Import the new component
 
 const CompletionStatusPage = ({
   expandedFamilyId,
@@ -60,12 +63,6 @@ const CompletionStatusPage = ({
     feedback: '',
   });
 
-  const query = {
-    scopeId: selectedScopeId,
-    assetId: selectedAssetId,
-    familyId: expandedFamilyId,
-  };
-
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
@@ -81,10 +78,39 @@ const CompletionStatusPage = ({
 
   // New state to manage row expansion for history details
   const [openRows, setOpenRows] = useState({});
+  const [evidenceUrls, setEvidenceUrls] = useState({});
+  const navigate = useNavigate(); // Initialize useNavigate
+  const [hasEvidence, setHasEvidence] = useState(null); // null: loading, true: evidence available, false: no evidence
 
-  const [evidenceUrls, setevidenceUrls] = useState([]);
+  // Memoize query object to prevent unnecessary re-renders
+  const query = useMemo(
+    () => ({
+      scopeId: selectedScopeId,
+      assetId: selectedAssetId,
+      familyId: expandedFamilyId,
+    }),
+    [selectedScopeId, selectedAssetId, expandedFamilyId]
+  );
+
+  const handleFetchStatus = async () => {
+    setLoading(true); // Set loading true when fetching starts
+    try {
+      const response = await getStatus(query);
+      setFetchedStatuses(Array.isArray(response) ? response : [response]);
+    } catch (error) {
+      console.error('Error fetching status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    console.log('Fetching status');
+    handleFetchStatus(); // Fetch data on component mount and when query changes
+  }, [query]);
+
+  useEffect(() => {
+    console.log('fetchUser called');
     const fetchCurrentUserData = async () => {
       try {
         const token = window.localStorage.getItem('token'); // Replace with actual token
@@ -98,8 +124,11 @@ const CompletionStatusPage = ({
     fetchCurrentUserData();
   }, []);
 
+  //view evidence logic
+
   // Fetch current user data
   useEffect(() => {
+    console.log('fetchCurrentUserData called');
     const fetchCurrentUserData = async () => {
       try {
         const token = window.localStorage.getItem('token'); // Replace with actual token
@@ -115,6 +144,7 @@ const CompletionStatusPage = ({
   }, []); // Empty dependency array means it runs once after the component mounts
 
   useEffect(() => {
+    console.log('fetchall User');
     const fetchAllUsernames = async () => {
       const uniqueUserIds = [
         ...new Set(fetchedStatuses.map((status) => status.username)),
@@ -192,10 +222,8 @@ const CompletionStatusPage = ({
   );
 
   useEffect(() => {
-    handleFetchStatus(); // Fetch data on component mount
-  }, [query]); // Also refetch data when query changes
+    console.log('fetchData');
 
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -208,18 +236,6 @@ const CompletionStatusPage = ({
     };
     fetchData();
   }, []);
-
-  const handleFetchStatus = async () => {
-    try {
-      const response = await getStatus(query);
-
-      setFetchedStatuses(Array.isArray(response) ? response : [response]);
-    } catch (error) {
-      console.error('Error fetching status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const sortData = (key, direction) => {
     const sortedData = [...fetchedStatuses].sort((a, b) => {
@@ -317,31 +333,61 @@ const CompletionStatusPage = ({
 
   const handleViewEvidence = async (actionId, controlId) => {
     try {
-      const res = await axios.post(`http://localhost:8021/api/evidence`, {
-        // assetId: selectedAssetId,
-        // scopeId: selectedScopeId,
-        // actionId,
-        // familyId: expandedFamilyId,
-        // controlId: controlId,
-        assetId: selectedAssetId,
-        scopeId: selectedScopeId,
-        actionId,
-        familyId: expandedFamilyId,
-        controlId: controlId,
-      });
+      const res = await axios.post(
+        `http://localhost:8021/api/evidence/params`,
+        {
+          assetId: selectedAssetId,
+          scopeId: selectedScopeId,
+          actionId,
+          familyId: expandedFamilyId,
+          controlId,
+        }
+      );
 
-      console.log('handleViewEvidence', res.data);
+      // Check if the response contains a valid file URL
+      if (res.data && res.data.fileUrl) {
+        console.log(res);
+        console.log(res.data.fileUrl);
+        // return res.data.fileUrl;
+        // Redirect to the file URL or a specific route
+        const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
+        window.location.href = fullUrl; // Redirect to the evidence URL
+      } else {
+        console.log('null');
+        return null; // No evidence found
+      }
     } catch (error) {
       console.error('Error fetching evidence:', error);
       return null; // Return null if there's an error or no evidence
     }
   };
 
-  // useEffect(() => {
-  //   if (actions.length > 0) {
-  //     fetchEvidenceUrls(); // Fetch URLs whenever actions prop changes
+  // const handleViewEvidence = async (actionId, controlId) => {
+  //   try {
+  //     const res = await axios.post(
+  //       `http://localhost:8021/api/evidence/params`,
+  //       {
+  //         assetId: selectedAssetId,
+  //         scopeId: selectedScopeId,
+  //         actionId,
+  //         familyId: expandedFamilyId,
+  //         controlId,
+  //       }
+  //     );
+  //     console.log(res);
+
+  //     // Check if the response contains a valid file URL
+  //     if (res.data && res.data.fileUrl) {
+  //       return res.data.fileUrl;
+  //     } else {
+  //       console.log('no evidence');
+  //       return null; // No evidence found
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching evidence:', error);
+  //     return null; // Return null if there's an error or no evidence
   //   }
-  // }, [actions]);
+  // };
 
   return (
     <div style={{ padding: '20px' }}>
@@ -364,74 +410,121 @@ const CompletionStatusPage = ({
                   {/* <TableCell>Updated At</TableCell> */}
                   <TableCell>Feedback</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Upload Evidence</TableCell>
+                  {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
                   <TableCell>View</TableCell>
-                  <TableCell>Actions</TableCell>
+                  {role === 'IT Team' ||
+                    (role === 'Auditor' && <TableCell>Actions</TableCell>)}
+                  {role === 'Auditor' && <TableCell>Mark as done</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedData.map((status) => {
-                  return (
-                    <React.Fragment key={status._id}>
-                      <TableRow>
-                        <TableCell>
-                          <IconButton
-                            size='small'
-                            onClick={() => handleToggleRow(status._id)}
-                          >
-                            {openRows[status._id] ? (
-                              <KeyboardArrowUp />
-                            ) : (
-                              <KeyboardArrowDown />
-                            )}
-                          </IconButton>
-                        </TableCell>
-                        <TableCell>{getUsername(status.username)}</TableCell>
+                {paginatedData
+                  .sort((a, b) => a._id.localeCompare(b._id))
+                  .map((status) => {
+                    return (
+                      <React.Fragment key={status._id}>
+                        <TableRow>
+                          <TableCell>
+                            <IconButton
+                              size='small'
+                              onClick={() => handleToggleRow(status._id)}
+                            >
+                              {openRows[status._id] ? (
+                                <KeyboardArrowUp />
+                              ) : (
+                                <KeyboardArrowDown />
+                              )}
+                            </IconButton>
+                          </TableCell>
+                          <TableCell>{getUsername(status.username)}</TableCell>
 
-                        {/* <TableCell>{status.username}</TableCell> */}
-                        <TableCell>
-                          {status.actionId?.fixed_id || 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          {status.controlId?.section_desc || 'N/A'}
-                        </TableCell>
-                        {/* <TableCell>{status.createdAt}</TableCell> */}
-                        {/* <TableCell>{status.updatedAt}</TableCell> */}
-                        <TableCell>{status.feedback || 'N/A'}</TableCell>
-                        <TableCell>{status.status || 'N/A'}</TableCell>
-                        <TableCell>
-                          <input type='file' onChange={handleFileChange} />
-                          <Button
-                            variant='contained'
-                            color='primary'
-                            onClick={() =>
-                              handleUploadEvidence(
-                                status.actionId?._id,
-                                status.controlId?._id
-                              )
-                            }
-                          >
-                            Upload Evidence
-                          </Button>
-                        </TableCell>
+                          {/* <TableCell>{status.username}</TableCell> */}
+                          <TableCell>
+                            {status.actionId?.fixed_id || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {status.controlId?.section_desc || 'N/A'}
+                          </TableCell>
+                          {/* <TableCell>{status.createdAt}</TableCell> */}
+                          {/* <TableCell>{status.updatedAt}</TableCell> */}
+                          <TableCell>{status.feedback || 'N/A'}</TableCell>
+                          <TableCell>{status.status || 'N/A'}</TableCell>
+                          {role === 'IT Team' && (
+                            <TableCell>
+                              <input type='file' onChange={handleFileChange} />
+                              <Button
+                                variant='contained'
+                                color='primary'
+                                onClick={() =>
+                                  handleUploadEvidence(
+                                    status.actionId?._id,
+                                    status.controlId?._id
+                                  )
+                                }
+                              >
+                                Upload Evidence
+                              </Button>
+                            </TableCell>
+                          )}
+                          {role === 'IT Team' ||
+                            (role === 'Auditor' && (
+                              <TableCell>
+                                <Button
+                                  variant='contained'
+                                  color='primary'
+                                  onClick={() =>
+                                    handleViewEvidence(
+                                      status.actionId?._id,
+                                      status.controlId?._id
+                                    )
+                                  }
+                                >
+                                  View Evidence
+                                </Button>
+                              </TableCell>
+                            ))}
 
-                        <TableCell>
-                          {/* Display link if evidence exists, otherwise show "No evidence uploaded" */}
-                          <Button
-                            onClick={() =>
-                              handleViewEvidence(
-                                status.actionId?._id,
-                                status.controlId?._id
-                              )
-                            }
-                          >
-                            View Evidence
-                          </Button>
-                        </TableCell>
+                          {/* <TableCell>
+                          {evidenceUrls[status.actionId?._id][
+                            status.controlId?._id
+                          ] ? (
+                            <a
+                              href={`http://localhost:8021${
+                                evidenceUrls[status.actionId?._id][
+                                  status.controlId?._id
+                                ]
+                              }`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                            >
+                              View Evidence
+                            </a>
+                          ) : (
+                            'No evidence uploaded'
+                          )}
+                        </TableCell> */}
 
-                        <TableCell>
-                          {role === 'Compliance Team' ||
-                            ('Admin' && (
+                          {/* {evidenceUrls[status.actionId?._id]?.[
+                            status.controlId?._id
+                          ] ? (
+                            <a
+                              href={`http://localhost:8021${
+                                evidenceUrls[status.actionId?._id][
+                                  status.controlId?._id
+                                ]
+                              }`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                            >
+                              View Evidence
+                            </a>
+                          ) : (
+                            'No evidence uploaded'
+                          )} */}
+
+                          <TableCell>
+                            {(role === 'Compliance Team' ||
+                              role === 'Admin') && (
                               <Button
                                 onClick={() =>
                                   onDelegateButtonClick(
@@ -442,10 +535,9 @@ const CompletionStatusPage = ({
                               >
                                 Delegate to IT
                               </Button>
-                            ))}
+                            )}
 
-                          {role === 'IT Team' ||
-                            ('Admin' && (
+                            {(role === 'IT Team' || role === 'Admin') && (
                               <Button
                                 onClick={() =>
                                   handleDelegateToAuditor(status._id)
@@ -453,76 +545,86 @@ const CompletionStatusPage = ({
                               >
                                 Delegate to Auditor
                               </Button>
-                            ))}
-                          {role === 'Auditor' ||
-                            ('Admin' && (
+                            )}
+
+                            {(role === 'Auditor' || role === 'Admin') && (
                               <Button
                                 onClick={() =>
                                   handleConfirmEvidence(status._id)
                                 }
                               >
-                                Confirm Evidence
+                                Raise query
                               </Button>
-                            ))}
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell
-                          style={{ paddingBottom: 0, paddingTop: 0 }}
-                          colSpan={13}
-                        >
-                          <Collapse
-                            in={openRows[status._id]}
-                            timeout='auto'
-                            unmountOnExit
+                            )}
+                          </TableCell>
+                          {role === 'Auditor' && (
+                            <ActionCompletionCell
+                              action={status.actionId?._id}
+                              expandedFamilyId={expandedFamilyId}
+                              selectedControlId={status.controlId?._id}
+                              selectedAssetId={selectedAssetId}
+                              selectedScopeId={selectedScopeId}
+                              handleMarkAsCompleted={handleMarkAsCompleted}
+                            />
+                          )}
+                        </TableRow>
+                        <TableRow>
+                          <TableCell
+                            style={{ paddingBottom: 0, paddingTop: 0 }}
+                            colSpan={13}
                           >
-                            <div style={{ margin: '10px' }}>
-                              <h3>History</h3>
-                              {status.history && status.history.length > 0 ? (
-                                <Table size='small' aria-label='history'>
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell>Modified At</TableCell>
-                                      <TableCell>Modified By</TableCell>
-                                      <TableCell>Changes</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {status.history.map((change, index) => (
-                                      <TableRow key={index}>
-                                        <TableCell>
-                                          {new Date(
-                                            change.modifiedAt
-                                          ).toLocaleString()}
-                                        </TableCell>
-                                        <TableCell>
-                                          {change.modifiedBy}
-                                        </TableCell>
-                                        <TableCell>
-                                          <ul>
-                                            {Object.entries(change.changes).map(
-                                              ([key, value]) => (
+                            <Collapse
+                              in={openRows[status._id]}
+                              timeout='auto'
+                              unmountOnExit
+                            >
+                              <div style={{ margin: '10px' }}>
+                                <h3>History</h3>
+                                {status.history && status.history.length > 0 ? (
+                                  <Table size='small' aria-label='history'>
+                                    <TableHead>
+                                      <TableRow>
+                                        <TableCell>Modified At</TableCell>
+                                        <TableCell>Modified By</TableCell>
+                                        <TableCell>Changes</TableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                      {status.history.map((change, index) => (
+                                        <TableRow key={index}>
+                                          <TableCell>
+                                            {new Date(
+                                              change.modifiedAt
+                                            ).toLocaleString()}
+                                          </TableCell>
+                                          <TableCell>
+                                            {change.modifiedBy}
+                                          </TableCell>
+                                          <TableCell>
+                                            <ul>
+                                              {Object.entries(
+                                                change.changes
+                                              ).map(([key, value]) => (
                                                 <li
                                                   key={key}
                                                 >{`${key}: ${value}`}</li>
-                                              )
-                                            )}
-                                          </ul>
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              ) : (
-                                <p>No history available.</p>
-                              )}
-                            </div>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  );
-                })}
+                                              ))}
+                                            </ul>
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                ) : (
+                                  <p>No history available.</p>
+                                )}
+                              </div>
+                            </Collapse>
+                          </TableCell>
+                        </TableRow>
+                      </React.Fragment>
+                    );
+                  })}
               </TableBody>
             </Table>
             <TablePagination

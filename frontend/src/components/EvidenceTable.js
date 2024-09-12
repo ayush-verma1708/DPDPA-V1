@@ -15,16 +15,14 @@ import axios from 'axios';
 
 const EvidenceTable = ({
   actions,
-  handleFileChange,
-  handleUploadEvidence,
-  handleStatusChange,
-  statusOptions,
+
   expandedFamilyId,
   selectedControlId,
   selectedAssetId,
   selectedScopeId,
-  ActionCompletionCell,
-  handleMarkAsCompleted,
+
+  handleFileChange,
+  handleUploadEvidence,
 }) => {
   const [evidenceUrls, setEvidenceUrls] = useState({});
 
@@ -97,7 +95,6 @@ const EvidenceTable = ({
               </TableCell>
 
               <TableCell>
-                {/* Display link if evidence exists, otherwise show "No evidence uploaded" */}
                 {evidenceUrls[action._id] ? (
                   <a
                     href={`http://localhost:8021${evidenceUrls[action._id]}`}

@@ -398,7 +398,7 @@ const ListOfActions = () => {
             color='primary'
             onClick={() => handleMarkAsCompleted(action._id)}
           >
-            Check Evidence
+            Confirm Evidence
           </Button>
         )}
       </TableCell>
@@ -437,88 +437,97 @@ const ListOfActions = () => {
     controlId,
     familyId
   ) => {
-    try {
-      // Construct the params object, conditionally including scopeId if it exists
-      const params = {
-        actionId,
-        assetId,
-        controlId,
-        familyId,
-        ...(scopeId && { scopeId }), // Only include scopeId if it is not null or undefined
-      };
+    console.log('call', actionId, assetId, scopeId, controlId, familyId);
+    // try {
+    //   // Construct the params object, conditionally including scopeId if it exists
+    //   const params = {
+    //     actionId,
+    //     assetId,
+    //     controlId,
+    //     familyId,
+    //     ...(scopeId && { scopeId }), // Only include scopeId if it is not null or undefined
+    //   };
 
-      // Make the API request with the constructed params
-      const response = await axios.get(
-        'http://localhost:8021/api/v1/completion-status',
-        { params }
-      );
+    //   // Make the API request with the constructed params
+    //   const response = await axios.get(
+    //     'http://localhost:8021/api/v1/completion-status',
+    //     { params }
+    //   );
 
-      // Return true if the response data indicates completion, otherwise false
-      return response.data?.isCompleted || false; // Expecting a boolean in the response
-    } catch (error) {
-      console.error('Error fetching completion status:', error);
-      return false;
-    }
+    //   // Return true if the response data indicates completion, otherwise false
+    //   return response.data?.isCompleted || false; // Expecting a boolean in the response
+    // } catch (error) {
+    //   console.error('Error fetching completion status:', error);
+    //   return false;
+    // }
   };
 
-  const handleMarkAsCompleted = async (actionId) => {
-    try {
-      const completionEntry = {
-        username: window.localStorage.getItem('username'), // Replace with actual username if needed
-        familyId: expandedFamilyId,
-        controlId: selectedControlId,
-        assetId: selectedAssetId,
-        ...(selectedScopeId && { scopeId: selectedScopeId }),
-        actionId: actionId,
-        isCompleted: true, // Ensure the status is set to true for completion
-      };
+  const handleMarkAsCompleted = async (actionId, NewcontrolId) => {
+    console.log(
+      'tada',
+      actionId,
+      NewcontrolId,
+      selectedAssetId,
+      selectedScopeId,
+      expandedFamilyId
+    );
+    // try {
+    //   const completionEntry = {
+    //     username: window.localStorage.getItem('username'), // Replace with actual username if needed
+    //     familyId: expandedFamilyId,
+    //     controlId: NewcontrolId,
+    //     assetId: selectedAssetId,
+    //     ...(selectedScopeId && { scopeId: selectedScopeId }),
+    //     actionId: actionId,
+    //     isCompleted: true, // Ensure the status is set to true for completion
+    //   };
 
-      // Mark the action as completed
-      const response = await axios.post(
-        `http://localhost:8021/api/v1/completion-status`,
-        completionEntry
-      );
+    //   // Mark the action as completed
+    //   const response = await axios.post(
+    //     `http://localhost:8021/api/v1/completion-status`,
+    //     completionEntry
+    //   );
 
-      if (response.status === 200) {
-        setNotification({
-          message: 'Action marked as completed!',
-          severity: 'success',
-        });
+    //   if (response.status === 200) {
+    //     setNotification({
+    //       message: 'Action marked as completed!',
+    //       severity: 'success',
+    //     });
 
-        const updatedActionsResponse = await fetchActions();
-        const updatedActions = await Promise.all(
-          updatedActionsResponse
-            .filter((action) => action.control_Id._id === selectedControlId)
-            .map(async (action) => {
-              const controlDescription = controls.find(
-                (control) => control._id === action.control_Id._id
-              )?.section_desc;
-              const isCompleted = await checkCompletionStatus(
-                action._id,
-                selectedAssetId,
-                selectedScopeId,
-                selectedControlId,
-                expandedFamilyId
-              );
-              return {
-                ...action,
-                controlDescription,
-                isCompleted,
-                evidenceUrl: action.evidenceUrl || null,
-              };
-            })
-        );
-        setActions(updatedActions);
-      } else {
-        throw new Error('Failed to mark action as completed.');
-      }
-    } catch (error) {
-      setNotification({
-        message: 'Failed to mark action as completed. Please try again later.',
-        severity: 'error',
-      });
-      console.error('Mark as Completed Error:', error);
-    }
+    //     const updatedActionsResponse = await fetchActions();
+    //     const updatedActions = await Promise.all(
+    //       updatedActionsResponse
+    //         .filter((action) => action.control_Id._id === selectedControlId)
+    //         .map(async (action) => {
+    //           const controlDescription = controls.find(
+    //             (control) => control._id === action.control_Id._id
+    //           )?.section_desc;
+    //           const isCompleted = await checkCompletionStatus(
+    //             action._id,
+    //             selectedAssetId,
+    //             selectedScopeId,
+    //             selectedControlId,
+    //             expandedFamilyId
+    //           );
+    //           return {
+    //             ...action,
+    //             controlDescription,
+    //             isCompleted,
+    //             evidenceUrl: action.evidenceUrl || null,
+    //           };
+    //         })
+    //     );
+    //     setActions(updatedActions);
+    //   } else {
+    //     throw new Error('Failed to mark action as completed.');
+    //   }
+    // } catch (error) {
+    //   setNotification({
+    //     message: 'Failed to mark action as completed. Please try again later.',
+    //     severity: 'error',
+    //   });
+    //   console.error('Mark as Completed Error:', error);
+    // }
   };
 
   const handleSnackbarClose = () => {
@@ -603,54 +612,16 @@ const ListOfActions = () => {
           </Alert>
         </Snackbar>
       </div>
-      {/* 
-      <div className='sidebar'>
-        {controlFamilies.map((family) => (
-          <div
-            key={family._id}
-            className={`control-family ${
-              expandedFamilyId === family._id ? 'expanded' : ''
-            }`}
-          >
-            <Tooltip title={family.description} placement='right'>
-              <div
-                className={`control-family-header ${
-                  expandedFamilyId === family._id ? 'expanded' : ''
-                } ${expandedFamilyId === family._id ? 'selected-family' : ''}`}
-                onClick={() => handleFamilyClick(family._id)}
-              >
-                Chapter {family.variable_id}
-              </div>
-            </Tooltip>
-            {/* {expandedFamilyId === family._id && (
-              <div className='controls'>
-                {family.controls.map((control) => (
-                  <Tooltip
-                    key={control._id}
-                    title={control.section_main_desc}
-                    placement='right'
-                  >
-                    <div
-                      className={`control ${
-                        selectedControlId === control._id
-                          ? 'selected-control'
-                          : ''
-                      }`}
-                      onClick={() => handleControlClick(control._id)}
-                    >
-                      {control.section_main_desc} - {control.section}
-                    </div>
-                  </Tooltip>
-                ))}
-              </div>
-            )} 
-          </div>
-        ))}
-      </div> */}
 
       <div className='sidebar'>
-        <div className='hover:bg-[white] bg-[white]'>
-          <div data-disabled className='control-family-header font-[400]'>
+        <div
+          className='hover:bg-[white] bg-[#ffffff]'
+          style={{ marginBottom: '10px' }}
+        >
+          <div
+            data-disabled
+            className='control-family-header font-[400] bg-gray-200 text-gray-500 cursor-not-allowed px-4 py-2 border border-gray-300 rounded'
+          >
             Chapter 1
           </div>
         </div>
