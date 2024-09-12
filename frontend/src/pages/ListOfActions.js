@@ -117,7 +117,7 @@ const ListOfActions = () => {
     setVisibleComponent(component);
   };
 
-  const handleUploadEvidence = async (actionId) => {
+  const handleUploadEvidence = async (actionId, NewcontrolId) => {
     if (!selectedFile) {
       setNotification({
         message: 'Please select a file first.',
@@ -131,7 +131,7 @@ const ListOfActions = () => {
         assetId: selectedAssetId,
         scopeId: selectedScopeId,
         actionId: actionId,
-        controlId: selectedControlId,
+        controlId: NewcontrolId,
         familyId: expandedFamilyId,
       };
 
@@ -603,7 +603,7 @@ const ListOfActions = () => {
           </Alert>
         </Snackbar>
       </div>
-
+      {/* 
       <div className='sidebar'>
         {controlFamilies.map((family) => (
           <div
@@ -643,13 +643,45 @@ const ListOfActions = () => {
                   </Tooltip>
                 ))}
               </div>
-            )} */}
+            )} 
           </div>
         ))}
+      </div> */}
+
+      <div className='sidebar'>
+        <div className='hover:bg-[white] bg-[white]'>
+          <div data-disabled className='control-family-header font-[400]'>
+            Chapter 1
+          </div>
+        </div>
+
+        {controlFamilies
+          .sort((a, b) => a.variable_id - b.variable_id) // Sort control families by variable_id
+          .map((family) => (
+            <div
+              key={family._id}
+              className={`control-family ${
+                expandedFamilyId === family._id ? 'expanded' : ''
+              }`}
+            >
+              <Tooltip title={family.description} placement='right'>
+                <div
+                  className={`control-family-header ${
+                    expandedFamilyId === family._id ? 'expanded' : ''
+                  } ${
+                    expandedFamilyId === family._id ? 'selected-family' : ''
+                  }`}
+                  onClick={() => handleFamilyClick(family._id)}
+                >
+                  Chapter {family.variable_id}
+                </div>
+              </Tooltip>
+            </div>
+          ))}
       </div>
 
       <div className='content'>
-        {role === 'IT Team' ||
+        {/* {role === 'IT Team' ||
           ('Admin' && (
             <Button onClick={() => showComponent('EvidenceTable')}>
               Show Evidence Table
@@ -660,7 +692,7 @@ const ListOfActions = () => {
             <Button onClick={() => showComponent('StatusCheckTable')}>
               Show Status Check Table
             </Button>
-          ))}
+          ))} */}
         {/* {role === '' ||
           ('Admin' && (
             <Button onClick={() => showComponent('ControlStatus')}>
@@ -668,12 +700,12 @@ const ListOfActions = () => {
             </Button>
           ))} */}
 
-        {role === 'Compliance Team' ||
+        {/* {role === 'Compliance Team' ||
           ('Admin' && (
             <Button onClick={() => showComponent('ControlFamilyStatus')}>
               Show Task Assignment Status
             </Button>
-          ))}
+          ))} */}
 
         {visibleComponent === 'EvidenceTable' && (
           <EvidenceTable
@@ -711,13 +743,19 @@ const ListOfActions = () => {
             selectedScopeId={selectedScopeId}
           />
         )}
-        {visibleComponent === 'ControlFamilyStatus' && (
-          <CompletionStatusPage
-            expandedFamilyId={expandedFamilyId}
-            selectedAssetId={selectedAssetId}
-            selectedScopeId={selectedScopeId}
-          />
-        )}
+
+        <CompletionStatusPage
+          expandedFamilyId={expandedFamilyId}
+          selectedAssetId={selectedAssetId}
+          selectedScopeId={selectedScopeId}
+          actions={actions}
+          handleFileChange={handleFileChange}
+          handleUploadEvidence={handleUploadEvidence}
+          handleStatusChange={handleStatusChange}
+          ActionCompletionCell={ActionCompletionCell}
+          statusOptions={statusOptions}
+          handleMarkAsCompleted={handleMarkAsCompleted}
+        />
       </div>
 
       {error && (

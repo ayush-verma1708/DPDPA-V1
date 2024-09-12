@@ -16,7 +16,8 @@ table {
   border-collapse: collapse; /* Merge table borders */
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd; /* Light border for table cells */
   padding: 8px; /* Padding inside table cells */
   text-align: left; /* Align text to the left */
@@ -63,7 +64,7 @@ body {
 .content {
   flex: 1;
   /* margin-left: 150px; Adjust based on sidebar width */
-  margin-top: 80px;
+  margin-top: 40px;
   box-sizing: border-box;
 }
 
@@ -195,7 +196,7 @@ body {
   display: flex;
   flex-direction: column;
   /* align-items: center; */
-  margin-top: -25px
+  margin-top: -25px;
 }
 
 .dropdown label {
@@ -208,8 +209,6 @@ body {
   padding: 10px;
   font-size: 1rem;
 }
-
-
 
 .error {
   color: red;
@@ -226,8 +225,7 @@ h1 {
   width: 100%;
 }
 
-
-  /* Control Family Styles */
+/* Control Family Styles
   .control-family-header {
     padding: 10px;
     cursor: pointer;
@@ -241,11 +239,11 @@ h1 {
   }
   
   .control-family-header.selected-family {
-    background-color: #e0e0e0; /* Highlighted color for selected family */
-    border: 2px solid #3f51b5; /* Optional border for emphasis */
+    background-color: #e0e0e0;
+    border: 2px solid #3f51b5; 
   }
   
-  /* Control Styles */
+ 
   .control {
     padding: 8px;
     cursor: pointer;
@@ -254,8 +252,8 @@ h1 {
   }
   
   .control.selected-control {
-    background-color: #d1c4e9; /* Highlighted color for selected control */
-    border: 2px solid #673ab7; /* Optional border for emphasis */
+    background-color: #d1c4e9; 
+    border: 2px solid #673ab7; 
   }
   
   .new-page {
@@ -267,9 +265,51 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-  }
-  
-  .Asset-container,
+  } */
+
+/* Control Family Styles */
+.control-family-header {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.control-family-header.expanded {
+  font-weight: bold;
+}
+
+.control-family-header.selected-family {
+  background-color: #e0e0e0; /* Highlighted color for selected family */
+  border: 2px solid #3f51b5; /* Optional border for emphasis */
+}
+
+/* Control Styles */
+.control {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-bottom: 3px;
+}
+
+.control.selected-control {
+  background-color: #d1c4e9; /* Highlighted color for selected control */
+  border: 2px solid #673ab7; /* Optional border for emphasis */
+}
+
+.new-page {
+  position: relative;
+  padding: 20px;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.Asset-container,
 .Scope-container {
   position: absolute;
   top: 16px;
@@ -285,40 +325,39 @@ h1 {
 .Scope-container {
   right: 16px;
 }
-  
-  .sidebar {
-    display: flex;
-    flex-direction: column;
-    width: 250px;
-  }
-  
-  .control-family {
-    margin-bottom: 10px;
-  }
-  
-  .control-family-header {
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .control-family-header.selected-family {
-    background-color: #f0f0f0;
-  }
-  
-  .controls {
-    padding-left: 20px;
-  }
-  
-  .control {
-    cursor: pointer;
-    margin-bottom: 5px;
-  }
-  
-  .control.selected-control {
-    background-color: #e0e0e0;
-  }
-  
-  .actions-table {
-    margin-top: 20px;
-  }
-  
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+}
+
+.control-family {
+  margin-bottom: 10px;
+}
+
+.control-family-header {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.control-family-header.selected-family {
+  background-color: #f0f0f0;
+}
+
+.controls {
+  padding-left: 20px;
+}
+
+.control {
+  cursor: pointer;
+  margin-bottom: 5px;
+}
+
+.control.selected-control {
+  background-color: #e0e0e0;
+}
+
+.actions-table {
+  margin-top: 20px;
+}
