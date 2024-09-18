@@ -20,8 +20,12 @@ import ControlsPage from './pages/ControlsPage';
 import ActionsPage from './pages/ActionsPage';
 import UploadPage from './pages/UploadPage';
 import PostLoginOnboarding from './pages/PostLoginOnboarding';
+import ScoreboardPage from './pages/ScoreboardPage';
+import RiskAnalysis from './pages/RiskAnalysis';
+
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import SettingsPage from './pages/SettingsPage';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -152,6 +156,57 @@ const App = () => {
             >
               <PrivateRoute>
                 <AssetList />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path='/scoreboard'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <ScoreboardPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path='/risk-analysis'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <RiskAnalysis />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />{' '}
+        <Route
+          path='/settings'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <SettingsPage />
               </PrivateRoute>
             </MiscLayout>
           }
