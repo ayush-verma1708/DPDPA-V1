@@ -26,13 +26,12 @@ router.get('/me', authenticate, getCurrentUser);
 
 export default router;
 
-// import express from 'express';
 // import jwt from 'jsonwebtoken';
 // import bcrypt from 'bcryptjs';
 // import User from '../models/User.js';
 // import auth from '../middleware/auth.js';
 // import adminAuth from '../middleware/adminAuth.js';
-// import { login, getCurrentUser } from '../controllers/authController.js'; 
+// import { login, getCurrentUser } from '../controllers/authController.js';
 
 // import { authenticate } from '../middleware/authenticate.js';
 
