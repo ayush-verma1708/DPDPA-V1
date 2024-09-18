@@ -433,6 +433,7 @@ const CompletionStatusPage = ({
                   {role === 'IT Team' ||
                     (role === 'Auditor' && <TableCell>Actions</TableCell>)}
                   {role === 'Auditor' && <TableCell>Mark as done</TableCell>}
+                  {role === 'IT Team' && <TableCell>Action</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
