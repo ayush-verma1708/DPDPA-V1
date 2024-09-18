@@ -28,6 +28,8 @@ import ControlFamilyStatus from '../components/ControlFamilyStatus'; // Adjust t
 import EvidenceTable from '../components/EvidenceTable'; // Import the new component
 import StatusCheckTable from '../components/StatusCheckTable'; // Import the new component
 
+import SelectorsAndNotifications from '../components/assetSelection';
+
 import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi';
@@ -54,20 +56,8 @@ const ListOfActions = () => {
     message: '',
     severity: 'info',
   });
-
-  const [isControlStatusVisible, setIsControlStatusVisible] = useState(true); // Added state for ControlStatus visibility
-  const [isControlFamilyStatusVisible, setIsControlFamilyStatusVisible] =
-    useState(true); // Added state for ControlStatus visibility
-
-  const [isStatusCheckTableVisible, setIsStatusCheckTableVisible] =
-    useState(true); // Added state for StatusCheckTable visibility
-
-  const [isTableVisible, setIsTableVisible] = useState(true);
-
   const [visibleComponent, setVisibleComponent] = useState(''); // State to track which component is visible
-  const [usernames, setUsernames] = useState({});
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
-  const [fetchedStatuses, setFetchedStatuses] = useState([]);
   const [role, setRole] = useState(''); // To store the role from userData
 
   const statusOptions = [
@@ -93,28 +83,8 @@ const ListOfActions = () => {
     fetchName();
   }, [selectedAssetId]);
 
-  const toggleTableVisibility = () => {
-    setIsTableVisible((prevState) => !prevState);
-  };
-
-  const toggleControlStatusVisibility = () => {
-    setIsControlStatusVisible((prevState) => !prevState);
-  };
-
-  const toggleControlFamilyStatusVisibility = () => {
-    setIsControlFamilyStatusVisible((prevState) => !prevState);
-  };
-
-  const toggleStatusCheckTableVisibility = () => {
-    setIsStatusCheckTableVisible((prevState) => !prevState);
-  };
-
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-  };
-
-  const showComponent = (component) => {
-    setVisibleComponent(component);
   };
 
   const handleUploadEvidence = async (actionId, NewcontrolId) => {
@@ -351,10 +321,6 @@ const ListOfActions = () => {
     setExpandedFamilyId(expandedFamilyId === familyId ? '' : familyId);
   };
 
-  const handleControlClick = (controlId) => {
-    setSelectedControlId(controlId);
-  };
-
   const ActionCompletionCell = ({
     action,
     expandedFamilyId,
@@ -438,28 +404,6 @@ const ListOfActions = () => {
     familyId
   ) => {
     console.log('call', actionId, assetId, scopeId, controlId, familyId);
-    // try {
-    //   // Construct the params object, conditionally including scopeId if it exists
-    //   const params = {
-    //     actionId,
-    //     assetId,
-    //     controlId,
-    //     familyId,
-    //     ...(scopeId && { scopeId }), // Only include scopeId if it is not null or undefined
-    //   };
-
-    //   // Make the API request with the constructed params
-    //   const response = await axios.get(
-    //     'http://localhost:8021/api/v1/completion-status',
-    //     { params }
-    //   );
-
-    //   // Return true if the response data indicates completion, otherwise false
-    //   return response.data?.isCompleted || false; // Expecting a boolean in the response
-    // } catch (error) {
-    //   console.error('Error fetching completion status:', error);
-    //   return false;
-    // }
   };
 
   const handleMarkAsCompleted = async (actionId, NewcontrolId) => {
@@ -471,63 +415,6 @@ const ListOfActions = () => {
       selectedScopeId,
       expandedFamilyId
     );
-    // try {
-    //   const completionEntry = {
-    //     username: window.localStorage.getItem('username'), // Replace with actual username if needed
-    //     familyId: expandedFamilyId,
-    //     controlId: NewcontrolId,
-    //     assetId: selectedAssetId,
-    //     ...(selectedScopeId && { scopeId: selectedScopeId }),
-    //     actionId: actionId,
-    //     isCompleted: true, // Ensure the status is set to true for completion
-    //   };
-
-    //   // Mark the action as completed
-    //   const response = await axios.post(
-    //     `http://localhost:8021/api/v1/completion-status`,
-    //     completionEntry
-    //   );
-
-    //   if (response.status === 200) {
-    //     setNotification({
-    //       message: 'Action marked as completed!',
-    //       severity: 'success',
-    //     });
-
-    //     const updatedActionsResponse = await fetchActions();
-    //     const updatedActions = await Promise.all(
-    //       updatedActionsResponse
-    //         .filter((action) => action.control_Id._id === selectedControlId)
-    //         .map(async (action) => {
-    //           const controlDescription = controls.find(
-    //             (control) => control._id === action.control_Id._id
-    //           )?.section_desc;
-    //           const isCompleted = await checkCompletionStatus(
-    //             action._id,
-    //             selectedAssetId,
-    //             selectedScopeId,
-    //             selectedControlId,
-    //             expandedFamilyId
-    //           );
-    //           return {
-    //             ...action,
-    //             controlDescription,
-    //             isCompleted,
-    //             evidenceUrl: action.evidenceUrl || null,
-    //           };
-    //         })
-    //     );
-    //     setActions(updatedActions);
-    //   } else {
-    //     throw new Error('Failed to mark action as completed.');
-    //   }
-    // } catch (error) {
-    //   setNotification({
-    //     message: 'Failed to mark action as completed. Please try again later.',
-    //     severity: 'error',
-    //   });
-    //   console.error('Mark as Completed Error:', error);
-    // }
   };
 
   const handleSnackbarClose = () => {
@@ -541,8 +428,7 @@ const ListOfActions = () => {
   return (
     <div className='new-page'>
       <div className='page-container'>
-        <div className='Asset-container'>
-          {/* Dropdown for Assets */}
+        {/* <div className='Asset-container'>
           <Select
             value={selectedAssetId}
             onChange={(e) => setSelectedAssetId(e.target.value)}
@@ -561,26 +447,38 @@ const ListOfActions = () => {
           </Select>
         </div>
 
-        <div className='Scope-container'>
-          {/* Dropdown for Scopes */}
-          <Select
-            value={selectedScopeId}
-            onChange={handleScopeChange}
-            displayEmpty
-            renderValue={(value) =>
-              value
-                ? `Scope: ${scopes.find((scope) => scope._id === value)?.name}`
-                : 'Select Scope'
-            }
-            disabled={scopes.length === 0}
-          >
-            {scopes.map((scope) => (
-              <MenuItem key={scope._id} value={scope._id}>
-                {scope.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
+        <div className='Scope-container'> */}
+        {/* <Select
+          value={selectedScopeId}
+          onChange={handleScopeChange}
+          displayEmpty
+          renderValue={(value) =>
+            value
+              ? `Scope: ${scopes.find((scope) => scope._id === value)?.name}`
+              : 'Select Scope'
+          }
+          disabled={scopes.length === 0}
+        >
+          {scopes.map((scope) => (
+            <MenuItem key={scope._id} value={scope._id}>
+              {scope.name}
+            </MenuItem>
+          ))}
+        </Select> */}
+        {/* </div> */}
+
+        <SelectorsAndNotifications
+          selectedAssetId={selectedAssetId}
+          assetName={assetName}
+          assets={assets}
+          selectedScopeId={selectedScopeId}
+          scopes={scopes}
+          handleScopeChange={handleScopeChange}
+          handleAssetChange={handleAssetChange}
+          error={error}
+          notification={notification}
+          handleSnackbarClose={handleSnackbarClose}
+        />
 
         {error && (
           <Snackbar
@@ -652,32 +550,6 @@ const ListOfActions = () => {
       </div>
 
       <div className='content'>
-        {/* {role === 'IT Team' ||
-          ('Admin' && (
-            <Button onClick={() => showComponent('EvidenceTable')}>
-              Show Evidence Table
-            </Button>
-          ))}
-        {role === 'Auditor' ||
-          ('Admin' && (
-            <Button onClick={() => showComponent('StatusCheckTable')}>
-              Show Status Check Table
-            </Button>
-          ))} */}
-        {/* {role === '' ||
-          ('Admin' && (
-            <Button onClick={() => showComponent('ControlStatus')}>
-              Show Control Status
-            </Button>
-          ))} */}
-
-        {/* {role === 'Compliance Team' ||
-          ('Admin' && (
-            <Button onClick={() => showComponent('ControlFamilyStatus')}>
-              Show Task Assignment Status
-            </Button>
-          ))} */}
-
         {visibleComponent === 'EvidenceTable' && (
           <EvidenceTable
             actions={actions}

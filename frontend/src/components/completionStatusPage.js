@@ -362,33 +362,6 @@ const CompletionStatusPage = ({
     }
   };
 
-  // const handleViewEvidence = async (actionId, controlId) => {
-  //   try {
-  //     const res = await axios.post(
-  //       `http://localhost:8021/api/evidence/params`,
-  //       {
-  //         assetId: selectedAssetId,
-  //         scopeId: selectedScopeId,
-  //         actionId,
-  //         familyId: expandedFamilyId,
-  //         controlId,
-  //       }
-  //     );
-  //     console.log(res);
-
-  //     // Check if the response contains a valid file URL
-  //     if (res.data && res.data.fileUrl) {
-  //       return res.data.fileUrl;
-  //     } else {
-  //       console.log('no evidence');
-  //       return null; // No evidence found
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching evidence:', error);
-  //     return null; // Return null if there's an error or no evidence
-  //   }
-  // };
-
   return (
     <div style={{ padding: '20px' }}>
       <section style={{ marginTop: '20px' }}>
@@ -406,8 +379,6 @@ const CompletionStatusPage = ({
                   <TableCell>Assigned to</TableCell>
                   <TableCell>Action</TableCell>
                   <TableCell>Control</TableCell>
-                  {/* <TableCell>Created At</TableCell> */}
-                  {/* <TableCell>Updated At</TableCell> */}
                   <TableCell>Feedback</TableCell>
                   <TableCell>Status</TableCell>
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
@@ -483,44 +454,6 @@ const CompletionStatusPage = ({
                                 </Button>
                               </TableCell>
                             ))}
-
-                          {/* <TableCell>
-                          {evidenceUrls[status.actionId?._id][
-                            status.controlId?._id
-                          ] ? (
-                            <a
-                              href={`http://localhost:8021${
-                                evidenceUrls[status.actionId?._id][
-                                  status.controlId?._id
-                                ]
-                              }`}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                            >
-                              View Evidence
-                            </a>
-                          ) : (
-                            'No evidence uploaded'
-                          )}
-                        </TableCell> */}
-
-                          {/* {evidenceUrls[status.actionId?._id]?.[
-                            status.controlId?._id
-                          ] ? (
-                            <a
-                              href={`http://localhost:8021${
-                                evidenceUrls[status.actionId?._id][
-                                  status.controlId?._id
-                                ]
-                              }`}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                            >
-                              View Evidence
-                            </a>
-                          ) : (
-                            'No evidence uploaded'
-                          )} */}
 
                           <TableCell>
                             {(role === 'Compliance Team' ||
