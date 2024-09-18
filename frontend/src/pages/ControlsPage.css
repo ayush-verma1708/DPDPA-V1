@@ -87,6 +87,28 @@
   cursor: not-allowed;
 }
 
+.table-container {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.table-container .MuiTableBody-root {
+  display: block; /* Ensure the table body is a block-level element */
+}
+
+.table-container .MuiTableHead-root {
+  position: sticky;
+  top: 0;
+  background-color: #fff; /* Adjust if needed for better visibility */
+  z-index: 1; /* Ensure header is above table body */
+}
+
+.table-container .MuiTableBody-root .MuiTableRow-root {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
 /* .controls-container {
   padding: 20px;
 }

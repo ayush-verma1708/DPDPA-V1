@@ -15,7 +15,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Snackbar from '@mui/material/Snackbar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Loading from '../components/Loading';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
 const ControlsPage = () => {
   const [controls, setControls] = useState([]);
@@ -27,6 +34,7 @@ const ControlsPage = () => {
     section_desc: '',
     control_type: '',
     control_Family_Id: '',
+    criticality: '',
   });
   const [editingControl, setEditingControl] = useState(null);
   const [editControl, setEditControl] = useState({
@@ -36,6 +44,7 @@ const ControlsPage = () => {
     section_desc: '',
     control_type: '',
     control_Family_Id: '',
+    criticality: '',
   });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -43,6 +52,21 @@ const ControlsPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // const fetchControls = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8021/api/v1/controls');
+  //     const sortedControls = response.data.sort((a, b) => {
+  //       const numA = parseInt(a.fixed_id.replace(/\D/g, ''), 10);
+  //       const numB = parseInt(b.fixed_id.replace(/\D/g, ''), 10);
+  //       return numA - numB;
+  //     });
+  //     setControls(sortedControls);
+  //   } catch (error) {
+  //     console.error('Error fetching controls:', error);
+  //   }
+  // };
 
   const fetchControls = async () => {
     try {
@@ -125,7 +149,9 @@ const ControlsPage = () => {
         section_desc: '',
         control_type: '',
         control_Family_Id: '',
+        criticality: '',
       });
+      setModalOpen(false);
       setSnackbarMessage('Control added successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -160,7 +186,9 @@ const ControlsPage = () => {
         section_desc: '',
         control_type: '',
         control_Family_Id: '',
+        criticality: '',
       });
+      setModalOpen(false);
       setSnackbarMessage('Control updated successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
@@ -206,29 +234,164 @@ const ControlsPage = () => {
     setPage(0);
   };
 
+  const openModal = (control) => {
+    if (control) {
+      setEditingControl(control);
+      setEditControl({ ...control });
+    } else {
+      setNewControl({
+        fixed_id: '',
+        section: '',
+        section_main_desc: '',
+        section_desc: '',
+        control_type: '',
+        control_Family_Id: '',
+        criticality: '',
+      });
+    }
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditingControl(null);
+  };
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div className='p-4'>
-      <div className='control-form'>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            editingControl ? handleEditControl() : handleAddControl();
-          }}
-        >
+      <Button
+        variant='contained'
+        color='primary'
+        onClick={() => openModal(null)}
+      >
+        Add New Control
+      </Button>
+
+      <TableContainer
+        component={Paper}
+        // className='mt-4'
+        className='mt-4 table-container'
+        style={{ maxHeight: '800px', maxWidth: '100%', overflow: 'auto' }}
+      >
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Fixed ID</TableCell>
+              <TableCell>Section</TableCell>
+              <TableCell>Section Main Description</TableCell>
+              <TableCell>Section Description</TableCell>
+              <TableCell>Control Type</TableCell>
+              <TableCell>Criticality</TableCell>
+              <TableCell>Control Family</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          {/* <TableBody>
+            {controls
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((control) => (
+                <TableRow key={control._id}>
+                  <TableCell>{control.fixed_id}</TableCell>
+                  <TableCell>{control.section}</TableCell>
+                  <TableCell>{control.section_main_desc}</TableCell>
+                  <TableCell>{control.section_desc}</TableCell>
+                  <TableCell>{control.control_type}</TableCell>
+                  <TableCell>{control.criticality}</TableCell>
+                  <TableCell>
+                    {
+                      controlFamilies.find(
+                        (cf) => cf._id === control.control_Family_Id
+                      )?.variable_id
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color='primary'
+                      onClick={() => openModal(control)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      color='secondary'
+                      onClick={() => handleDeleteControl(control._id)}
+                      className='ml-2'
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody> */}
+          <TableBody>
+            {controls
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((control) => (
+                <TableRow key={control._id}>
+                  <TableCell>{control.fixed_id}</TableCell>
+                  <TableCell>{control.section}</TableCell>
+                  <TableCell>{control.section_main_desc}</TableCell>
+                  <TableCell>{control.section_desc}</TableCell>
+                  <TableCell>{control.control_type}</TableCell>
+                  <TableCell>{control.criticality}</TableCell>
+                  <TableCell>
+                    {
+                      controlFamilies.find(
+                        (cf) => cf._id === control.control_Family_Id
+                      )?.variable_id
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color='primary'
+                      onClick={() => openModal(control)}
+                      disabled={control.isDPDPA} // Disable if isDPDPA is true
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      color='secondary'
+                      onClick={() => handleDeleteControl(control._id)}
+                      className='ml-2'
+                      disabled={control.isDPDPA} // Disable if isDPDPA is true
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component='div'
+        count={controls.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+
+      <Dialog open={modalOpen} onClose={closeModal}>
+        <DialogTitle>
+          {editingControl ? 'Edit Control' : 'Add New Control'}
+        </DialogTitle>
+        <DialogContent>
           <TextField
+            margin='dense'
             label='Section'
             name='section'
             value={editingControl ? editControl.section : newControl.section}
             onChange={handleTextChange}
-            required
             fullWidth
-            margin='normal'
           />
           <TextField
+            margin='dense'
             label='Section Main Description'
             name='section_main_desc'
             value={
@@ -238,9 +401,9 @@ const ControlsPage = () => {
             }
             onChange={handleTextChange}
             fullWidth
-            margin='normal'
           />
           <TextField
+            margin='dense'
             label='Section Description'
             name='section_desc'
             value={
@@ -250,9 +413,9 @@ const ControlsPage = () => {
             }
             onChange={handleTextChange}
             fullWidth
-            margin='normal'
           />
           <TextField
+            margin='dense'
             label='Control Type'
             name='control_type'
             value={
@@ -262,30 +425,7 @@ const ControlsPage = () => {
             }
             onChange={handleTextChange}
             fullWidth
-            margin='normal'
           />
-          {/* Add the Criticality Dropdown Field */}
-          <FormControl fullWidth margin='normal'>
-            <InputLabel>Criticality</InputLabel>
-            <Select
-              name='criticality'
-              value={
-                editingControl
-                  ? editControl.criticality
-                  : newControl.criticality
-              }
-              onChange={handleSelectChange}
-              required
-            >
-              <MenuItem value='' disabled>
-                Select Criticality
-              </MenuItem>
-              <MenuItem value='low'>Low</MenuItem>
-              <MenuItem value='medium'>Medium</MenuItem>
-              <MenuItem value='high'>High</MenuItem>
-              <MenuItem value='critical'>Critical</MenuItem>
-            </Select>
-          </FormControl>
           <FormControl fullWidth margin='normal'>
             <InputLabel>Control Family</InputLabel>
             <Select
@@ -307,75 +447,29 @@ const ControlsPage = () => {
               ))}
             </Select>
           </FormControl>
-          <Button type='submit' variant='contained' color='primary'>
-            {editingControl ? 'Update Control' : 'Add Control'}
+          <TextField
+            margin='dense'
+            label='Criticality'
+            name='criticality'
+            value={
+              editingControl ? editControl.criticality : newControl.criticality
+            }
+            onChange={handleTextChange}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal} color='primary'>
+            Cancel
           </Button>
-        </form>
-      </div>
-
-      <TableContainer component={Paper} className='mt-4'>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Fixed ID</TableCell>
-              <TableCell>Section</TableCell>
-              <TableCell>Section Main Description</TableCell>
-              <TableCell>Section Description</TableCell>
-              <TableCell>Control Type</TableCell>
-              <TableCell>Criticality</TableCell>
-              <TableCell>Control Family</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {controls
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((control) => (
-                <TableRow key={control._id}>
-                  <TableCell>{control.fixed_id}</TableCell>
-                  <TableCell>{control.section}</TableCell>
-                  <TableCell>{control.section_main_desc}</TableCell>
-                  <TableCell>{control.section_desc}</TableCell>
-                  <TableCell>{control.control_type}</TableCell>
-                  <TableCell>{control.criticality}</TableCell>
-                  <TableCell>
-                    {
-                      controlFamilies.find(
-                        (cf) => cf._id === control.control_Family_Id
-                      )?.variable_id
-                    }
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => {
-                        setEditingControl(control);
-                        setEditControl({ ...control });
-                      }}
-                      disabled={control.isDPDPA} // Disable the Edit button if isDPDPA is true
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => handleDeleteControl(control._id)}
-                      disabled={control.isDPDPA}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component='div'
-          count={controls.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
+          <Button
+            onClick={editingControl ? handleEditControl : handleAddControl}
+            color='primary'
+          >
+            {editingControl ? 'Save' : 'Add'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbarOpen}
