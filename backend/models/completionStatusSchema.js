@@ -50,6 +50,7 @@ const CompletionStatusSchema = new mongoose.Schema(
         'Closed',
         'Not Applicable',
         'Risk Accepted',
+        'Completed',
       ],
       default: 'Open',
     },

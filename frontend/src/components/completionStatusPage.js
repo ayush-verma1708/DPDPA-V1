@@ -17,7 +17,7 @@ import {
   TableRow,
   Paper,
   TableSortLabel,
-  Button,
+  // Button,
   TextField,
   Select,
   MenuItem,
@@ -27,17 +27,29 @@ import {
   TablePagination,
   Collapse,
   IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
 } from '@mui/material';
 
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
 import { getAssets } from '../api/assetApi';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import {
+  Upload,
+  Visibility,
+  CheckCircle,
+  Edit,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+} from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
 import { getUserById } from '../api/userApi';
 import { fetchCurrentUser } from '../api/userApi';
 import EvidenceTableCell from './EvidenceTableCell';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import ActionCompletionCell from '../components/ActionCompletionCell'; // Import the new component
+import { Button, Tooltip } from '@mui/material';
 
 const CompletionStatusPage = ({
   expandedFamilyId,
@@ -45,10 +57,7 @@ const CompletionStatusPage = ({
   selectedScopeId,
   handleFileChange,
   handleUploadEvidence,
-  handleStatusChange,
-  statusOptions,
-  ActionCompletionCell,
-  handleMarkAsCompleted,
+  markActionAsCompleted,
 }) => {
   const [statusData, setStatusData] = useState({
     actionId: '',
@@ -362,6 +371,43 @@ const CompletionStatusPage = ({
     }
   };
 
+  const handleMarkAsCompleted = async (actionId, controlId) => {
+    try {
+      // Prompt for feedback
+      const feedback = prompt(
+        'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
+      );
+
+      // Mark the action as completed
+      await markActionAsCompleted(actionId, controlId, feedback);
+
+      // Refetch the statuses after marking as completed
+
+      // Update status in the list
+      updateStatusInList(
+        actionId,
+        feedback ? 'Audit Non-Confirm' : 'Audit Closed',
+        feedback ? 'Return Evidence' : 'Confirm Evidence',
+        feedback
+      );
+      await handleFetchStatus();
+    } catch (error) {
+      console.error('Error marking action as completed:', error);
+    }
+  };
+
+  // const handleMarkAsCompleted = async (actionId, controlId) => {
+  //   try {
+  //     // Assuming you have an API function to mark the action as completed
+  //     await markActionAsCompleted(actionId, controlId);
+
+  //     // Refetch the statuses after marking as completed
+  //     await handleFetchStatus();
+  //   } catch (error) {
+  //     console.error('Error marking action as completed:', error);
+  //   }
+  // };
+
   return (
     <div style={{ padding: '20px' }}>
       <section style={{ marginTop: '20px' }}>
@@ -379,6 +425,7 @@ const CompletionStatusPage = ({
                   <TableCell>Assigned to</TableCell>
                   <TableCell>Action</TableCell>
                   <TableCell>Control</TableCell>
+
                   <TableCell>Feedback</TableCell>
                   <TableCell>Status</TableCell>
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
@@ -392,6 +439,8 @@ const CompletionStatusPage = ({
                 {paginatedData
                   .sort((a, b) => a._id.localeCompare(b._id))
                   .map((status) => {
+                    const isCompleted = status.status === 'Completed';
+
                     return (
                       <React.Fragment key={status._id}>
                         <TableRow>
@@ -399,6 +448,8 @@ const CompletionStatusPage = ({
                             <IconButton
                               size='small'
                               onClick={() => handleToggleRow(status._id)}
+                              color='primary'
+                              disabled={isCompleted} // Disable toggle button if completed
                             >
                               {openRows[status._id] ? (
                                 <KeyboardArrowUp />
@@ -408,41 +459,42 @@ const CompletionStatusPage = ({
                             </IconButton>
                           </TableCell>
                           <TableCell>{getUsername(status.username)}</TableCell>
-
-                          {/* <TableCell>{status.username}</TableCell> */}
                           <TableCell>
                             {status.actionId?.fixed_id || 'N/A'}
                           </TableCell>
                           <TableCell>
                             {status.controlId?.section_desc || 'N/A'}
                           </TableCell>
-                          {/* <TableCell>{status.createdAt}</TableCell> */}
-                          {/* <TableCell>{status.updatedAt}</TableCell> */}
                           <TableCell>{status.feedback || 'N/A'}</TableCell>
                           <TableCell>{status.status || 'N/A'}</TableCell>
-                          {role === 'IT Team' && (
+                          {role === 'IT Team' && !isCompleted && (
                             <TableCell>
                               <input type='file' onChange={handleFileChange} />
-                              <Button
-                                variant='contained'
-                                color='primary'
-                                onClick={() =>
-                                  handleUploadEvidence(
-                                    status.actionId?._id,
-                                    status.controlId?._id
-                                  )
-                                }
-                              >
-                                Upload Evidence
-                              </Button>
-                            </TableCell>
-                          )}
-                          {role === 'IT Team' ||
-                            (role === 'Auditor' && (
-                              <TableCell>
+                              <Tooltip title='Upload Evidence'>
                                 <Button
                                   variant='contained'
                                   color='primary'
+                                  startIcon={<Upload />}
+                                  onClick={() =>
+                                    handleUploadEvidence(
+                                      status.actionId?._id,
+                                      status.controlId?._id
+                                    )
+                                  }
+                                  disabled={isCompleted} // Disable button if completed
+                                >
+                                  Upload Evidence
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
+                          )}
+                          {(role === 'IT Team' || role === 'Auditor') && (
+                            <TableCell>
+                              <Tooltip title='View Evidence'>
+                                <Button
+                                  variant='contained'
+                                  color='primary'
+                                  startIcon={<Visibility />}
                                   onClick={() =>
                                     handleViewEvidence(
                                       status.actionId?._id,
@@ -452,53 +504,81 @@ const CompletionStatusPage = ({
                                 >
                                   View Evidence
                                 </Button>
-                              </TableCell>
-                            ))}
-
-                          <TableCell>
-                            {(role === 'Compliance Team' ||
-                              role === 'Admin') && (
-                              <Button
-                                onClick={() =>
-                                  onDelegateButtonClick(
-                                    status._id,
-                                    status.assetId._id
-                                  )
-                                }
-                              >
-                                Delegate to IT
-                              </Button>
-                            )}
-
-                            {(role === 'IT Team' || role === 'Admin') && (
-                              <Button
-                                onClick={() =>
-                                  handleDelegateToAuditor(status._id)
-                                }
-                              >
-                                Delegate to Auditor
-                              </Button>
-                            )}
-
-                            {(role === 'Auditor' || role === 'Admin') && (
-                              <Button
-                                onClick={() =>
-                                  handleConfirmEvidence(status._id)
-                                }
-                              >
-                                Raise query
-                              </Button>
-                            )}
-                          </TableCell>
+                              </Tooltip>
+                            </TableCell>
+                          )}
+                          {(role === 'Compliance Team' || role === 'Admin') && (
+                            <TableCell>
+                              <Tooltip title='Delegate to IT'>
+                                <Button
+                                  variant='outlined'
+                                  color='secondary'
+                                  startIcon={<Edit />}
+                                  onClick={() =>
+                                    onDelegateButtonClick(
+                                      status._id,
+                                      status.assetId._id
+                                    )
+                                  }
+                                  disabled={isCompleted} // Disable button if completed
+                                >
+                                  Delegate to IT
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
+                          )}
+                          {(role === 'IT Team' || role === 'Admin') && (
+                            <TableCell>
+                              <Tooltip title='Delegate to Auditor'>
+                                <Button
+                                  variant='outlined'
+                                  color='secondary'
+                                  startIcon={<Edit />}
+                                  onClick={() =>
+                                    handleDelegateToAuditor(status._id)
+                                  }
+                                  disabled={isCompleted} // Disable button if completed
+                                >
+                                  Delegate to Auditor
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
+                          )}
+                          {(role === 'Auditor' || role === 'Admin') && (
+                            <TableCell>
+                              <Tooltip title='Raise Query'>
+                                <Button
+                                  variant='contained'
+                                  color='error'
+                                  startIcon={<CheckCircle />}
+                                  onClick={() =>
+                                    handleConfirmEvidence(status._id)
+                                  }
+                                  disabled={isCompleted} // Disable button if completed
+                                >
+                                  Raise Query
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
+                          )}
                           {role === 'Auditor' && (
-                            <ActionCompletionCell
-                              action={status.actionId?._id}
-                              expandedFamilyId={expandedFamilyId}
-                              selectedControlId={status.controlId?._id}
-                              selectedAssetId={selectedAssetId}
-                              selectedScopeId={selectedScopeId}
-                              handleMarkAsCompleted={handleMarkAsCompleted}
-                            />
+                            <TableCell>
+                              <Tooltip title='Confirm Evidence'>
+                                <Button
+                                  variant='contained'
+                                  color='primary'
+                                  onClick={() =>
+                                    handleMarkAsCompleted(
+                                      status.actionId?._id,
+                                      status.controlId?._id
+                                    )
+                                  }
+                                  disabled={isCompleted} // Disable button if completed
+                                >
+                                  Confirm Evidence
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
                           )}
                         </TableRow>
                         <TableRow>
@@ -559,6 +639,201 @@ const CompletionStatusPage = ({
                     );
                   })}
               </TableBody>
+
+              {/* <TableBody>
+                {paginatedData
+                  .sort((a, b) => a._id.localeCompare(b._id))
+                  .map((status) => (
+                    <React.Fragment key={status._id}>
+                      <TableRow>
+                        <TableCell>
+                          <IconButton
+                            size='small'
+                            onClick={() => handleToggleRow(status._id)}
+                            color='primary'
+                          >
+                            {openRows[status._id] ? (
+                              <KeyboardArrowUp />
+                            ) : (
+                              <KeyboardArrowDown />
+                            )}
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>{getUsername(status.username)}</TableCell>
+                        <TableCell>
+                          {status.actionId?.fixed_id || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          {status.controlId?.section_desc || 'N/A'}
+                        </TableCell>
+                        <TableCell>{status.feedback || 'N/A'}</TableCell>
+                        <TableCell>{status.status || 'N/A'}</TableCell>
+                        {role === 'IT Team' && (
+                          <TableCell>
+                            <input type='file' onChange={handleFileChange} />
+                            <Tooltip title='Upload Evidence'>
+                              <Button
+                                variant='contained'
+                                color='primary'
+                                startIcon={<Upload />}
+                                onClick={() =>
+                                  handleUploadEvidence(
+                                    status.actionId?._id,
+                                    status.controlId?._id
+                                  )
+                                }
+                              >
+                                Upload Evidence
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {(role === 'IT Team' || role === 'Auditor') && (
+                          <TableCell>
+                            <Tooltip title='View Evidence'>
+                              <Button
+                                variant='contained'
+                                color='primary'
+                                startIcon={<Visibility />}
+                                onClick={() =>
+                                  handleViewEvidence(
+                                    status.actionId?._id,
+                                    status.controlId?._id
+                                  )
+                                }
+                              >
+                                View Evidence
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {(role === 'Compliance Team' || role === 'Admin') && (
+                          <TableCell>
+                            <Tooltip title='Delegate to IT'>
+                              <Button
+                                variant='outlined'
+                                color='secondary'
+                                startIcon={<Edit />}
+                                onClick={() =>
+                                  onDelegateButtonClick(
+                                    status._id,
+                                    status.assetId._id
+                                  )
+                                }
+                              >
+                                Delegate to IT
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {(role === 'IT Team' || role === 'Admin') && (
+                          <TableCell>
+                            <Tooltip title='Delegate to Auditor'>
+                              <Button
+                                variant='outlined'
+                                color='secondary'
+                                startIcon={<Edit />}
+                                onClick={() =>
+                                  handleDelegateToAuditor(status._id)
+                                }
+                              >
+                                Delegate to Auditor
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {(role === 'Auditor' || role === 'Admin') && (
+                          <TableCell>
+                            <Tooltip title='Raise Query'>
+                              <Button
+                                variant='contained'
+                                color='error'
+                                startIcon={<CheckCircle />}
+                                onClick={() =>
+                                  handleConfirmEvidence(status._id)
+                                }
+                              >
+                                Raise Query
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {role === 'Auditor' && (
+                          <TableCell>
+                            <Tooltip title='Confirm Evidence'>
+                              <Button
+                                variant='contained'
+                                color='primary'
+                                onClick={() =>
+                                  handleMarkAsCompleted(
+                                    status.actionId?._id,
+                                    status.controlId?._id
+                                  )
+                                }
+                              >
+                                Confirm Evidence
+                              </Button>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell
+                          style={{ paddingBottom: 0, paddingTop: 0 }}
+                          colSpan={13}
+                        >
+                          <Collapse
+                            in={openRows[status._id]}
+                            timeout='auto'
+                            unmountOnExit
+                          >
+                            <div style={{ margin: '10px' }}>
+                              <h3>History</h3>
+                              {status.history && status.history.length > 0 ? (
+                                <Table size='small' aria-label='history'>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell>Modified At</TableCell>
+                                      <TableCell>Modified By</TableCell>
+                                      <TableCell>Changes</TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {status.history.map((change, index) => (
+                                      <TableRow key={index}>
+                                        <TableCell>
+                                          {new Date(
+                                            change.modifiedAt
+                                          ).toLocaleString()}
+                                        </TableCell>
+                                        <TableCell>
+                                          {change.modifiedBy}
+                                        </TableCell>
+                                        <TableCell>
+                                          <ul>
+                                            {Object.entries(change.changes).map(
+                                              ([key, value]) => (
+                                                <li
+                                                  key={key}
+                                                >{`${key}: ${value}`}</li>
+                                              )
+                                            )}
+                                          </ul>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              ) : (
+                                <p>No history available.</p>
+                              )}
+                            </div>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
+                    </React.Fragment>
+                  ))}
+              </TableBody> */}
             </Table>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}

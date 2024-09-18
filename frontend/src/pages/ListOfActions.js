@@ -1,38 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { getControlFamilies } from '../api/controlFamilyAPI';
 import { fetchActions } from '../api/actionAPI';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Snackbar,
-  Alert,
-  Select,
-  MenuItem,
-  Tooltip,
-} from '@mui/material';
+import { Snackbar, Alert, Tooltip } from '@mui/material';
 import Loading from '../components/Loading';
 import '../styles/ListOfActions.css';
-import axios from 'axios';
 
 import { getAssetDetails, getAssetDetailsById } from '../api/assetDetailsApi';
 import { getAllEvidences, uploadEvidence } from '../api/evidenceApi';
-
-import ControlStatus from '../components/ControlStatus'; // Adjust the path as needed
-import ControlFamilyStatus from '../components/ControlFamilyStatus'; // Adjust the path as needed
-import EvidenceTable from '../components/EvidenceTable'; // Import the new component
-import StatusCheckTable from '../components/StatusCheckTable'; // Import the new component
 
 import SelectorsAndNotifications from '../components/assetSelection';
 
 import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi';
+import { createOrUpdateStatus } from '../api/completionStatusApi';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -226,20 +207,11 @@ const ListOfActions = () => {
                     (control) => control._id === action.control_Id._id
                   )?.section_desc;
 
-                  // Fetch the completion status
-                  const isCompleted = await checkCompletionStatus(
-                    action._id,
-                    selectedAssetId,
-                    selectedScopeId,
-                    selectedControlId,
-                    expandedFamilyId
-                  );
-
                   // Return the modified action object with completion status and evidence URL
                   return {
                     ...action,
                     controlDescription,
-                    isCompleted,
+
                     evidenceUrl: action.evidenceUrl || null, // Add evidenceUrl if available
                   };
                 })
@@ -321,104 +293,40 @@ const ListOfActions = () => {
     setExpandedFamilyId(expandedFamilyId === familyId ? '' : familyId);
   };
 
-  const ActionCompletionCell = ({
-    action,
-    expandedFamilyId,
-    selectedControlId,
-    selectedAssetId,
-    selectedScopeId,
-    handleMarkAsCompleted,
-  }) => {
-    const [isCompleted, setIsCompleted] = useState(false);
-
-    useEffect(() => {
-      const fetchCompletionStatus = async () => {
-        const status = await checkCompletionStatus(
-          action._id,
-          selectedAssetId,
-          selectedScopeId,
-          selectedControlId,
-          expandedFamilyId
-        );
-        setIsCompleted(status);
-      };
-
-      fetchCompletionStatus();
-    }, [
-      action._id,
-      selectedAssetId,
-      selectedScopeId,
-      selectedControlId,
-      expandedFamilyId,
-    ]);
-
-    return (
-      <TableCell>
-        {isCompleted ? (
-          <Button variant='contained' color='success' disabled>
-            Evidence Confirm
-          </Button>
-        ) : (
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={() => handleMarkAsCompleted(action._id)}
-          >
-            Confirm Evidence
-          </Button>
-        )}
-      </TableCell>
-    );
-  };
-
-  const handleStatusChange = async (actionId, newStatus) => {
-    try {
-      // Update status in the backend
-      await axios.put(`/api/actions/${actionId}`, { status: newStatus });
-
-      // Update status in local state
-      setActions((prevActions) =>
-        prevActions.map((action) =>
-          action._id === actionId ? { ...action, status: newStatus } : action
-        )
-      );
-
-      setNotification({
-        message: 'Status updated successfully!',
-        severity: 'success',
-      });
-    } catch (error) {
-      setNotification({
-        message: 'Failed to update status. Please try again.',
-        severity: 'error',
-      });
-      console.error('Status Update Error:', error);
-    }
-  };
-
-  const checkCompletionStatus = async (
-    actionId,
-    assetId,
-    scopeId,
-    controlId,
-    familyId
-  ) => {
-    console.log('call', actionId, assetId, scopeId, controlId, familyId);
-  };
-
-  const handleMarkAsCompleted = async (actionId, NewcontrolId) => {
-    console.log(
-      'tada',
-      actionId,
-      NewcontrolId,
-      selectedAssetId,
-      selectedScopeId,
-      expandedFamilyId
-    );
-  };
-
   const handleSnackbarClose = () => {
     setNotification({ message: '', severity: 'info' });
+  };
+
+  const markActionAsCompleted = async (actionId, newControlId, feedback) => {
+    // Prepare the request data, including scopeId only if it's provided
+    const token = window.localStorage.getItem('token'); // Replace with actual token
+    const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
+    console.log(userData.data.email);
+    const requestData = {
+      actionId: actionId,
+      controlId: newControlId,
+      familyId: expandedFamilyId, // Assuming you have this available in scope
+      assetId: selectedAssetId, // Assuming you have this available in scope
+      isCompleted: true, // Set isCompleted to true
+      status: 'Completed',
+      username: userData.data._id,
+      feedback,
+    };
+
+    // Conditionally include scopeId if it is defined
+    if (selectedScopeId) {
+      requestData.scopeId = selectedScopeId;
+    }
+
+    try {
+      // Make API request to update the completion status
+      const response = await createOrUpdateStatus(requestData);
+
+      console.log('Status updated successfully:', response);
+      // Optionally refetch statuses here if needed
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
   };
 
   if (loading) {
@@ -428,45 +336,6 @@ const ListOfActions = () => {
   return (
     <div className='new-page'>
       <div className='page-container'>
-        {/* <div className='Asset-container'>
-          <Select
-            value={selectedAssetId}
-            onChange={(e) => setSelectedAssetId(e.target.value)}
-            displayEmpty
-            renderValue={(value) =>
-              value ? `Asset:${assetName}` : 'Select Asset'
-            }
-          >
-            {assets.map((asset) => {
-              return (
-                <MenuItem key={asset.asset._id} value={asset.asset._id}>
-                  {asset.asset.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </div>
-
-        <div className='Scope-container'> */}
-        {/* <Select
-          value={selectedScopeId}
-          onChange={handleScopeChange}
-          displayEmpty
-          renderValue={(value) =>
-            value
-              ? `Scope: ${scopes.find((scope) => scope._id === value)?.name}`
-              : 'Select Scope'
-          }
-          disabled={scopes.length === 0}
-        >
-          {scopes.map((scope) => (
-            <MenuItem key={scope._id} value={scope._id}>
-              {scope.name}
-            </MenuItem>
-          ))}
-        </Select> */}
-        {/* </div> */}
-
         <SelectorsAndNotifications
           selectedAssetId={selectedAssetId}
           assetName={assetName}
@@ -550,43 +419,6 @@ const ListOfActions = () => {
       </div>
 
       <div className='content'>
-        {visibleComponent === 'EvidenceTable' && (
-          <EvidenceTable
-            actions={actions}
-            handleFileChange={handleFileChange}
-            handleUploadEvidence={handleUploadEvidence}
-            handleStatusChange={handleStatusChange}
-            ActionCompletionCell={ActionCompletionCell}
-            statusOptions={statusOptions}
-            expandedFamilyId={expandedFamilyId}
-            selectedControlId={selectedControlId}
-            selectedAssetId={selectedAssetId}
-            selectedScopeId={selectedScopeId}
-            handleMarkAsCompleted={handleMarkAsCompleted}
-          />
-        )}
-        {visibleComponent === 'StatusCheckTable' && (
-          <StatusCheckTable
-            actions={actions}
-            handleFileChange={handleFileChange}
-            handleUploadEvidence={handleUploadEvidence}
-            handleStatusChange={handleStatusChange}
-            ActionCompletionCell={ActionCompletionCell}
-            statusOptions={statusOptions}
-            expandedFamilyId={expandedFamilyId}
-            selectedControlId={selectedControlId}
-            selectedAssetId={selectedAssetId}
-            selectedScopeId={selectedScopeId}
-            handleMarkAsCompleted={handleMarkAsCompleted}
-          />
-        )}
-        {visibleComponent === 'ControlStatus' && (
-          <ControlStatus
-            selectedAssetId={selectedAssetId}
-            selectedScopeId={selectedScopeId}
-          />
-        )}
-
         <CompletionStatusPage
           expandedFamilyId={expandedFamilyId}
           selectedAssetId={selectedAssetId}
@@ -594,10 +426,7 @@ const ListOfActions = () => {
           actions={actions}
           handleFileChange={handleFileChange}
           handleUploadEvidence={handleUploadEvidence}
-          handleStatusChange={handleStatusChange}
-          ActionCompletionCell={ActionCompletionCell}
-          statusOptions={statusOptions}
-          handleMarkAsCompleted={handleMarkAsCompleted}
+          markActionAsCompleted={markActionAsCompleted}
         />
       </div>
 
