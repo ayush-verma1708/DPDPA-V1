@@ -2,15 +2,19 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mui/material": "^6.0.2",
-    "@mui/x-data-grid": "^7.16.0",
+    "@mui/icons-material": "^6.1.0",
+    "@mui/material": "^6.1.0",
+    "@mui/x-data-grid": "^7.17.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "express-async-handler": "^1.2.0",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
-    "mui": "^0.0.1"
+    "mui": "^0.0.1",
+    "react-slick": "^0.30.2",
+    "recharts": "^2.12.7",
+    "slick-carousel": "^1.8.1"
   },
   "scripts": {
     "front": "cd .\\frontend\\ && pnpm start",

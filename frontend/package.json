@@ -6,8 +6,8 @@
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.6",
-    "@mui/material": "^5.16.5",
-    "@mui/x-data-grid": "^7.11.1",
+    "@mui/material": "^5.16.7",
+    "@mui/x-data-grid": "^7.17.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "axios": "^1.7.2",
@@ -19,6 +19,7 @@
     "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
     "reactstrap": "^9.2.2",
+    "recharts": "^2.12.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

@@ -39,3 +39,18 @@ export const deleteScope = async (id) => {
   const response = await axios.delete(`${API_URL_SCOPE_DELETE}${id}`);
   return response.data;
 };
+
+// Function to get the scope name by ID
+export const getScopeNameById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL_SCOPE}${id}`);
+    if (response.data && response.data.name) {
+      return response.data.name; // Assuming scope has a `name` field
+    } else {
+      throw new Error('Scope not found or invalid response structure');
+    }
+  } catch (error) {
+    console.error(`Error fetching scope by ID: ${id}`, error);
+    throw error;
+  }
+};

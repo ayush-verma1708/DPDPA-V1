@@ -9,6 +9,8 @@ import {
 } from '../api/userApi'; // Assume this gets the current logged-in user
 import { useNavigate } from 'react-router-dom';
 
+import RiskDashboard from '../components/RiskDashboard';
+
 const Dashboard = () => {
   const [showSteps, setShowSteps] = useState(true);
   const buttonClass = showSteps ? 'show-steps' : 'hide-steps';

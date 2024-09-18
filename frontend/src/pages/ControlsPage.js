@@ -26,7 +26,7 @@ const ControlsPage = () => {
     section_main_desc: '',
     section_desc: '',
     control_type: '',
-    control_Family_Id: ''
+    control_Family_Id: '',
   });
   const [editingControl, setEditingControl] = useState(null);
   const [editControl, setEditControl] = useState({
@@ -35,7 +35,7 @@ const ControlsPage = () => {
     section_main_desc: '',
     section_desc: '',
     control_type: '',
-    control_Family_Id: ''
+    control_Family_Id: '',
   });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -60,7 +60,9 @@ const ControlsPage = () => {
 
   const fetchControlFamilies = async () => {
     try {
-      const response = await axios.get('http://localhost:8021/api/v1/control-families');
+      const response = await axios.get(
+        'http://localhost:8021/api/v1/control-families'
+      );
       setControlFamilies(response.data);
     } catch (error) {
       console.error('Error fetching control families:', error);
@@ -99,7 +101,9 @@ const ControlsPage = () => {
   };
 
   const handleAddControl = async () => {
-    const isValidControlFamily = controlFamilies.some(cf => cf._id === newControl.control_Family_Id);
+    const isValidControlFamily = controlFamilies.some(
+      (cf) => cf._id === newControl.control_Family_Id
+    );
 
     if (!isValidControlFamily) {
       setSnackbarMessage('Control family does not exist');
@@ -109,7 +113,10 @@ const ControlsPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8021/api/v1/controls', newControl);
+      const response = await axios.post(
+        'http://localhost:8021/api/v1/controls',
+        newControl
+      );
       setControls([...controls, response.data]);
       setNewControl({
         fixed_id: '',
@@ -117,14 +124,16 @@ const ControlsPage = () => {
         section_main_desc: '',
         section_desc: '',
         control_type: '',
-        control_Family_Id: ''
+        control_Family_Id: '',
       });
       setSnackbarMessage('Control added successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
       console.error('Error adding control:', error.response?.data);
-      setSnackbarMessage(error.response?.data?.message || 'Error adding control');
+      setSnackbarMessage(
+        error.response?.data?.message || 'Error adding control'
+      );
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -132,10 +141,17 @@ const ControlsPage = () => {
 
   const handleEditControl = async () => {
     try {
-      await axios.put(`http://localhost:8021/api/v1/controls/${editingControl._id}`, editControl);
-      setControls(controls.map(control =>
-        control._id === editingControl._id ? { ...control, ...editControl } : control
-      ));
+      await axios.put(
+        `http://localhost:8021/api/v1/controls/${editingControl._id}`,
+        editControl
+      );
+      setControls(
+        controls.map((control) =>
+          control._id === editingControl._id
+            ? { ...control, ...editControl }
+            : control
+        )
+      );
       setEditingControl(null);
       setEditControl({
         fixed_id: '',
@@ -143,14 +159,19 @@ const ControlsPage = () => {
         section_main_desc: '',
         section_desc: '',
         control_type: '',
-        control_Family_Id: ''
+        control_Family_Id: '',
       });
       setSnackbarMessage('Control updated successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Error updating control:', error.response?.data || error.message);
-      setSnackbarMessage(error.response?.data?.message || 'Error updating control');
+      console.error(
+        'Error updating control:',
+        error.response?.data || error.message
+      );
+      setSnackbarMessage(
+        error.response?.data?.message || 'Error updating control'
+      );
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -159,13 +180,18 @@ const ControlsPage = () => {
   const handleDeleteControl = async (id) => {
     try {
       await axios.delete(`http://localhost:8021/api/v1/controls/${id}`);
-      setControls(controls.filter(control => control._id !== id));
+      setControls(controls.filter((control) => control._id !== id));
       setSnackbarMessage('Control deleted successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Error deleting control:', error.response?.data || error.message);
-      setSnackbarMessage(error.response?.data?.message || 'Error deleting control');
+      console.error(
+        'Error deleting control:',
+        error.response?.data || error.message
+      );
+      setSnackbarMessage(
+        error.response?.data?.message || 'Error deleting control'
+      );
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
@@ -185,65 +211,109 @@ const ControlsPage = () => {
   }
 
   return (
-    <div className="p-4">
-      <div className="control-form">
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          editingControl ? handleEditControl() : handleAddControl();
-        }}>
+    <div className='p-4'>
+      <div className='control-form'>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            editingControl ? handleEditControl() : handleAddControl();
+          }}
+        >
           <TextField
-            label="Section"
-            name="section"
+            label='Section'
+            name='section'
             value={editingControl ? editControl.section : newControl.section}
             onChange={handleTextChange}
             required
             fullWidth
-            margin="normal"
+            margin='normal'
           />
           <TextField
-            label="Section Main Description"
-            name="section_main_desc"
-            value={editingControl ? editControl.section_main_desc : newControl.section_main_desc}
+            label='Section Main Description'
+            name='section_main_desc'
+            value={
+              editingControl
+                ? editControl.section_main_desc
+                : newControl.section_main_desc
+            }
             onChange={handleTextChange}
             fullWidth
-            margin="normal"
+            margin='normal'
           />
           <TextField
-            label="Section Description"
-            name="section_desc"
-            value={editingControl ? editControl.section_desc : newControl.section_desc}
+            label='Section Description'
+            name='section_desc'
+            value={
+              editingControl
+                ? editControl.section_desc
+                : newControl.section_desc
+            }
             onChange={handleTextChange}
             fullWidth
-            margin="normal"
+            margin='normal'
           />
           <TextField
-            label="Control Type"
-            name="control_type"
-            value={editingControl ? editControl.control_type : newControl.control_type}
+            label='Control Type'
+            name='control_type'
+            value={
+              editingControl
+                ? editControl.control_type
+                : newControl.control_type
+            }
             onChange={handleTextChange}
             fullWidth
-            margin="normal"
+            margin='normal'
           />
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Control Family</InputLabel>
+          {/* Add the Criticality Dropdown Field */}
+          <FormControl fullWidth margin='normal'>
+            <InputLabel>Criticality</InputLabel>
             <Select
-              value={editingControl ? editControl.control_Family_Id : newControl.control_Family_Id}
+              name='criticality'
+              value={
+                editingControl
+                  ? editControl.criticality
+                  : newControl.criticality
+              }
               onChange={handleSelectChange}
               required
             >
-              <MenuItem value="" disabled>Select Control Family</MenuItem>
+              <MenuItem value='' disabled>
+                Select Criticality
+              </MenuItem>
+              <MenuItem value='low'>Low</MenuItem>
+              <MenuItem value='medium'>Medium</MenuItem>
+              <MenuItem value='high'>High</MenuItem>
+              <MenuItem value='critical'>Critical</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin='normal'>
+            <InputLabel>Control Family</InputLabel>
+            <Select
+              value={
+                editingControl
+                  ? editControl.control_Family_Id
+                  : newControl.control_Family_Id
+              }
+              onChange={handleSelectChange}
+              required
+            >
+              <MenuItem value='' disabled>
+                Select Control Family
+              </MenuItem>
               {controlFamilies.map((cf) => (
-                <MenuItem key={cf._id} value={cf._id}>{cf.variable_id}</MenuItem>
+                <MenuItem key={cf._id} value={cf._id}>
+                  {cf.variable_id}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
-          <Button type="submit" variant="contained" color="primary">
+          <Button type='submit' variant='contained' color='primary'>
             {editingControl ? 'Update Control' : 'Add Control'}
           </Button>
         </form>
       </div>
 
-      <TableContainer component={Paper} className="mt-4">
+      <TableContainer component={Paper} className='mt-4'>
         <Table>
           <TableHead>
             <TableRow>
@@ -252,36 +322,53 @@ const ControlsPage = () => {
               <TableCell>Section Main Description</TableCell>
               <TableCell>Section Description</TableCell>
               <TableCell>Control Type</TableCell>
+              <TableCell>Criticality</TableCell>
               <TableCell>Control Family</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {controls.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((control) => (
-              <TableRow key={control._id}>
-                <TableCell>{control.fixed_id}</TableCell>
-                <TableCell>{control.section}</TableCell>
-                <TableCell>{control.section_main_desc}</TableCell>
-                <TableCell>{control.section_desc}</TableCell>
-                <TableCell>{control.control_type}</TableCell>
-                <TableCell>{controlFamilies.find(cf => cf._id === control.control_Family_Id)?.variable_id}</TableCell>
-                <TableCell>
-                  <Button onClick={() => {
-                    setEditingControl(control);
-                    setEditControl({ ...control });
-                  }}
-                  disabled={control.isDPDPA}  // Disable the Edit button if isDPDPA is true
-                  >Edit</Button>
-                  <Button onClick={() => handleDeleteControl(control._id)}  disabled={control.isDPDPA} 
-                    >Delete</Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {controls
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((control) => (
+                <TableRow key={control._id}>
+                  <TableCell>{control.fixed_id}</TableCell>
+                  <TableCell>{control.section}</TableCell>
+                  <TableCell>{control.section_main_desc}</TableCell>
+                  <TableCell>{control.section_desc}</TableCell>
+                  <TableCell>{control.control_type}</TableCell>
+                  <TableCell>{control.criticality}</TableCell>
+                  <TableCell>
+                    {
+                      controlFamilies.find(
+                        (cf) => cf._id === control.control_Family_Id
+                      )?.variable_id
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => {
+                        setEditingControl(control);
+                        setEditControl({ ...control });
+                      }}
+                      disabled={control.isDPDPA} // Disable the Edit button if isDPDPA is true
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteControl(control._id)}
+                      disabled={control.isDPDPA}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
-          component="div"
+          component='div'
           count={controls.length}
           rowsPerPage={rowsPerPage}
           page={page}

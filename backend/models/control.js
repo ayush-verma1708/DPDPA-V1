@@ -5,12 +5,22 @@ const controlSchema = new mongoose.Schema({
   section: { type: String, required: true },
   section_main_desc: { type: String, required: true },
   section_desc: { type: String, required: true },
-  control_type: { type: String , required: true},
-  control_Family_Id: { type: mongoose.Schema.Types.ObjectId, ref: 'ControlFamily', required: true },
-  isDPDPA: { type: Boolean, default: false }
+  control_type: { type: String, required: true },
+  control_Family_Id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ControlFamily',
+    required: true,
+  },
+  isDPDPA: { type: Boolean, default: false },
+  criticality: {
+    type: String,
+    enum: ['low', 'medium', 'high', 'critical'],
+    required: true,
+    default: 'low',
+  },
 });
 
-controlSchema.pre('remove', async function(next) {
+controlSchema.pre('remove', async function (next) {
   try {
     await Action.deleteMany({ control_Id: this._id });
     next();
@@ -18,7 +28,6 @@ controlSchema.pre('remove', async function(next) {
     next(err);
   }
 });
-
 
 const Control = mongoose.model('Control', controlSchema);
 
