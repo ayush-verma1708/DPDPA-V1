@@ -35,6 +35,7 @@ const CompletionStatusSchema = new mongoose.Schema(
       required: true,
     },
     isCompleted: { type: Boolean, default: false },
+    isEvidenceUploaded: { type: Boolean, default: false },
     completedAt: { type: Date, default: null },
     username: { type: String },
     status: {

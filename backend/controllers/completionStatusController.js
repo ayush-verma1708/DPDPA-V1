@@ -12,6 +12,73 @@ const logHistory = (completionStatus, changes, username) => {
 };
 
 // Create or Update Completion Status
+// export const createOrUpdateStatus = async (req, res) => {
+//   const {
+//     actionId,
+//     assetId,
+//     scopeId,
+//     controlId,
+//     familyId,
+//     isCompleted,
+
+//     username,
+//     status,
+//     action,
+//     feedback,
+//   } = req.body;
+
+//   try {
+//     if (!actionId || !assetId || !controlId || !familyId) {
+//       return res.status(400).json({ error: 'Missing required fields' });
+//     }
+
+//     let completionStatus = await CompletionStatus.findOne({
+//       actionId,
+//       assetId,
+//       scopeId,
+//       controlId,
+//       familyId,
+//     });
+//     const changes = {};
+
+//     if (completionStatus) {
+//       // Update existing status
+//       if (isCompleted !== undefined) changes.isCompleted = isCompleted;
+//       if (username) changes.username = username;
+//       if (status) changes.status = status;
+//       if (action) changes.action = action;
+//       if (feedback) changes.feedback = feedback;
+
+//       Object.assign(completionStatus, changes);
+//       completionStatus.completedAt = isCompleted
+//         ? new Date()
+//         : completionStatus.completedAt;
+//       logHistory(completionStatus, changes, username);
+//       await completionStatus.save();
+//     } else {
+//       // Create new status entry
+//       completionStatus = new CompletionStatus({
+//         actionId,
+//         assetId,
+//         scopeId: scopeId || null,
+//         controlId,
+//         familyId,
+//         isCompleted,
+//         username,
+//         status,
+//         action,
+//         feedback,
+//         completedAt: isCompleted ? new Date() : null,
+//       });
+//       await completionStatus.save();
+//     }
+
+//     res.status(200).json(completionStatus);
+//   } catch (err) {
+//     console.error('Error in createOrUpdateStatus:', err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 export const createOrUpdateStatus = async (req, res) => {
   const {
     actionId,
@@ -20,6 +87,7 @@ export const createOrUpdateStatus = async (req, res) => {
     controlId,
     familyId,
     isCompleted,
+    isEvidenceUploaded,
     username,
     status,
     action,
@@ -43,6 +111,8 @@ export const createOrUpdateStatus = async (req, res) => {
     if (completionStatus) {
       // Update existing status
       if (isCompleted !== undefined) changes.isCompleted = isCompleted;
+      if (isEvidenceUploaded !== undefined)
+        changes.isEvidenceUploaded = isEvidenceUploaded;
       if (username) changes.username = username;
       if (status) changes.status = status;
       if (action) changes.action = action;
@@ -52,6 +122,7 @@ export const createOrUpdateStatus = async (req, res) => {
       completionStatus.completedAt = isCompleted
         ? new Date()
         : completionStatus.completedAt;
+
       logHistory(completionStatus, changes, username);
       await completionStatus.save();
     } else {
@@ -63,6 +134,7 @@ export const createOrUpdateStatus = async (req, res) => {
         controlId,
         familyId,
         isCompleted,
+        isEvidenceUploaded,
         username,
         status,
         action,
@@ -79,9 +151,43 @@ export const createOrUpdateStatus = async (req, res) => {
   }
 };
 
+// export const updateStatus = async (req, res) => {
+//   const { completionStatusId } = req.params;
+//   const { status, action, feedback, username } = req.body;
+
+//   try {
+//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ error: 'CompletionStatus not found' });
+//     }
+
+//     const changes = {};
+//     if (status !== undefined) changes.status = status;
+//     if (action !== undefined) changes.action = action;
+//     if (feedback !== undefined) changes.feedback = feedback;
+
+//     // Update the status and other fields
+//     Object.assign(completionStatus, changes);
+
+//     if (status === 'Audit Closed' || status === 'Closed') {
+//       completionStatus.isCompleted = true;
+//       completionStatus.completedAt = new Date();
+//     }
+
+//     logHistory(completionStatus, changes, username);
+
+//     await completionStatus.save();
+//     res.status(200).json(completionStatus);
+//   } catch (err) {
+//     console.error('Error in updateStatus:', err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
 export const updateStatus = async (req, res) => {
   const { completionStatusId } = req.params;
-  const { status, action, feedback, username } = req.body;
+  const { status, action, feedback, username, isEvidenceUploaded } = req.body;
 
   try {
     let completionStatus = await CompletionStatus.findById(completionStatusId);
@@ -94,6 +200,8 @@ export const updateStatus = async (req, res) => {
     if (status !== undefined) changes.status = status;
     if (action !== undefined) changes.action = action;
     if (feedback !== undefined) changes.feedback = feedback;
+    if (isEvidenceUploaded !== undefined)
+      changes.isEvidenceUploaded = isEvidenceUploaded;
 
     // Update the status and other fields
     Object.assign(completionStatus, changes);
@@ -267,6 +375,38 @@ export const delegateToAuditor = async (req, res) => {
 };
 
 // Controller for Auditor: Confirm Evidence or Return Evidence
+// export const confirmEvidence = async (req, res) => {
+//   const { completionStatusId } = req.params;
+//   const { feedback, username } = req.body;
+
+//   try {
+//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ error: 'CompletionStatus not found' });
+//     }
+
+//     const changes = {
+//       status: feedback ? 'Audit Non-Confirm' : 'Audit Closed',
+//       action: feedback ? 'Return Evidence' : 'Confirm Evidence',
+//       feedback: feedback || null,
+//     };
+
+//     if (!feedback) {
+//       changes.isCompleted = true;
+//       changes.completedAt = new Date();
+//     }
+
+//     Object.assign(completionStatus, changes);
+//     logHistory(completionStatus, changes, username);
+
+//     await completionStatus.save();
+//     res.status(200).json({ message: 'Evidence processed', completionStatus });
+//   } catch (err) {
+//     console.error('Error in confirmEvidence:', err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 export const confirmEvidence = async (req, res) => {
   const { completionStatusId } = req.params;
   const { feedback, username } = req.body;
@@ -282,6 +422,7 @@ export const confirmEvidence = async (req, res) => {
       status: feedback ? 'Audit Non-Confirm' : 'Audit Closed',
       action: feedback ? 'Return Evidence' : 'Confirm Evidence',
       feedback: feedback || null,
+      isEvidenceUploaded: true, // Evidence is considered uploaded when confirmed
     };
 
     if (!feedback) {
