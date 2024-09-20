@@ -419,8 +419,10 @@ const CompletionStatusPage = ({
                       return true; // No filtering for these roles, return all data
                     }
                     // For other users, only show statuses where assigned to the current user
-                    // return status.AssignedTo?._id === currentUserId;
-                    return status;
+                    return (
+                      currentUserId === status.AssignedTo?._id ||
+                      status.AssignedBy?._id
+                    );
                   })
                   .map((status) => {
                     const isCompleted = status.status === 'Completed';
