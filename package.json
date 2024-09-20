@@ -7,11 +7,13 @@
     "@mui/x-data-grid": "^7.17.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.4",
     "cookie-parser": "^1.4.6",
     "express-async-handler": "^1.2.0",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "mui": "^0.0.1",
+    "react-chartjs-2": "^5.2.0",
     "react-slick": "^0.30.2",
     "recharts": "^2.12.7",
     "slick-carousel": "^1.8.1"

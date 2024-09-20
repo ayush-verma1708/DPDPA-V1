@@ -7,9 +7,9 @@ import ScoreboardComponent from '../components/Scoreboard'; // Rename the import
 const ScoreboardPage = () => {
   return (
     <Container>
-      <Typography variant='h4' gutterBottom>
+      {/* <Typography variant='h4' gutterBottom>
         Scoreboard
-      </Typography>
+      </Typography> */}
       <Paper sx={{ padding: 2, marginBottom: 2 }}>
         <Box>
           <ScoreboardComponent />
