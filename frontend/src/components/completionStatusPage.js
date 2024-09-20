@@ -102,15 +102,57 @@ const CompletionStatusPage = ({
     [selectedScopeId, selectedAssetId, expandedFamilyId]
   );
 
+  // const handleFetchStatus = async () => {
+  //   setLoading(true); // Set loading true when fetching starts
+  //   try {
+  //     const response = await getStatus(query);
+  //     setFetchedStatuses(Array.isArray(response) ? response : [response]);
+  //   } catch (error) {
+  //     console.error('Error fetching status:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleFetchStatus = async () => {
     setLoading(true); // Set loading true when fetching starts
     try {
       const response = await getStatus(query);
-      setFetchedStatuses(Array.isArray(response) ? response : [response]);
+      let fetchedStatuses = Array.isArray(response) ? response : [response];
+
+      // Apply sorting logic here
+      fetchedStatuses = fetchedStatuses.sort((a, b) => {
+        const controlFamilyIdA = a.controlId?.controlFamily?.fixed_id || '';
+        const controlFamilyIdB = b.controlId?.controlFamily?.fixed_id || '';
+
+        const controlIdA = a.controlId?.fixed_id || '';
+        const controlIdB = b.controlId?.fixed_id || '';
+
+        const actionIdA = a.actionId?.fixed_id || '';
+        const actionIdB = b.actionId?.fixed_id || '';
+
+        // Compare controlFamily.fixed_id
+        const controlFamilyComparison =
+          controlFamilyIdA.localeCompare(controlFamilyIdB);
+        if (controlFamilyComparison !== 0) {
+          return controlFamilyComparison;
+        }
+
+        // Compare control.fixed_id if controlFamily IDs are the same
+        const controlComparison = controlIdA.localeCompare(controlIdB);
+        if (controlComparison !== 0) {
+          return controlComparison;
+        }
+
+        // Compare actionId.fixed_id if both controlFamily and control IDs are the same
+        return actionIdA.localeCompare(actionIdB);
+      });
+
+      // Set the sorted statuses
+      setFetchedStatuses(fetchedStatuses);
     } catch (error) {
       console.error('Error fetching status:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading false when fetching is done
     }
   };
 
@@ -361,33 +403,6 @@ const CompletionStatusPage = ({
       console.error('Error marking action as completed:', error);
     }
   };
-  // useEffect(() => {
-  //   console.log('fetchUser called');
-  //   const fetchCurrentUserData = async () => {
-  //     try {
-  //       const token = window.localStorage.getItem('token'); // Replace with actual token
-  //       const userData = await fetchCurrentUser(token);
-  //       setCurrentUsername(userData.username); // Set current username
-  //       setCurrentUserId(userData._id);
-  //     } catch (error) {
-  //       console.error('Error fetching current user data:', error);
-  //     }
-  //   };
-
-  //   fetchCurrentUserData();
-  // }, []);
-
-  // const handleMarkAsCompleted = async (actionId, controlId) => {
-  //   try {
-  //     // Assuming you have an API function to mark the action as completed
-  //     await markActionAsCompleted(actionId, controlId);
-
-  //     // Refetch the statuses after marking as completed
-  //     await handleFetchStatus();
-  //   } catch (error) {
-  //     console.error('Error marking action as completed:', error);
-  //   }
-  // };
 
   useEffect(() => {
     console.log('fetchCurrentUserData called');
@@ -436,7 +451,41 @@ const CompletionStatusPage = ({
               </TableHead>
               <TableBody>
                 {paginatedData
-                  .sort((a, b) => a._id.localeCompare(b._id))
+                  // .sort((a, b) => {
+                  //   const fixedIdA = a.actionId?.fixed_id || '';
+                  //   const fixedIdB = b.actionId?.fixed_id || '';
+                  //   return fixedIdA.localeCompare(fixedIdB);
+                  // })
+                  .sort((a, b) => {
+                    // Retrieve fixed IDs for controlFamily, control, and action
+                    const controlFamilyIdA =
+                      a.controlId?.controlFamily?.fixed_id || '';
+                    const controlFamilyIdB =
+                      b.controlId?.controlFamily?.fixed_id || '';
+
+                    const controlIdA = a.controlId?.fixed_id || '';
+                    const controlIdB = b.controlId?.fixed_id || '';
+
+                    const actionIdA = a.actionId?.fixed_id || '';
+                    const actionIdB = b.actionId?.fixed_id || '';
+
+                    // First, compare controlFamily.fixed_id
+                    const controlFamilyComparison =
+                      controlFamilyIdA.localeCompare(controlFamilyIdB);
+                    if (controlFamilyComparison !== 0) {
+                      return controlFamilyComparison;
+                    }
+
+                    // If controlFamily.fixed_id is the same, compare control.fixed_id
+                    const controlComparison =
+                      controlIdA.localeCompare(controlIdB);
+                    if (controlComparison !== 0) {
+                      return controlComparison;
+                    }
+
+                    // If both controlFamily.fixed_id and control.fixed_id are the same, compare actionId.fixed_id
+                    return actionIdA.localeCompare(actionIdB);
+                  })
                   .map((status) => {
                     const isCompleted = status.status === 'Completed';
 
@@ -639,201 +688,6 @@ const CompletionStatusPage = ({
                     );
                   })}
               </TableBody>
-
-              {/* <TableBody>
-                {paginatedData
-                  .sort((a, b) => a._id.localeCompare(b._id))
-                  .map((status) => (
-                    <React.Fragment key={status._id}>
-                      <TableRow>
-                        <TableCell>
-                          <IconButton
-                            size='small'
-                            onClick={() => handleToggleRow(status._id)}
-                            color='primary'
-                          >
-                            {openRows[status._id] ? (
-                              <KeyboardArrowUp />
-                            ) : (
-                              <KeyboardArrowDown />
-                            )}
-                          </IconButton>
-                        </TableCell>
-                        <TableCell>{getUsername(status.username)}</TableCell>
-                        <TableCell>
-                          {status.actionId?.fixed_id || 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          {status.controlId?.section_desc || 'N/A'}
-                        </TableCell>
-                        <TableCell>{status.feedback || 'N/A'}</TableCell>
-                        <TableCell>{status.status || 'N/A'}</TableCell>
-                        {role === 'IT Team' && (
-                          <TableCell>
-                            <input type='file' onChange={handleFileChange} />
-                            <Tooltip title='Upload Evidence'>
-                              <Button
-                                variant='contained'
-                                color='primary'
-                                startIcon={<Upload />}
-                                onClick={() =>
-                                  handleUploadEvidence(
-                                    status.actionId?._id,
-                                    status.controlId?._id
-                                  )
-                                }
-                              >
-                                Upload Evidence
-                              </Button>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {(role === 'IT Team' || role === 'Auditor') && (
-                          <TableCell>
-                            <Tooltip title='View Evidence'>
-                              <Button
-                                variant='contained'
-                                color='primary'
-                                startIcon={<Visibility />}
-                                onClick={() =>
-                                  handleViewEvidence(
-                                    status.actionId?._id,
-                                    status.controlId?._id
-                                  )
-                                }
-                              >
-                                View Evidence
-                              </Button>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {(role === 'Compliance Team' || role === 'Admin') && (
-                          <TableCell>
-                            <Tooltip title='Delegate to IT'>
-                              <Button
-                                variant='outlined'
-                                color='secondary'
-                                startIcon={<Edit />}
-                                onClick={() =>
-                                  onDelegateButtonClick(
-                                    status._id,
-                                    status.assetId._id
-                                  )
-                                }
-                              >
-                                Delegate to IT
-                              </Button>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {(role === 'IT Team' || role === 'Admin') && (
-                          <TableCell>
-                            <Tooltip title='Delegate to Auditor'>
-                              <Button
-                                variant='outlined'
-                                color='secondary'
-                                startIcon={<Edit />}
-                                onClick={() =>
-                                  handleDelegateToAuditor(status._id)
-                                }
-                              >
-                                Delegate to Auditor
-                              </Button>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {(role === 'Auditor' || role === 'Admin') && (
-                          <TableCell>
-                            <Tooltip title='Raise Query'>
-                              <Button
-                                variant='contained'
-                                color='error'
-                                startIcon={<CheckCircle />}
-                                onClick={() =>
-                                  handleConfirmEvidence(status._id)
-                                }
-                              >
-                                Raise Query
-                              </Button>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {role === 'Auditor' && (
-                          <TableCell>
-                            <Tooltip title='Confirm Evidence'>
-                              <Button
-                                variant='contained'
-                                color='primary'
-                                onClick={() =>
-                                  handleMarkAsCompleted(
-                                    status.actionId?._id,
-                                    status.controlId?._id
-                                  )
-                                }
-                              >
-                                Confirm Evidence
-                              </Button>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                      </TableRow>
-                      <TableRow>
-                        <TableCell
-                          style={{ paddingBottom: 0, paddingTop: 0 }}
-                          colSpan={13}
-                        >
-                          <Collapse
-                            in={openRows[status._id]}
-                            timeout='auto'
-                            unmountOnExit
-                          >
-                            <div style={{ margin: '10px' }}>
-                              <h3>History</h3>
-                              {status.history && status.history.length > 0 ? (
-                                <Table size='small' aria-label='history'>
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell>Modified At</TableCell>
-                                      <TableCell>Modified By</TableCell>
-                                      <TableCell>Changes</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {status.history.map((change, index) => (
-                                      <TableRow key={index}>
-                                        <TableCell>
-                                          {new Date(
-                                            change.modifiedAt
-                                          ).toLocaleString()}
-                                        </TableCell>
-                                        <TableCell>
-                                          {change.modifiedBy}
-                                        </TableCell>
-                                        <TableCell>
-                                          <ul>
-                                            {Object.entries(change.changes).map(
-                                              ([key, value]) => (
-                                                <li
-                                                  key={key}
-                                                >{`${key}: ${value}`}</li>
-                                              )
-                                            )}
-                                          </ul>
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              ) : (
-                                <p>No history available.</p>
-                              )}
-                            </div>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  ))}
-              </TableBody> */}
             </Table>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
