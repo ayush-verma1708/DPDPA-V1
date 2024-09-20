@@ -78,10 +78,13 @@ export const delegateToIT = async (
 };
 
 // Delegate to Auditor
-export const delegateToAuditor = async (completionStatusId) => {
+export const delegateToAuditor = async (completionStatusId, currentUserId) => {
   try {
     const response = await axios.put(
-      `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-auditor`
+      `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-auditor`,
+      {
+        currentUserId,
+      }
     );
     return response.data;
   } catch (error) {

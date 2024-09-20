@@ -239,10 +239,9 @@ const CompletionStatusPage = ({
     }
   };
 
-  const handleDelegateToAuditor = async (statusId) => {
+  const handleDelegateToAuditor = async (statusId, currentUserId) => {
     try {
-      const response = await delegateToAuditor(statusId);
-      updateStatusInList(statusId, 'Audit Delegated', 'Delegate to Auditor');
+      const response = await delegateToAuditor(statusId, currentUserId);
       await handleFetchStatus(); // Refetch data after action
     } catch (error) {
       console.error('Error delegating to Auditor:', error);
@@ -536,29 +535,21 @@ const CompletionStatusPage = ({
                           )}
                           {(role === 'IT Team' || role === 'Admin') && (
                             <TableCell>
-                              {/* <Tooltip title='Delegate to Auditor'>
-                                <Button
-                                  variant='outlined'
-                                  color='secondary'
-                                  startIcon={<Edit />}
-                                  onClick={() =>
-                                    handleDelegateToAuditor(status._id)
-                                  }
-                                  disabled={isCompleted} // Disable button if completed
-                                >
-                                  Delegate to Auditor
-                                </Button>
-                              </Tooltip> */}
                               <Tooltip title='Delegate to Auditor'>
                                 <Button
                                   variant='text' // Change to 'text' to remove outlined styling
                                   color='secondary'
                                   onClick={() =>
-                                    handleDelegateToAuditor(status._id)
+                                    handleDelegateToAuditor(
+                                      status._id,
+                                      currentUserId
+                                    )
                                   }
                                   disabled={
-                                    isCompleted ||
-                                    status.status !== 'Evidence Uploaded'
+                                    isCompleted
+
+                                    // ||
+                                    // status.status !== 'Evidence Uploaded'
                                   } // Disable button if completed
                                 >
                                   Delegate to Auditor

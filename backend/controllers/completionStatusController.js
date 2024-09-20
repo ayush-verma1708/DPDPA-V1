@@ -234,29 +234,74 @@ export const delegateToIT = async (req, res) => {
 };
 
 // Controller for IT Team: Delegate to Auditor
+// export const delegateToAuditor = async (req, res) => {
+//   const { completionStatusId } = req.params;
+//   const { currentUserId } = req.body;
+//   defaultAuditor = '66d6d07eef980699d3d64258';
+//   try {
+//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ error: 'CompletionStatus not found' });
+//     }
+
+//     const changes = {
+//       status: 'Audit Delegated',
+//       action: 'Delegate to Auditor',
+//       // adding default auditor
+//       AssignedBy: currentUserId,
+//       AssignedTo: defaultAuditor,
+//     };
+
+//     Object.assign(completionStatus, changes);
+//     logHistory(completionStatus, changes, req.body.username);
+
+//     await completionStatus.save();
+
+//     res.status(200).json({ message: 'Delegated to Auditor', completionStatus });
+//   } catch (err) {
+//     console.error('Error in delegateToAuditor:', err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 export const delegateToAuditor = async (req, res) => {
-  const { completionStatusId } = req.params;
+  const { completionStatusId } = req.params; // Extracting ID from request params
+  const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
+
+  // Define default auditor
+  const defaultAuditor = '66d6d07eef980699d3d64258';
 
   try {
+    // Find the completion status by ID
     let completionStatus = await CompletionStatus.findById(completionStatusId);
 
+    // If no completion status is found, return 404 error
     if (!completionStatus) {
       return res.status(404).json({ error: 'CompletionStatus not found' });
     }
 
+    // Define changes to be made
     const changes = {
-      status: 'Audit Delegated',
-      action: 'Delegate to Auditor',
+      status: 'Audit Delegated', // Update status
+      action: 'Delegate to Auditor', // Update action
+      AssignedBy: currentUserId, // Assign current user ID
+      AssignedTo: defaultAuditor, // Assign default auditor
     };
 
+    // Merge changes into the completion status object
     Object.assign(completionStatus, changes);
-    logHistory(completionStatus, changes, req.body.username);
 
+    // Log history for auditing (you might want to ensure logHistory is implemented correctly)
+    logHistory(completionStatus, changes, username);
+
+    // Save the updated completion status document
     await completionStatus.save();
 
+    // Return success response
     res.status(200).json({ message: 'Delegated to Auditor', completionStatus });
   } catch (err) {
     console.error('Error in delegateToAuditor:', err);
+    // Return 500 error if something goes wrong in the try block
     res.status(500).json({ error: err.message });
   }
 };
