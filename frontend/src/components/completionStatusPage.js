@@ -79,6 +79,7 @@ const CompletionStatusPage = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [usernames, setUsernames] = useState({});
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
+  const [currentUserId, setCurrentUserId] = useState(null); // Store current username
   const [role, setRole] = useState(''); // To store the role from userData
 
   // Pagination state
@@ -118,94 +119,55 @@ const CompletionStatusPage = ({
     handleFetchStatus(); // Fetch data on component mount and when query changes
   }, [query]);
 
-  useEffect(() => {
-    console.log('fetchUser called');
-    const fetchCurrentUserData = async () => {
-      try {
-        const token = window.localStorage.getItem('token'); // Replace with actual token
-        const userData = await fetchCurrentUser(token);
-        setCurrentUsername(userData.username); // Set current username
-      } catch (error) {
-        console.error('Error fetching current user data:', error);
-      }
-    };
-
-    fetchCurrentUserData();
-  }, []);
-
   //view evidence logic
 
   // Fetch current user data
-  useEffect(() => {
-    console.log('fetchCurrentUserData called');
-    const fetchCurrentUserData = async () => {
-      try {
-        const token = window.localStorage.getItem('token'); // Replace with actual token
-        const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
-        setCurrentUsername(userData.username); // Set current username
-        setRole(userData.data.role); // Set role from user data
-      } catch (error) {
-        console.error('Error fetching current user data:', error);
-      }
-    };
 
-    fetchCurrentUserData(); // Call the async function inside useEffect
-  }, []); // Empty dependency array means it runs once after the component mounts
+  // useEffect(() => {
+  //   console.log('fetchall User');
+  //   const fetchAllUsernames = async () => {
+  //     const uniqueUserIds = [
+  //       ...new Set(fetchedStatuses.map((status) => status.username)),
+  //     ];
+  //     const newUsernames = {};
 
-  useEffect(() => {
-    console.log('fetchall User');
-    const fetchAllUsernames = async () => {
-      const uniqueUserIds = [
-        ...new Set(fetchedStatuses.map((status) => status.username)),
-      ];
-      const newUsernames = {};
+  //     await Promise.all(
+  //       uniqueUserIds.map(async (userId) => {
+  //         if (userId !== 'yourUsername' && !usernames[userId]) {
+  //           const username = await handleFetchUsername(userId);
+  //           newUsernames[userId] = username;
+  //         }
+  //       })
+  //     );
 
-      await Promise.all(
-        uniqueUserIds.map(async (userId) => {
-          if (userId !== 'yourUsername' && !usernames[userId]) {
-            const username = await handleFetchUsername(userId);
-            newUsernames[userId] = username;
-          }
-        })
-      );
+  //     setUsernames((prevUsernames) => ({
+  //       ...prevUsernames,
+  //       ...newUsernames,
+  //     }));
+  //   };
 
-      setUsernames((prevUsernames) => ({
-        ...prevUsernames,
-        ...newUsernames,
-      }));
-    };
+  //   fetchAllUsernames();
+  // }, [fetchedStatuses]);
 
-    fetchAllUsernames();
-  }, [fetchedStatuses]);
+  // const getUsername = (userId) => {
+  //   return usernames[userId] || 'N/A';
+  // };
 
-  const getUsername = (userId) => {
-    return usernames[userId] || 'N/A';
-  };
+  // const handleFetchUsername = async (userId) => {
+  //   if (userId === window.localStorage.getItem('username')) {
+  //     return 'N/A'; // Return a default value if userId is 'yourusername'
+  //   }
 
-  const handleFetchUsername = async (userId) => {
-    // if (usernames[userId]) {
-    //   return usernames[userId]; // Return cached username if it exists
-    // }
-    if (userId === window.localStorage.getItem('username')) {
-      return 'N/A'; // Return a default value if userId is 'yourusername'
-    }
+  //   try {
+  //     const userData = await getUserById(userId);
+  //     const username = userData.username;
 
-    try {
-      const userData = await getUserById(userId);
-      const username = userData.username;
-
-      // // Cache the username to avoid redundant API calls
-      // setUsernames((prevUsernames) => ({
-      //   ...prevUsernames,
-      //   [userId]: username,
-      // }));
-
-      return username;
-    } catch (error) {
-      console.error('Error fetching username:', error);
-      return 'N/A';
-    }
-  };
+  //     return username;
+  //   } catch (error) {
+  //     console.error('Error fetching username:', error);
+  //     return 'N/A';
+  //   }
+  // };
 
   const handleToggleRow = (statusId) => {
     setOpenRows((prevOpenRows) => ({
@@ -281,7 +243,11 @@ const CompletionStatusPage = ({
       const itOwnerUsername = assetDetail.itOwnerName; // Adjust field name if needed
 
       // Update the status with the IT owner username
-      const response = await delegateToIT(statusId, itOwnerUsername);
+      const response = await delegateToIT(
+        statusId,
+        itOwnerUsername,
+        currentUserId
+      );
 
       // Update status in the list
       updateStatusInList(
@@ -395,6 +361,21 @@ const CompletionStatusPage = ({
       console.error('Error marking action as completed:', error);
     }
   };
+  // useEffect(() => {
+  //   console.log('fetchUser called');
+  //   const fetchCurrentUserData = async () => {
+  //     try {
+  //       const token = window.localStorage.getItem('token'); // Replace with actual token
+  //       const userData = await fetchCurrentUser(token);
+  //       setCurrentUsername(userData.username); // Set current username
+  //       setCurrentUserId(userData._id);
+  //     } catch (error) {
+  //       console.error('Error fetching current user data:', error);
+  //     }
+  //   };
+
+  //   fetchCurrentUserData();
+  // }, []);
 
   // const handleMarkAsCompleted = async (actionId, controlId) => {
   //   try {
@@ -407,6 +388,22 @@ const CompletionStatusPage = ({
   //     console.error('Error marking action as completed:', error);
   //   }
   // };
+
+  useEffect(() => {
+    console.log('fetchCurrentUserData called');
+    const fetchCurrentUserData = async () => {
+      try {
+        const token = window.localStorage.getItem('token'); // Replace with actual token
+        const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
+        setCurrentUsername(userData.username); // Set current username
+        setRole(userData.data.role); // Set role from user data
+      } catch (error) {
+        console.error('Error fetching current user data:', error);
+      }
+    };
+
+    fetchCurrentUserData(); // Call the async function inside useEffect
+  }, []); // Empty dependency array means it runs once after the component mounts
 
   return (
     <div style={{ padding: '20px' }}>
@@ -423,6 +420,7 @@ const CompletionStatusPage = ({
                 <TableRow>
                   <TableCell />
                   <TableCell>Assigned to</TableCell>
+                  <TableCell>Assigned By</TableCell>
                   <TableCell>Action</TableCell>
                   <TableCell>Control</TableCell>
 
@@ -459,7 +457,8 @@ const CompletionStatusPage = ({
                               )}
                             </IconButton>
                           </TableCell>
-                          <TableCell>{getUsername(status.username)}</TableCell>
+                          <TableCell>{status.AssignedTo?.username}</TableCell>
+                          <TableCell>{status.AssignedBy?.username}</TableCell>
                           <TableCell>
                             {status.actionId?.fixed_id || 'N/A'}
                           </TableCell>

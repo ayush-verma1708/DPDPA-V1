@@ -57,23 +57,17 @@ export const deleteStatus = async (completionStatusId) => {
   }
 };
 
-// Delegate to IT Team
-// export const delegateToIT = async (completionStatusId) => {
-//   try {
-//     const response = await axios.put(`${API_BASE_URL}/completion-status/${completionStatusId}/delegate-it`);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error in delegateToIT:', error);
-//     throw error;
-//   }
-// };
-
-export const delegateToIT = async (completionStatusId, itOwnerUsername) => {
+export const delegateToIT = async (
+  completionStatusId,
+  itOwnerId,
+  currentUserId
+) => {
   try {
     const response = await axios.put(
       `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-it`,
       {
-        itOwnerUsername,
+        itOwnerId,
+        currentUserId,
       }
     );
     return response.data;
