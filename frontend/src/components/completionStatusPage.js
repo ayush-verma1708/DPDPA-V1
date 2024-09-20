@@ -410,7 +410,8 @@ const CompletionStatusPage = ({
       try {
         const token = window.localStorage.getItem('token'); // Replace with actual token
         const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
-        setCurrentUsername(userData.username); // Set current username
+        setCurrentUsername(userData.data.username); // Set current username
+        setCurrentUserId(userData.data._id); // Set current username
         setRole(userData.data.role); // Set role from user data
       } catch (error) {
         console.error('Error fetching current user data:', error);
@@ -452,40 +453,36 @@ const CompletionStatusPage = ({
               <TableBody>
                 {paginatedData
                   // .sort((a, b) => {
-                  //   const fixedIdA = a.actionId?.fixed_id || '';
-                  //   const fixedIdB = b.actionId?.fixed_id || '';
-                  //   return fixedIdA.localeCompare(fixedIdB);
+                  //   // Retrieve fixed IDs for controlFamily, control, and action
+                  //   const controlFamilyIdA =
+                  //     a.controlId?.controlFamily?.fixed_id || '';
+                  //   const controlFamilyIdB =
+                  //     b.controlId?.controlFamily?.fixed_id || '';
+
+                  //   const controlIdA = a.controlId?.fixed_id || '';
+                  //   const controlIdB = b.controlId?.fixed_id || '';
+
+                  //   const actionIdA = a.actionId?.fixed_id || '';
+                  //   const actionIdB = b.actionId?.fixed_id || '';
+
+                  //   // First, compare controlFamily.fixed_id
+                  //   const controlFamilyComparison =
+                  //     controlFamilyIdA.localeCompare(controlFamilyIdB);
+                  //   if (controlFamilyComparison !== 0) {
+                  //     return controlFamilyComparison;
+                  //   }
+
+                  //   // If controlFamily.fixed_id is the same, compare control.fixed_id
+                  //   const controlComparison =
+                  //     controlIdA.localeCompare(controlIdB);
+                  //   if (controlComparison !== 0) {
+                  //     return controlComparison;
+                  //   }
+
+                  //   // If both controlFamily.fixed_id and control.fixed_id are the same, compare actionId.fixed_id
+                  //   return actionIdA.localeCompare(actionIdB);
                   // })
-                  .sort((a, b) => {
-                    // Retrieve fixed IDs for controlFamily, control, and action
-                    const controlFamilyIdA =
-                      a.controlId?.controlFamily?.fixed_id || '';
-                    const controlFamilyIdB =
-                      b.controlId?.controlFamily?.fixed_id || '';
-
-                    const controlIdA = a.controlId?.fixed_id || '';
-                    const controlIdB = b.controlId?.fixed_id || '';
-
-                    const actionIdA = a.actionId?.fixed_id || '';
-                    const actionIdB = b.actionId?.fixed_id || '';
-
-                    // First, compare controlFamily.fixed_id
-                    const controlFamilyComparison =
-                      controlFamilyIdA.localeCompare(controlFamilyIdB);
-                    if (controlFamilyComparison !== 0) {
-                      return controlFamilyComparison;
-                    }
-
-                    // If controlFamily.fixed_id is the same, compare control.fixed_id
-                    const controlComparison =
-                      controlIdA.localeCompare(controlIdB);
-                    if (controlComparison !== 0) {
-                      return controlComparison;
-                    }
-
-                    // If both controlFamily.fixed_id and control.fixed_id are the same, compare actionId.fixed_id
-                    return actionIdA.localeCompare(actionIdB);
-                  })
+                  .filter((status) => status.AssignedTo?._id === currentUserId)
                   .map((status) => {
                     const isCompleted = status.status === 'Completed';
 
