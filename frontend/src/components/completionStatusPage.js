@@ -50,13 +50,14 @@ import { fetchCurrentUser } from '../api/userApi';
 import EvidenceTableCell from './EvidenceTableCell';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Tooltip } from '@mui/material';
+import { uploadEvidence } from '../api/evidenceApi';
 
 const CompletionStatusPage = ({
   expandedFamilyId,
   selectedAssetId,
   selectedScopeId,
   handleFileChange,
-  handleUploadEvidence,
+  UploadSelectedEvidence,
   markActionAsCompleted,
 }) => {
   const [statusData, setStatusData] = useState({
@@ -88,9 +89,6 @@ const CompletionStatusPage = ({
 
   // New state to manage row expansion for history details
   const [openRows, setOpenRows] = useState({});
-  const [evidenceUrls, setEvidenceUrls] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [hasEvidence, setHasEvidence] = useState(null); // null: loading, true: evidence available, false: no evidence
 
   // Memoize query object to prevent unnecessary re-renders
   const query = useMemo(
@@ -102,17 +100,6 @@ const CompletionStatusPage = ({
     [selectedScopeId, selectedAssetId, expandedFamilyId]
   );
 
-  // const handleFetchStatus = async () => {
-  //   setLoading(true); // Set loading true when fetching starts
-  //   try {
-  //     const response = await getStatus(query);
-  //     setFetchedStatuses(Array.isArray(response) ? response : [response]);
-  //   } catch (error) {
-  //     console.error('Error fetching status:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleFetchStatus = async () => {
     setLoading(true); // Set loading true when fetching starts
     try {
@@ -161,56 +148,6 @@ const CompletionStatusPage = ({
     handleFetchStatus(); // Fetch data on component mount and when query changes
   }, [query]);
 
-  //view evidence logic
-
-  // Fetch current user data
-
-  // useEffect(() => {
-  //   console.log('fetchall User');
-  //   const fetchAllUsernames = async () => {
-  //     const uniqueUserIds = [
-  //       ...new Set(fetchedStatuses.map((status) => status.username)),
-  //     ];
-  //     const newUsernames = {};
-
-  //     await Promise.all(
-  //       uniqueUserIds.map(async (userId) => {
-  //         if (userId !== 'yourUsername' && !usernames[userId]) {
-  //           const username = await handleFetchUsername(userId);
-  //           newUsernames[userId] = username;
-  //         }
-  //       })
-  //     );
-
-  //     setUsernames((prevUsernames) => ({
-  //       ...prevUsernames,
-  //       ...newUsernames,
-  //     }));
-  //   };
-
-  //   fetchAllUsernames();
-  // }, [fetchedStatuses]);
-
-  // const getUsername = (userId) => {
-  //   return usernames[userId] || 'N/A';
-  // };
-
-  // const handleFetchUsername = async (userId) => {
-  //   if (userId === window.localStorage.getItem('username')) {
-  //     return 'N/A'; // Return a default value if userId is 'yourusername'
-  //   }
-
-  //   try {
-  //     const userData = await getUserById(userId);
-  //     const username = userData.username;
-
-  //     return username;
-  //   } catch (error) {
-  //     console.error('Error fetching username:', error);
-  //     return 'N/A';
-  //   }
-  // };
-
   const handleToggleRow = (statusId) => {
     setOpenRows((prevOpenRows) => ({
       ...prevOpenRows,
@@ -235,8 +172,6 @@ const CompletionStatusPage = ({
   );
 
   useEffect(() => {
-    console.log('fetchData');
-
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -385,11 +320,8 @@ const CompletionStatusPage = ({
       const feedback = prompt(
         'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
       );
-
       // Mark the action as completed
       await markActionAsCompleted(actionId, controlId, feedback);
-
-      // Refetch the statuses after marking as completed
 
       // Update status in the list
       updateStatusInList(
@@ -401,6 +333,16 @@ const CompletionStatusPage = ({
       await handleFetchStatus();
     } catch (error) {
       console.error('Error marking action as completed:', error);
+    }
+  };
+
+  const handleUploadEvidence = async (actionId, controlId) => {
+    // Mark the action as completed
+    await UploadSelectedEvidence(actionId, controlId);
+
+    await handleFetchStatus();
+    {
+      console.error('Error Uploading');
     }
   };
 
@@ -435,12 +377,12 @@ const CompletionStatusPage = ({
               <TableHead>
                 <TableRow>
                   <TableCell />
-                  <TableCell>Assigned to</TableCell>
-                  <TableCell>Assigned By</TableCell>
+                  {/* <TableCell>Assigned to</TableCell> */}
+                  {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
+                  {/* <TableCell>Assigned By</TableCell> */}
                   <TableCell>Action</TableCell>
                   <TableCell>Control</TableCell>
-
-                  <TableCell>Feedback</TableCell>
+                  {role !== 'IT Team' && <TableCell>Feedback</TableCell>}
                   <TableCell>Status</TableCell>
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
                   <TableCell>View</TableCell>
@@ -452,37 +394,14 @@ const CompletionStatusPage = ({
               </TableHead>
               <TableBody>
                 {paginatedData
-                  // .sort((a, b) => {
-                  //   // Retrieve fixed IDs for controlFamily, control, and action
-                  //   const controlFamilyIdA =
-                  //     a.controlId?.controlFamily?.fixed_id || '';
-                  //   const controlFamilyIdB =
-                  //     b.controlId?.controlFamily?.fixed_id || '';
-
-                  //   const controlIdA = a.controlId?.fixed_id || '';
-                  //   const controlIdB = b.controlId?.fixed_id || '';
-
-                  //   const actionIdA = a.actionId?.fixed_id || '';
-                  //   const actionIdB = b.actionId?.fixed_id || '';
-
-                  //   // First, compare controlFamily.fixed_id
-                  //   const controlFamilyComparison =
-                  //     controlFamilyIdA.localeCompare(controlFamilyIdB);
-                  //   if (controlFamilyComparison !== 0) {
-                  //     return controlFamilyComparison;
-                  //   }
-
-                  //   // If controlFamily.fixed_id is the same, compare control.fixed_id
-                  //   const controlComparison =
-                  //     controlIdA.localeCompare(controlIdB);
-                  //   if (controlComparison !== 0) {
-                  //     return controlComparison;
-                  //   }
-
-                  //   // If both controlFamily.fixed_id and control.fixed_id are the same, compare actionId.fixed_id
-                  //   return actionIdA.localeCompare(actionIdB);
-                  // })
-                  .filter((status) => status.AssignedTo?._id === currentUserId)
+                  .filter((status) => {
+                    // Allow Admin and Compliance Team to view all statuses
+                    if (role === 'Admin' || role === 'Compliance Team') {
+                      return true; // No filtering for these roles, return all data
+                    }
+                    // For other users, only show statuses where assigned to the current user
+                    return status.AssignedTo?._id === currentUserId;
+                  })
                   .map((status) => {
                     const isCompleted = status.status === 'Completed';
 
@@ -503,31 +422,38 @@ const CompletionStatusPage = ({
                               )}
                             </IconButton>
                           </TableCell>
-                          <TableCell>{status.AssignedTo?.username}</TableCell>
-                          <TableCell>{status.AssignedBy?.username}</TableCell>
+                          {role !== 'IT Team' && (
+                            <TableCell>{status.AssignedTo?.username}</TableCell>
+                          )}
+                          {/* <TableCell>{status.AssignedBy?.username}</TableCell> */}
                           <TableCell>
                             {status.actionId?.fixed_id || 'N/A'}
                           </TableCell>
                           <TableCell>
                             {status.controlId?.section_desc || 'N/A'}
                           </TableCell>
-                          <TableCell>{status.feedback || 'N/A'}</TableCell>
+                          {/* <TableCell>{status.feedback || 'N/A'}</TableCell> */}
+                          {role !== 'IT Team' && (
+                            <TableCell>{status.feedback || 'N/A'}</TableCell>
+                          )}
+
                           <TableCell>{status.status || 'N/A'}</TableCell>
                           {role === 'IT Team' && !isCompleted && (
                             <TableCell>
                               <input type='file' onChange={handleFileChange} />
                               <Tooltip title='Upload Evidence'>
                                 <Button
-                                  variant='contained'
-                                  color='primary'
-                                  startIcon={<Upload />}
                                   onClick={() =>
                                     handleUploadEvidence(
                                       status.actionId?._id,
                                       status.controlId?._id
                                     )
                                   }
-                                  disabled={isCompleted} // Disable button if completed
+                                  disabled={
+                                    isCompleted ||
+                                    !status.status == 'Delegated to IT Team' ||
+                                    status.isEvidenceUploaded
+                                  } // Disable button if completed
                                 >
                                   Upload Evidence
                                 </Button>
@@ -536,7 +462,7 @@ const CompletionStatusPage = ({
                           )}
                           {(role === 'IT Team' || role === 'Auditor') && (
                             <TableCell>
-                              <Tooltip title='View Evidence'>
+                              {/* <Tooltip title='View Evidence'>
                                 <Button
                                   variant='contained'
                                   color='primary'
@@ -547,6 +473,22 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
+                                  disabled={!status.isEvidenceUploaded} // Disable button if completed
+                                >
+                                  View Evidence
+                                </Button>
+                              </Tooltip> */}
+                              <Tooltip title='View Evidence'>
+                                <Button
+                                  variant='text' // Change to 'text' to remove contained styling
+                                  color='primary'
+                                  onClick={() =>
+                                    handleViewEvidence(
+                                      status.actionId?._id,
+                                      status.controlId?._id
+                                    )
+                                  }
+                                  disabled={!status.isEvidenceUploaded} // Disable button if evidence is not uploaded
                                 >
                                   View Evidence
                                 </Button>
@@ -555,7 +497,7 @@ const CompletionStatusPage = ({
                           )}
                           {(role === 'Compliance Team' || role === 'Admin') && (
                             <TableCell>
-                              <Tooltip title='Delegate to IT'>
+                              {/* <Tooltip title='Delegate to IT'>
                                 <Button
                                   variant='outlined'
                                   color='secondary'
@@ -566,7 +508,26 @@ const CompletionStatusPage = ({
                                       status.assetId._id
                                     )
                                   }
-                                  disabled={isCompleted} // Disable button if completed
+                                  disabled={
+                                    isCompleted || status.status !== 'Open'
+                                  } // Disable button if completed
+                                >
+                                  Delegate to IT
+                                </Button>
+                              </Tooltip> */}
+                              <Tooltip title='Delegate to IT'>
+                                <Button
+                                  variant='text' // Change to 'text' to remove the outlined styling
+                                  color='secondary'
+                                  onClick={() =>
+                                    onDelegateButtonClick(
+                                      status._id,
+                                      status.assetId._id
+                                    )
+                                  }
+                                  disabled={
+                                    isCompleted || status.status !== 'Open'
+                                  } // Disable button if completed
                                 >
                                   Delegate to IT
                                 </Button>
@@ -575,7 +536,7 @@ const CompletionStatusPage = ({
                           )}
                           {(role === 'IT Team' || role === 'Admin') && (
                             <TableCell>
-                              <Tooltip title='Delegate to Auditor'>
+                              {/* <Tooltip title='Delegate to Auditor'>
                                 <Button
                                   variant='outlined'
                                   color='secondary'
@@ -584,6 +545,21 @@ const CompletionStatusPage = ({
                                     handleDelegateToAuditor(status._id)
                                   }
                                   disabled={isCompleted} // Disable button if completed
+                                >
+                                  Delegate to Auditor
+                                </Button>
+                              </Tooltip> */}
+                              <Tooltip title='Delegate to Auditor'>
+                                <Button
+                                  variant='text' // Change to 'text' to remove outlined styling
+                                  color='secondary'
+                                  onClick={() =>
+                                    handleDelegateToAuditor(status._id)
+                                  }
+                                  disabled={
+                                    isCompleted ||
+                                    status.status !== 'Evidence Uploaded'
+                                  } // Disable button if completed
                                 >
                                   Delegate to Auditor
                                 </Button>

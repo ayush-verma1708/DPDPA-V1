@@ -57,7 +57,7 @@ const CompletionStatusSchema = new mongoose.Schema(
       enum: [
         'Open',
         'Delegated to IT Team',
-        'Evidence Ready',
+        'Evidence Uploaded',
         'Misconfigured',
         'Audit Delegated',
         'Audit Non-Confirm',

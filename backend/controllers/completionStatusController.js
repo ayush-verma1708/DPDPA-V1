@@ -204,34 +204,6 @@ export const deleteStatus = async (req, res) => {
   }
 };
 
-// Controller for Compliance Team: Delegate to IT Team
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT'
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, req.body.username);
-
-//     await completionStatus.save();
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-// Controller for Compliance Team: Delegate to IT Team
 export const delegateToIT = async (req, res) => {
   const { completionStatusId } = req.params;
   const { itOwnerId, currentUserId } = req.body;
@@ -289,39 +261,6 @@ export const delegateToAuditor = async (req, res) => {
   }
 };
 
-// Controller for Auditor: Confirm Evidence or Return Evidence
-// export const confirmEvidence = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { feedback, username } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const changes = {
-//       status: feedback ? 'Audit Non-Confirm' : 'Audit Closed',
-//       action: feedback ? 'Return Evidence' : 'Confirm Evidence',
-//       feedback: feedback || null,
-//     };
-
-//     if (!feedback) {
-//       changes.isCompleted = true;
-//       changes.completedAt = new Date();
-//     }
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, username);
-
-//     await completionStatus.save();
-//     res.status(200).json({ message: 'Evidence processed', completionStatus });
-//   } catch (err) {
-//     console.error('Error in confirmEvidence:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 export const confirmEvidence = async (req, res) => {
   const { completionStatusId } = req.params;
   const { feedback, username } = req.body;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getControlFamilies } from '../api/controlFamilyAPI';
 import { fetchActions } from '../api/actionAPI';
 import { Snackbar, Alert, Tooltip } from '@mui/material';
@@ -13,7 +13,7 @@ import SelectorsAndNotifications from '../components/assetSelection';
 import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi';
-import { createOrUpdateStatus } from '../api/completionStatusApi';
+import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -68,7 +68,7 @@ const ListOfActions = () => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const handleUploadEvidence = async (actionId, NewcontrolId) => {
+  const UploadSelectedEvidence = async (actionId, NewcontrolId) => {
     if (!selectedFile) {
       setNotification({
         message: 'Please select a file first.',
@@ -106,6 +106,24 @@ const ListOfActions = () => {
           action._id === actionId ? { ...action, evidenceUrl } : action
         )
       );
+
+      const requestData = {
+        actionId: actionId,
+        controlId: NewcontrolId,
+        familyId: expandedFamilyId, // Assuming you have this available in scope
+        assetId: selectedAssetId, // Assuming you have this available in scope
+        status: 'Evidence Uploaded',
+        isEvidenceUploaded: true,
+      };
+
+      // Conditionally include scopeId if it is defined
+      if (selectedScopeId) {
+        requestData.scopeId = selectedScopeId;
+      }
+
+      // Update the status model
+      console.log(requestData);
+      await createOrUpdateStatus(requestData);
     } catch (error) {
       setNotification({
         message: 'Failed to upload file. Please try again.',
@@ -289,6 +307,17 @@ const ListOfActions = () => {
     setSelectedScopeId(event.target.value);
   };
 
+  useEffect(() => {
+    if (controlFamilies.length > 0) {
+      setExpandedFamilyId(controlFamilies[0]._id); // Set the first control family as expanded
+    }
+  }, [controlFamilies]); // Run this effect when controlFamilies changes
+
+  const sortedFamilies = useMemo(
+    () => controlFamilies.sort((a, b) => a.variable_id - b.variable_id),
+    [controlFamilies]
+  );
+
   const handleFamilyClick = (familyId) => {
     setExpandedFamilyId(expandedFamilyId === familyId ? '' : familyId);
   };
@@ -393,7 +422,7 @@ const ListOfActions = () => {
           </div>
         </div>
 
-        {controlFamilies
+        {/* {controlFamilies
           .sort((a, b) => a.variable_id - b.variable_id) // Sort control families by variable_id
           .map((family) => (
             <div
@@ -415,7 +444,26 @@ const ListOfActions = () => {
                 </div>
               </Tooltip>
             </div>
-          ))}
+          ))} */}
+        {sortedFamilies.map((family) => (
+          <div
+            key={family._id}
+            className={`control-family ${
+              expandedFamilyId === family._id ? 'expanded' : ''
+            }`}
+          >
+            <Tooltip title={family.description} placement='right'>
+              <div
+                className={`control-family-header ${
+                  expandedFamilyId === family._id ? 'expanded' : ''
+                } ${expandedFamilyId === family._id ? 'selected-family' : ''}`}
+                onClick={() => handleFamilyClick(family._id)}
+              >
+                Chapter {family.variable_id}
+              </div>
+            </Tooltip>
+          </div>
+        ))}
       </div>
 
       <div className='content'>
@@ -425,7 +473,7 @@ const ListOfActions = () => {
           selectedScopeId={selectedScopeId}
           actions={actions}
           handleFileChange={handleFileChange}
-          handleUploadEvidence={handleUploadEvidence}
+          UploadSelectedEvidence={UploadSelectedEvidence}
           markActionAsCompleted={markActionAsCompleted}
         />
       </div>

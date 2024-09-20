@@ -1,6 +1,9 @@
 # Node modules
 node_modules/
 
+uploading folder
+/uploads
+
 # Environment files
 .env
 .env.local
