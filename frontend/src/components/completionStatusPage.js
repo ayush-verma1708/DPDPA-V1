@@ -7,6 +7,7 @@ import {
   delegateToIT,
   delegateToAuditor,
   confirmEvidence,
+  returnEvidence,
 } from '../api/completionStatusApi';
 import {
   Table,
@@ -60,6 +61,7 @@ const CompletionStatusPage = ({
   handleFileChange,
   UploadSelectedEvidence,
   markActionAsCompleted,
+  issueInEvidence,
 }) => {
   const [statusData, setStatusData] = useState({
     actionId: '',
@@ -249,23 +251,23 @@ const CompletionStatusPage = ({
     }
   };
 
-  const handleConfirmEvidence = async (statusId) => {
-    try {
-      const feedback = prompt(
-        'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
-      );
-      await handleFetchStatus(); // Refetch data after action
-      const response = await confirmEvidence(statusId, feedback);
-      updateStatusInList(
-        statusId,
-        feedback ? 'Audit Non-Confirm' : 'Audit Closed',
-        feedback ? 'Return Evidence' : 'Confirm Evidence',
-        feedback
-      );
-    } catch (error) {
-      console.error('Error confirming evidence:', error);
-    }
-  };
+  // const handleConfirmEvidence = async (statusId) => {
+  //   try {
+  //     const feedback = prompt(
+  //       'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
+  //     );
+  //     await handleFetchStatus(); // Refetch data after action
+  //     const response = await confirmEvidence(statusId, feedback);
+  //     updateStatusInList(
+  //       statusId,
+  //       feedback ? 'Audit Non-Confirm' : 'Audit Closed',
+  //       feedback ? 'Return Evidence' : 'Confirm Evidence',
+  //       feedback
+  //     );
+  //   } catch (error) {
+  //     console.error('Error confirming evidence:', error);
+  //   }
+  // };
 
   const updateStatusInList = (
     statusId,
@@ -330,6 +332,23 @@ const CompletionStatusPage = ({
         feedback ? 'Return Evidence' : 'Confirm Evidence',
         feedback
       );
+      await handleFetchStatus();
+    } catch (error) {
+      console.error('Error marking action as completed:', error);
+    }
+  };
+
+  const handleQuery = async (actionId, controlId) => {
+    try {
+      // Prompt for feedback
+      const feedback = prompt(
+        'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
+      );
+      // Mark the action as completed
+      await issueInEvidence(actionId, controlId, feedback);
+
+      // Update status in the list
+      updateStatusInList(actionId, feedback);
       await handleFetchStatus();
     } catch (error) {
       console.error('Error marking action as completed:', error);
@@ -564,7 +583,10 @@ const CompletionStatusPage = ({
                                   color='error'
                                   startIcon={<Warning />}
                                   onClick={() =>
-                                    handleConfirmEvidence(status._id)
+                                    handleQuery(
+                                      status.actionId?._id,
+                                      status.controlId?._id
+                                    )
                                   }
                                   disabled={isCompleted} // Disable button if completed
                                 >

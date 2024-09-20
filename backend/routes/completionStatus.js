@@ -9,6 +9,7 @@ import {
   confirmEvidence,
   getRiskByAsset,
   getOverallRisk,
+  raiseQuery,
 } from '../controllers/completionStatusController.js';
 
 const router = express.Router();
@@ -33,6 +34,9 @@ router.put('/:completionStatusId/delegate-auditor', delegateToAuditor);
 
 // Route for Auditor to confirm or return evidence
 router.put('/:completionStatusId/confirm-evidence', confirmEvidence);
+
+// Route for auditor to return evidence
+router.put('/:completionStatusId/return-evidence', raiseQuery);
 
 // Route for calculating risk by asset
 router.get('/risk/:assetId', getRiskByAsset);

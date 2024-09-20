@@ -110,3 +110,21 @@ export const confirmEvidence = async (
     throw error;
   }
 };
+
+// Confirm Evidence or Return Evidence
+export const returnEvidence = async (
+  completionStatusId,
+  feedback,
+  currentUserId
+) => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/return-evidence`,
+      { feedback, currentUserId }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error in confirmEvidence:', error);
+    throw error;
+  }
+};

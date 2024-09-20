@@ -338,7 +338,39 @@ const ListOfActions = () => {
       assetId: selectedAssetId, // Assuming you have this available in scope
       isCompleted: true, // Set isCompleted to true
       status: 'Completed',
-      username: userData.data._id,
+      AssignedBy: userData.data._id,
+      feedback,
+    };
+
+    // Conditionally include scopeId if it is defined
+    if (selectedScopeId) {
+      requestData.scopeId = selectedScopeId;
+    }
+
+    try {
+      // Make API request to update the completion status
+      const response = await createOrUpdateStatus(requestData);
+
+      console.log('Status updated successfully:', response);
+      // Optionally refetch statuses here if needed
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
+  const issueInEvidence = async (actionId, newControlId, feedback) => {
+    // Prepare the request data, including scopeId only if it's provided
+    const token = window.localStorage.getItem('token'); // Replace with actual token
+    const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
+
+    const requestData = {
+      actionId: actionId,
+      controlId: newControlId,
+      familyId: expandedFamilyId, // Assuming you have this available in scope
+      assetId: selectedAssetId, // Assuming you have this available in scope
+
+      status: 'Wrong Evidence',
+      AssignedBy: userData.data._id,
       feedback,
     };
 
@@ -475,6 +507,7 @@ const ListOfActions = () => {
           handleFileChange={handleFileChange}
           UploadSelectedEvidence={UploadSelectedEvidence}
           markActionAsCompleted={markActionAsCompleted}
+          issueInEvidence={issueInEvidence}
         />
       </div>
 
