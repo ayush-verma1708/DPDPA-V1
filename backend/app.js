@@ -18,6 +18,8 @@ import assetDetailRouter from './routes/assetDetail.routes.js';
 import completionStatusRoutes from './routes/completionStatus.js'; // Import completion status routes
 import evidenceRoutes from './routes/evidenceRoutes.js';
 
+import notificationRoutes from './routes/notificationsRoutes.js';
+
 import completionRoutes from './routes/completionRoutes.js';
 
 import companyFormRoutes from './routes/companyFormRoutes.js';
@@ -64,6 +66,8 @@ app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion 
 
 app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
+
+app.use('/api/notifications', notificationRoutes);
 
 // Use the company form routes
 app.use('/api/company-form', companyFormRoutes);
