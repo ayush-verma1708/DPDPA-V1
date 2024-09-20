@@ -279,27 +279,64 @@ const ListOfActions = () => {
   }, []);
 
   // Update scopes based on selected asset
+  // useEffect(() => {
+  //   if (selectedAssetId) {
+  //     const selectedAsset = assets.find((asset) => {
+  //       return asset.asset._id === selectedAssetId;
+  //     });
+  //     if (selectedAsset && selectedAsset.asset.isScoped) {
+  //       setScopes([selectedAsset.scoped]);
+  //       setSelectedScopeId(selectedAsset.scoped._id);
+  //     } else {
+  //       setScopes([]);
+  //       setSelectedScopeId('');
+  //     }
+  //   } else {
+  //     setScopes([]);
+  //     setSelectedScopeId('');
+  //   }
+  // }, [selectedAssetId, assets]);
   useEffect(() => {
     if (selectedAssetId) {
-      const selectedAsset = assets.find((asset) => {
-        return asset.asset._id === selectedAssetId;
-      });
-      console.log(selectedAsset);
-      if (selectedAsset && selectedAsset.asset.isScoped) {
-        setScopes([selectedAsset.scoped]);
-        setSelectedScopeId(selectedAsset.scoped._id);
+      // Find all scopes related to the selected asset
+      const selectedAssetScopes = assets
+        .filter((asset) => asset.asset._id === selectedAssetId)
+        .map((asset) => asset.scoped);
+
+      if (selectedAssetScopes.length > 0) {
+        setScopes(selectedAssetScopes); // Set all scopes for the selected asset
+        setSelectedScopeId(selectedAssetScopes[0]._id); // Automatically select the first scope
       } else {
-        setScopes([]);
-        setSelectedScopeId('');
+        setScopes([]); // Reset scopes if none are available
+        setSelectedScopeId(''); // Clear selected scope if there are none
       }
     } else {
-      setScopes([]);
-      setSelectedScopeId('');
+      setScopes([]); // Reset scopes if no asset is selected
+      setSelectedScopeId(''); // Clear selected scope if no asset is selected
     }
   }, [selectedAssetId, assets]);
 
+  // useEffect(() => {
+  //   if (selectedAssetId) {
+  //     // Find all entries related to the selected asset
+  //     const selectedAssetScopes = assets
+  //       .filter((asset) => asset.asset._id === selectedAssetId) // Get all matching assets
+  //       .map((asset) => asset.scoped); // Extract scopes
+
+  //     if (selectedAssetScopes.length > 0) {
+  //       setScopes(selectedAssetScopes); // Set all scopes for the selected asset
+  //       setSelectedScopeId(''); // Optionally, reset scope selection until user picks one
+  //     } else {
+  //       setScopes([]); // If no scopes are available, reset scopes
+  //       setSelectedScopeId('');
+  //     }
+  //   } else {
+  //     setScopes([]);
+  //     setSelectedScopeId('');
+  //   }
+  // }, [selectedAssetId, assets]);
+
   const handleAssetChange = (event) => {
-    console.log('asset info', event.target.value);
     setSelectedAssetId(event.target.value);
   };
 
