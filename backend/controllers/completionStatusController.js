@@ -308,7 +308,7 @@ export const delegateToAuditor = async (req, res) => {
 
 export const confirmEvidence = async (req, res) => {
   const { completionStatusId } = req.params;
-  const { feedback, username } = req.body;
+  const { feedback, currentUserId } = req.body;
 
   try {
     let completionStatus = await CompletionStatus.findById(completionStatusId);
@@ -322,6 +322,7 @@ export const confirmEvidence = async (req, res) => {
       action: feedback ? 'Return Evidence' : 'Confirm Evidence',
       feedback: feedback || null,
       isEvidenceUploaded: true, // Evidence is considered uploaded when confirmed
+      createdBy: currentUserId,
     };
 
     if (!feedback) {

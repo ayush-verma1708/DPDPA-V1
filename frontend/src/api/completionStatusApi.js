@@ -94,11 +94,15 @@ export const delegateToAuditor = async (completionStatusId, currentUserId) => {
 };
 
 // Confirm Evidence or Return Evidence
-export const confirmEvidence = async (completionStatusId, feedback) => {
+export const confirmEvidence = async (
+  completionStatusId,
+  feedback,
+  currentUserId
+) => {
   try {
     const response = await axios.put(
       `${API_BASE_URL}/completion-status/${completionStatusId}/confirm-evidence`,
-      { feedback }
+      { feedback, currentUserId }
     );
     return response.data;
   } catch (error) {

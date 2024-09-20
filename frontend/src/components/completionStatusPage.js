@@ -40,6 +40,7 @@ import {
   Upload,
   Visibility,
   CheckCircle,
+  Warning,
   Edit,
   KeyboardArrowDown,
   KeyboardArrowUp,
@@ -399,7 +400,8 @@ const CompletionStatusPage = ({
                       return true; // No filtering for these roles, return all data
                     }
                     // For other users, only show statuses where assigned to the current user
-                    return status.AssignedTo?._id === currentUserId;
+                    // return status.AssignedTo?._id === currentUserId;
+                    return status;
                   })
                   .map((status) => {
                     const isCompleted = status.status === 'Completed';
@@ -412,7 +414,7 @@ const CompletionStatusPage = ({
                               size='small'
                               onClick={() => handleToggleRow(status._id)}
                               color='primary'
-                              disabled={isCompleted} // Disable toggle button if completed
+                              // disabled={isCompleted} // Disable toggle button if completed
                             >
                               {openRows[status._id] ? (
                                 <KeyboardArrowUp />
@@ -546,10 +548,8 @@ const CompletionStatusPage = ({
                                     )
                                   }
                                   disabled={
-                                    isCompleted
-
-                                    // ||
-                                    // status.status !== 'Evidence Uploaded'
+                                    isCompleted ||
+                                    status.status !== 'Evidence Uploaded'
                                   } // Disable button if completed
                                 >
                                   Delegate to Auditor
@@ -561,9 +561,8 @@ const CompletionStatusPage = ({
                             <TableCell>
                               <Tooltip title='Raise Query'>
                                 <Button
-                                  variant='contained'
                                   color='error'
-                                  startIcon={<CheckCircle />}
+                                  startIcon={<Warning />}
                                   onClick={() =>
                                     handleConfirmEvidence(status._id)
                                   }
@@ -578,8 +577,8 @@ const CompletionStatusPage = ({
                             <TableCell>
                               <Tooltip title='Confirm Evidence'>
                                 <Button
-                                  variant='contained'
                                   color='primary'
+                                  startIcon={<CheckCircle />}
                                   onClick={() =>
                                     handleMarkAsCompleted(
                                       status.actionId?._id,
