@@ -421,7 +421,7 @@ const CompletionStatusPage = ({
                     // For other users, only show statuses where assigned to the current user
                     return (
                       currentUserId === status.AssignedTo?._id ||
-                      status.AssignedBy?._id
+                      currentUserId === status.AssignedBy?._id
                     );
                   })
                   .map((status) => {
