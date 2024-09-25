@@ -641,11 +641,26 @@ const CompletionStatusPage = ({
                                     <TableBody>
                                       {status.history.map((change, index) => (
                                         <TableRow key={index}>
-                                          <TableCell>
+                                          {/* <TableCell>
                                             {new Date(
                                               change.modifiedAt
                                             ).toLocaleString()}
+                                          </TableCell> */}
+                                          <TableCell>
+                                            {new Date(
+                                              change.modifiedAt
+                                            ).toLocaleString('en-IN', {
+                                              day: '2-digit',
+                                              month: '2-digit',
+                                              year: 'numeric',
+                                              // hour: '2-digit',
+                                              // minute: '2-digit',
+                                              // second: '2-digit',
+                                              // hour12: true, // Use 12-hour format with AM/PM
+                                              // timeZone: 'Asia/Kolkata', // Ensures the time is in IST
+                                            })}
                                           </TableCell>
+
                                           <TableCell>
                                             {change.modifiedBy}
                                           </TableCell>

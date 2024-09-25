@@ -5,6 +5,9 @@ node_modules/
 build/
 dist/
 
+# images
+/public
+
 # Environment files
 .env
 .env.local

@@ -331,11 +331,24 @@ const Scoreboard = () => {
                   <TableCell>
                     {action.AssignedBy.username || 'Unknown'}
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {action.completedAt
                       ? new Date(action.completedAt).toLocaleDateString()
                       : 'N/A'}
+                  </TableCell> */}
+                  <TableCell>
+                    {action.completedAt
+                      ? new Date(action.completedAt).toLocaleDateString(
+                          'en-IN',
+                          {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                          }
+                        )
+                      : 'N/A'}
                   </TableCell>
+
                   <TableCell>{action.feedback || 'N/A'}</TableCell>
                 </TableRow>
               );

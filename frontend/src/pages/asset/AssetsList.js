@@ -371,7 +371,7 @@ const AssetList = () => {
     itOwnerName: assetDet.itOwnerName || '',
     itOwnerEmail: assetDet.itOwnerEmail || '',
     coverages: assetDet.coverages,
-    createdAt: moment(assetDet.createdAt).format('YYYY-MM-DD'),
+    createdAt: moment(assetDet.createdAt).format('DD-MM-YYYY'),
   }));
 
   return (
