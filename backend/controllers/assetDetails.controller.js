@@ -7,7 +7,9 @@ const getAssetDetails = AsyncHandler(async (req, res) => {
   try {
     const assetDetails = await AssetDetails.find({})
       .populate('asset', 'name isScoped') // Populate the asset field with its name and isScoped
-      .populate('scoped', 'name'); // Populate the scoped field with its name
+      .populate('scoped', 'name') // Populate the scoped field with its name
+      .populate('businessOwnerName')
+      .populate('itOwnerName');
 
     if (!Array.isArray(assetDetails)) {
       console.error('Expected array from database query, got:', assetDetails);
@@ -196,7 +198,8 @@ const getAssetDetailsById = AsyncHandler(async (req, res) => {
     // Find the asset details by assetDetails ID
     const assetDetails = await AssetDetails.findById(id)
       .populate('asset') // Populate asset details
-      .populate('scoped'); // Populate scope details if available
+      .populate('scoped') // Populate scope details if available
+      .populate('businessOwnerName'); // Populate scope details if available
 
     if (!assetDetails) {
       return res.status(404).json({ message: 'Asset details not found' });

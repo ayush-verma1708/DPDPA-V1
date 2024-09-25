@@ -362,13 +362,13 @@ const AssetList = () => {
   ];
 
   const rows = assetDetails.map((assetDet) => ({
-    id: assetDet._id,
+    id: assetDet._id.substring(0, 7),
     asset: assetDet.asset?.name || 'Unknown',
     scoped: assetDet.scoped?.name || 'non-scoped',
     criticality: assetDet.criticality || '',
-    businessOwnerName: assetDet.businessOwnerName || '',
+    businessOwnerName: assetDet.businessOwnerName.username || '',
     businessOwnerEmail: assetDet.businessOwnerEmail || '',
-    itOwnerName: assetDet.itOwnerName || '',
+    itOwnerName: assetDet.itOwnerName.username || '',
     itOwnerEmail: assetDet.itOwnerEmail || '',
     coverages: assetDet.coverages,
     createdAt: moment(assetDet.createdAt).format('DD-MM-YYYY'),
