@@ -195,6 +195,28 @@ const ActionsPage = () => {
                   </TableCell>
                   <TableCell>{action.isDPDPA ? 'Yes' : 'No'}</TableCell>
                   <TableCell>
+                    {!action.isDPDPA && (
+                      <>
+                        <IconButton
+                          aria-label='edit'
+                          color='primary'
+                          onClick={() => handleOpenDialog(action)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          aria-label='delete'
+                          color='error'
+                          onClick={() => handleDeleteAction(action._id)}
+                          style={{ marginLeft: '10px' }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
+                  </TableCell>
+
+                  {/* <TableCell>
                     <IconButton
                       aria-label='edit'
                       color='primary'
@@ -212,7 +234,7 @@ const ActionsPage = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
           </TableBody>
@@ -259,7 +281,7 @@ const ActionsPage = () => {
             />
             <FormControl fullWidth margin='normal'>
               <InputLabel>Control</InputLabel>
-              <Select
+              {/* <Select
                 labelId='Controls-label'
                 label='Controls'
                 value={
@@ -281,6 +303,32 @@ const ActionsPage = () => {
                     {control.fixed_id}
                   </MenuItem>
                 ))}
+              </Select> */}
+              <Select
+                labelId='Controls-label'
+                label='Controls'
+                value={
+                  editingAction ? editAction.control_Id : newAction.control_Id
+                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  editingAction
+                    ? setEditAction({ ...editAction, control_Id: value })
+                    : setNewAction({ ...newAction, control_Id: value });
+                }}
+                required
+              >
+                <MenuItem value='' disabled>
+                  Select Control
+                </MenuItem>
+                {controls
+                  .slice() // Create a shallow copy to avoid mutating the original array
+                  .sort((a, b) => (a.fixed_id > b.fixed_id ? 1 : -1)) // Sort by fixed_id
+                  .map((control) => (
+                    <MenuItem key={control._id} value={control._id}>
+                      {control.fixed_id}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>

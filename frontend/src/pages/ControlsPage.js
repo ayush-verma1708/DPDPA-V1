@@ -335,7 +335,15 @@ const ControlsPage = () => {
                   <TableCell>{control.section}</TableCell>
                   <TableCell>{control.section_main_desc}</TableCell>
                   <TableCell>{control.section_desc}</TableCell>
-                  <TableCell>{control.control_type}</TableCell>
+                  {/* <TableCell>{control.control_type}</TableCell> */}
+                  <TableCell>
+                    {control.control_type === 't'
+                      ? 'Technical'
+                      : control.control_type === 'i'
+                      ? 'Information'
+                      : 'Other'}
+                  </TableCell>
+
                   <TableCell>{control.criticality}</TableCell>
                   <TableCell>
                     {
@@ -344,7 +352,7 @@ const ControlsPage = () => {
                       )?.variable_id
                     }
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <IconButton
                       color='primary'
                       onClick={() => openModal(control)}
@@ -360,6 +368,25 @@ const ControlsPage = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
+                  </TableCell> */}
+                  <TableCell>
+                    {!control.isDPDPA && (
+                      <>
+                        <IconButton
+                          color='primary'
+                          onClick={() => openModal(control)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          color='secondary'
+                          onClick={() => handleDeleteControl(control._id)}
+                          className='ml-2'
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

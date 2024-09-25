@@ -27,7 +27,7 @@ const ControlFamiliesPage = () => {
     variable_id: '',
   });
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState('add'); // 'add' or 'edit'
@@ -179,6 +179,28 @@ const ControlFamiliesPage = () => {
                   <TableCell>{cf.fixed_id}</TableCell>
                   <TableCell>{cf.variable_id}</TableCell>
                   <TableCell>
+                    {!cf.isDPDPA && (
+                      <>
+                        <IconButton
+                          aria-label='edit'
+                          color='primary'
+                          onClick={() => handleOpenModal('edit', cf)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          aria-label='delete'
+                          color='secondary'
+                          onClick={() => handleDeleteFamily(cf._id)}
+                          style={{ marginLeft: '10px' }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
+                  </TableCell>
+
+                  {/* <TableCell>
                     <IconButton
                       aria-label='edit'
                       color='primary'
@@ -196,7 +218,7 @@ const ControlFamiliesPage = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
           </TableBody>

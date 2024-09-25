@@ -639,44 +639,47 @@ const CompletionStatusPage = ({
                                       </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                      {status.history.map((change, index) => (
-                                        <TableRow key={index}>
-                                          {/* <TableCell>
+                                      {status.history
+                                        .slice() // Create a shallow copy to avoid mutating the original array
+                                        .reverse() // Reverse the array to show the latest history first
+                                        .map((change, index) => (
+                                          <TableRow key={index}>
+                                            {/* <TableCell>
                                             {new Date(
                                               change.modifiedAt
                                             ).toLocaleString()}
                                           </TableCell> */}
-                                          <TableCell>
-                                            {new Date(
-                                              change.modifiedAt
-                                            ).toLocaleString('en-IN', {
-                                              day: '2-digit',
-                                              month: '2-digit',
-                                              year: 'numeric',
-                                              // hour: '2-digit',
-                                              // minute: '2-digit',
-                                              // second: '2-digit',
-                                              // hour12: true, // Use 12-hour format with AM/PM
-                                              // timeZone: 'Asia/Kolkata', // Ensures the time is in IST
-                                            })}
-                                          </TableCell>
+                                            <TableCell>
+                                              {new Date(
+                                                change.modifiedAt
+                                              ).toLocaleString('en-IN', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                                // hour: '2-digit',
+                                                // minute: '2-digit',
+                                                // second: '2-digit',
+                                                // hour12: true, // Use 12-hour format with AM/PM
+                                                // timeZone: 'Asia/Kolkata', // Ensures the time is in IST
+                                              })}
+                                            </TableCell>
 
-                                          <TableCell>
-                                            {change.modifiedBy}
-                                          </TableCell>
-                                          <TableCell>
-                                            <ul>
-                                              {Object.entries(
-                                                change.changes
-                                              ).map(([key, value]) => (
-                                                <li
-                                                  key={key}
-                                                >{`${key}: ${value}`}</li>
-                                              ))}
-                                            </ul>
-                                          </TableCell>
-                                        </TableRow>
-                                      ))}
+                                            <TableCell>
+                                              {change.modifiedBy}
+                                            </TableCell>
+                                            <TableCell>
+                                              <ul>
+                                                {Object.entries(
+                                                  change.changes
+                                                ).map(([key, value]) => (
+                                                  <li
+                                                    key={key}
+                                                  >{`${key}: ${value}`}</li>
+                                                ))}
+                                              </ul>
+                                            </TableCell>
+                                          </TableRow>
+                                        ))}
                                     </TableBody>
                                   </Table>
                                 ) : (
