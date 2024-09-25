@@ -305,7 +305,8 @@ const CompletionStatusPage = ({
         // return res.data.fileUrl;
         // Redirect to the file URL or a specific route
         const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
-        window.location.href = fullUrl; // Redirect to the evidence URL
+        // window.location.href = fullUrl; // Redirect to the evidence URL
+        window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
       } else {
         console.log('null');
         return null; // No evidence found
