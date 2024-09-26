@@ -63,6 +63,7 @@ const CompletionStatusSchema = new mongoose.Schema(
         'Wrong Evidence',
         'Risk Accepted',
         'Completed',
+        'External Audit Delegated',
       ],
       default: 'Open',
     },
@@ -74,6 +75,7 @@ const CompletionStatusSchema = new mongoose.Schema(
         'Delegate to Auditor',
         'Confirm Evidence',
         'Return Evidence',
+        'Delegate to External Auditor',
       ],
     },
     feedback: { type: String, default: null }, // Optional field to store auditor's feedback

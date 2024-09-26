@@ -157,7 +157,8 @@ const UserCreation = () => {
                 <TableCell>{user._id}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell> {/* Display email */}
-                <TableCell>{user.password}</TableCell>
+                <TableCell>********</TableCell> {/* Masked password */}
+                {/* <TableCell>{user.password}</TableCell> */}
                 <TableCell>{user.role}</TableCell>
                 <TableCell>
                   <Checkbox checked={user.permissions.view} disabled />
@@ -238,6 +239,7 @@ const UserCreation = () => {
                 <MenuItem value='Compliance Team'>Compliance Team</MenuItem>
                 <MenuItem value='IT Team'>IT Team</MenuItem>
                 <MenuItem value='Auditor'>Auditor</MenuItem>
+                <MenuItem value='External Auditor'>External Auditor</MenuItem>
                 <MenuItem value='user'>User</MenuItem>
               </Select>
             </FormControl>

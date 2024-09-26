@@ -93,6 +93,25 @@ export const delegateToAuditor = async (completionStatusId, currentUserId) => {
   }
 };
 
+// Delegate to Auditor
+export const delegateToExternalAuditor = async (
+  completionStatusId,
+  currentUserId
+) => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-external-auditor`,
+      {
+        currentUserId,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error in delegateToExternalAuditor:', error);
+    throw error;
+  }
+};
+
 // Confirm Evidence or Return Evidence
 export const confirmEvidence = async (
   completionStatusId,

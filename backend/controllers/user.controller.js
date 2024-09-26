@@ -80,6 +80,7 @@ const createUser = AsyncHandler(async (req, res) => {
     'IT Team',
     'Auditor',
     'user',
+    'External Auditor', // Add this new role
   ];
   if (role && !validRoles.includes(role)) {
     throw new ApiError(400, 'Invalid role.');
@@ -132,6 +133,7 @@ const updateUser = AsyncHandler(async (req, res) => {
     'Compliance Team',
     'IT Team',
     'Auditor',
+    'External Auditor', // Add this new role
     'user',
   ];
   if (role && !validRoles.includes(role)) {

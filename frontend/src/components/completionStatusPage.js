@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-
 import axios from 'axios';
 import {
   createOrUpdateStatus,
   getStatus,
   delegateToIT,
   delegateToAuditor,
+  delegateToExternalAuditor,
   confirmEvidence,
   returnEvidence,
 } from '../api/completionStatusApi';
@@ -34,7 +34,6 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
 import { getAssets } from '../api/assetApi';
 import {
@@ -75,6 +74,8 @@ const CompletionStatusPage = ({
     action: '',
     feedback: '',
   });
+
+  const [userNames, setUserNames] = useState({});
 
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
@@ -251,6 +252,15 @@ const CompletionStatusPage = ({
     }
   };
 
+  const handleDelegateToExternalAuditor = async (statusId, currentUserId) => {
+    try {
+      const response = await delegateToExternalAuditor(statusId, currentUserId);
+      await handleFetchStatus(); // Refetch data after action
+    } catch (error) {
+      console.error('Error delegating to Auditor:', error);
+    }
+  };
+
   // const handleConfirmEvidence = async (statusId) => {
   //   try {
   //     const feedback = prompt(
@@ -395,11 +405,10 @@ const CompletionStatusPage = ({
           >
             <Table>
               <TableHead>
-                <TableRow>
+                {/* <TableRow>
                   <TableCell />
-                  {/* <TableCell>Assigned to</TableCell> */}
                   {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
-                  {/* <TableCell>Assigned By</TableCell> */}
+                  
                   <TableCell>Action</TableCell>
                   <TableCell>Control</TableCell>
                   {role !== 'IT Team' && <TableCell>Feedback</TableCell>}
@@ -407,9 +416,44 @@ const CompletionStatusPage = ({
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
                   <TableCell>View</TableCell>
                   {role === 'IT Team' ||
-                    (role === 'Auditor' && <TableCell>Actions</TableCell>)}
-                  {role === 'Auditor' && <TableCell>Mark as done</TableCell>}
+                    role === 'Auditor' ||
+                    (role === 'External Auditor' && (
+                      <TableCell>Actions</TableCell>
+                    ))}
+                  {role === 'Auditor' && <TableCell>Actions</TableCell>}
+                  {role === 'Auditor' && <TableCell>Confirm</TableCell>}
+                  {role === 'External Auditor' && (
+                    <TableCell>Mark as done</TableCell>
+                  )}
                   {role === 'IT Team' && <TableCell>Action</TableCell>}
+                </TableRow> */}
+                <TableRow>
+                  <TableCell />
+                  {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
+                  <TableCell>Action</TableCell>
+                  <TableCell>Control</TableCell>
+                  {role !== 'IT Team' && <TableCell>Feedback</TableCell>}
+                  <TableCell>Status</TableCell>
+
+                  {/* Conditional rendering for Upload Evidence based on role */}
+                  {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
+
+                  <TableCell>View</TableCell>
+
+                  {/* Actions for different roles */}
+                  {role === 'IT Team' && <TableCell>Actions</TableCell>}
+                  {role === 'Auditor' && (
+                    <>
+                      <TableCell>Actions</TableCell>
+                      <TableCell>Confirm</TableCell>
+                    </>
+                  )}
+                  {role === 'External Auditor' && (
+                    <>
+                      <TableCell>Actions</TableCell>
+                      <TableCell>Mark as done</TableCell>
+                    </>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -474,7 +518,7 @@ const CompletionStatusPage = ({
                                   }
                                   disabled={
                                     isCompleted ||
-                                    !status.status == 'Delegated to IT Team' ||
+                                    !status.status === 'Delegated to IT Team' ||
                                     status.isEvidenceUploaded
                                   } // Disable button if completed
                                 >
@@ -483,7 +527,9 @@ const CompletionStatusPage = ({
                               </Tooltip>
                             </TableCell>
                           )}
-                          {(role === 'IT Team' || role === 'Auditor') && (
+                          {(role === 'IT Team' ||
+                            role === 'Auditor' ||
+                            role === 'External Auditor') && (
                             <TableCell>
                               {/* <Tooltip title='View Evidence'>
                                 <Button
@@ -579,7 +625,10 @@ const CompletionStatusPage = ({
                               </Tooltip>
                             </TableCell>
                           )}
-                          {(role === 'Auditor' || role === 'Admin') && (
+
+                          {(role === 'Auditor' ||
+                            role === 'Admin' ||
+                            role === 'External Auditor') && (
                             <TableCell>
                               <Tooltip title='Raise Query'>
                                 <Button
@@ -591,14 +640,33 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
-                                  disabled={isCompleted} // Disable button if completed
+                                  disabled={!isCompleted} // Disable button if completed
                                 >
                                   Raise Query
                                 </Button>
                               </Tooltip>
                             </TableCell>
                           )}
-                          {role === 'Auditor' && (
+                          {(role === 'Admin' || role === 'Auditor') && (
+                            <TableCell>
+                              <Tooltip title='Delegate to External Auditor'>
+                                <Button
+                                  variant='text' // Change to 'text' to remove outlined styling
+                                  color='secondary'
+                                  onClick={() =>
+                                    handleDelegateToExternalAuditor(
+                                      status._id,
+                                      currentUserId
+                                    )
+                                  }
+                                  disabled={!isCompleted}
+                                >
+                                  Delegate to External Auditor
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
+                          )}
+                          {role === 'External Auditor' && (
                             <TableCell>
                               <Tooltip title='Confirm Evidence'>
                                 <Button

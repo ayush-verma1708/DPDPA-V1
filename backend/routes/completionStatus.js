@@ -10,6 +10,7 @@ import {
   getRiskByAsset,
   getOverallRisk,
   raiseQuery,
+  delegateToExternalAuditor,
 } from '../controllers/completionStatusController.js';
 
 const router = express.Router();
@@ -31,6 +32,12 @@ router.put('/:completionStatusId/delegate-it', delegateToIT);
 
 // Route for IT Team to delegate to Auditor
 router.put('/:completionStatusId/delegate-auditor', delegateToAuditor);
+
+// Route for Auditor to external Auditor
+router.put(
+  '/:completionStatusId/delegate-external-auditor',
+  delegateToExternalAuditor
+);
 
 // Route for Auditor to confirm or return evidence
 router.put('/:completionStatusId/confirm-evidence', confirmEvidence);

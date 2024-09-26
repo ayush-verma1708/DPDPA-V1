@@ -345,7 +345,13 @@ const Sidebar = ({ onSelect }) => {
             alignItems: open ? 'flex-start' : 'center',
           }}
         >
-          {hasAccess(['Compliance Team', 'Admin', 'IT Team', 'Auditor']) && (
+          {hasAccess([
+            'Compliance Team',
+            'Admin',
+            'IT Team',
+            'Auditor',
+            'External Auditor',
+          ]) && (
             <ListItem
               button
               component={Link}
@@ -423,7 +429,12 @@ const Sidebar = ({ onSelect }) => {
             </ListItem>
           )}
 
-          {hasAccess(['Compliance Team', 'IT Team', 'Auditor']) && (
+          {hasAccess([
+            'Compliance Team',
+            'IT Team',
+            'Auditor',
+            'External Auditor',
+          ]) && (
             <ListItem
               button
               component={Link}

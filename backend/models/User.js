@@ -27,6 +27,7 @@ const userSchema = new mongoose.Schema(
         'Compliance Team',
         'IT Team',
         'Auditor',
+        'External Auditor', // New role added here
         'user',
       ],
       default: 'user',
@@ -71,6 +72,8 @@ userSchema.pre('save', async function (next) {
     'Compliance Team': { view: true, add: true, edit: true, delegate: true },
     'IT Team': { view: true, edit: true, delegate: true, uploadEvidence: true },
     Auditor: { view: true, confirmEvidence: true },
+    'External Auditor': { view: true, confirmEvidence: true }, // Permissions for External Auditor
+
     user: {
       view: false,
       add: false,
