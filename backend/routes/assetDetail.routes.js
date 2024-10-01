@@ -9,6 +9,7 @@ import {
   getScopedInSAssetdDetails,
   updateAssetDetails,
   getAssetDetailsById,
+  getScopeNameById,
 } from '../controllers/assetDetails.controller.js';
 
 const assetDetailRouter = Router();
@@ -21,6 +22,7 @@ assetDetailRouter.route('/assets/').get(getAssetsInAssetDetails);
 assetDetailRouter.route('/scoped/:asset').get(getScopedInSAssetdDetails);
 assetDetailRouter.route('/:assetId').get(getAssetDetailsByAssetId);
 assetDetailRouter.route('/assetDetails/:id').get(getAssetDetailsById);
+assetDetailRouter.route('/scope/:id').get(getScopeNameById);
 
 export default assetDetailRouter;
 

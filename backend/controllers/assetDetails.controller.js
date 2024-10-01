@@ -213,6 +213,23 @@ const getAssetDetailsById = AsyncHandler(async (req, res) => {
   }
 });
 
+const getScopeNameById = async (req, res) => {
+  const scopeId = req.params.id;
+
+  try {
+    const scope = await Scoped.findById(scopeId);
+
+    if (!scope) {
+      return res.status(404).json({ message: 'Scope not found' });
+    }
+
+    res.status(200).json({ id: scope._id, name: scope.name });
+  } catch (error) {
+    console.error('Error fetching scope:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export {
   getAssetDetails,
   addAssetDetails,
@@ -222,4 +239,5 @@ export {
   getScopedInSAssetdDetails,
   getAssetDetailsByAssetId,
   getAssetDetailsById,
+  getScopeNameById,
 };
