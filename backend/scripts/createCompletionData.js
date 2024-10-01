@@ -155,8 +155,8 @@ export async function createCompletionData(username) {
   } catch (error) {
     console.error('Error creating completion data:', error);
   } finally {
-    mongoose.connection.close();
-    console.log('MongoDB connection closed.');
+    // mongoose.connection.close();
+    console.log('All Entry added');
   }
 }
 
