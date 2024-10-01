@@ -147,42 +147,59 @@ export const getStatus = async (req, res) => {
       .lean() // Use lean for faster performance
       .populate({
         path: 'actionId',
-        select: 'name description', // Specify only needed fields
+        select: 'fixed_id', // Specify only needed fields
       })
       .populate({
         path: 'assetId',
-        select: 'name type', // Specify only needed fields
+        select: 'username', // Include username for assigned to field
       })
       .populate({
         path: 'scopeId',
-        select: 'name', // Specify only needed fields
+        select: 'name', // Include name for scope
       })
       .populate({
         path: 'controlId',
-        select: 'name', // Specify only needed fields
+        select: 'section_desc', // Include description for control
       })
       .populate({
         path: 'familyId',
-        select: 'name', // Specify only needed fields
+        select: 'name', // Include name for family
       })
       .populate({
         path: 'AssignedTo',
-        select: 'name email', // Specify only needed fields
+        select: 'username', // Include username for AssignedTo
       })
       .populate({
         path: 'AssignedBy',
-        select: 'name email', // Specify only needed fields
+        select: 'username', // Include username for AssignedBy
       })
       .populate({
         path: 'createdBy',
-        select: 'name email', // Specify only needed fields
+        select: 'username', // Include username for createdBy
       });
 
-    if (statuses.length === 0) {
+    // Map through the statuses to format data according to table fields
+    const formattedStatuses = statuses.map((status) => ({
+      _id: status._id,
+      actionId: status.actionId, // Will contain only fixed_id
+      controlId: status.controlId, // Will contain only section_desc
+      assetId: status.assetId, // Will contain only username
+      scopeId: status.scopeId, // Will contain only name
+      familyId: status.familyId, // Will contain only name
+      AssignedTo: status.AssignedTo, // Will contain only username
+      AssignedBy: status.AssignedBy, // Will contain only username
+      createdBy: status.createdBy, // Will contain only username
+      feedback: status.feedback || 'N/A',
+      status: status.status || 'N/A',
+      isEvidenceUploaded: status.isEvidenceUploaded,
+      history: status.history,
+    }));
+
+    if (formattedStatuses.length === 0) {
       return res.status(404).json({ message: 'No completion statuses found.' });
     }
 
-    return res.status(200).json(statuses);
+    return res.status(200).json(formattedStatuses);
   } catch (err) {
     console.error('Error in getStatus:', err);
     return res.status(500).json({
@@ -190,6 +207,64 @@ export const getStatus = async (req, res) => {
     });
   }
 };
+
+// export const getStatus = async (req, res) => {
+//   const { assetId, scopeId, familyId } = req.query;
+
+//   try {
+//     const query = {};
+//     if (assetId) query.assetId = assetId;
+//     if (scopeId) query.scopeId = scopeId;
+//     if (familyId) query.familyId = familyId;
+
+//     // Fetching completion statuses with necessary data in one go
+//     const statuses = await CompletionStatus.find(query)
+//       .lean() // Use lean for faster performance
+//       .populate({
+//         path: 'actionId',
+//         select: 'name description', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'assetId',
+//         select: 'name type', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'scopeId',
+//         select: 'name', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'controlId',
+//         select: 'name', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'familyId',
+//         select: 'name', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'AssignedTo',
+//         select: 'name email', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'AssignedBy',
+//         select: 'name email', // Specify only needed fields
+//       })
+//       .populate({
+//         path: 'createdBy',
+//         select: 'name email', // Specify only needed fields
+//       });
+
+//     if (statuses.length === 0) {
+//       return res.status(404).json({ message: 'No completion statuses found.' });
+//     }
+
+//     return res.status(200).json(statuses);
+//   } catch (err) {
+//     console.error('Error in getStatus:', err);
+//     return res.status(500).json({
+//       error: 'An error occurred while fetching completion statuses.',
+//     });
+//   }
+// };
 
 // export const getStatus = async (req, res) => {
 //   const { assetId, scopeId, familyId } = req.query;
