@@ -640,14 +640,14 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
-                                  disabled={!isCompleted} // Disable button if completed
+                                  // disabled={!isCompleted} // Disable button if completed
                                 >
                                   Raise Query
                                 </Button>
                               </Tooltip>
                             </TableCell>
                           )}
-                          {(role === 'Admin' || role === 'Auditor') && (
+                          {(role === 'Admin' || role == 'Auditor') && (
                             <TableCell>
                               <Tooltip title='Delegate to External Auditor'>
                                 <Button

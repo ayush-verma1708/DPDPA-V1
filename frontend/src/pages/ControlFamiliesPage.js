@@ -178,7 +178,7 @@ const ControlFamiliesPage = () => {
                 <TableRow key={cf._id}>
                   <TableCell>{cf.fixed_id}</TableCell>
                   <TableCell>{cf.variable_id}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {!cf.isDPDPA && (
                       <>
                         <IconButton
@@ -198,9 +198,9 @@ const ControlFamiliesPage = () => {
                         </IconButton>
                       </>
                     )}
-                  </TableCell>
+                  </TableCell> */}
 
-                  {/* <TableCell>
+                  <TableCell>
                     <IconButton
                       aria-label='edit'
                       color='primary'
@@ -218,7 +218,7 @@ const ControlFamiliesPage = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

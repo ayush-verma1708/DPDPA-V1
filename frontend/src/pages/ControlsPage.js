@@ -352,7 +352,7 @@ const ControlsPage = () => {
                       )?.variable_id
                     }
                   </TableCell>
-                  {/* <TableCell>
+                  <TableCell>
                     <IconButton
                       color='primary'
                       onClick={() => openModal(control)}
@@ -368,8 +368,8 @@ const ControlsPage = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </TableCell> */}
-                  <TableCell>
+                  </TableCell>
+                  {/* <TableCell>
                     {!control.isDPDPA && (
                       <>
                         <IconButton
@@ -387,7 +387,7 @@ const ControlsPage = () => {
                         </IconButton>
                       </>
                     )}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
           </TableBody>

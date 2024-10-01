@@ -273,10 +273,10 @@ const RiskDashboard = () => {
           {['low', 'medium', 'high', 'critical'].map((level) => (
             <Grid item xs={6} sm={3} key={level}>
               <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
-                <Typography variant='h6'>
+                <Typography variant='h5'>
                   {level.charAt(0).toUpperCase() + level.slice(1)}
                 </Typography>
-                <Typography variant='body1'>
+                <Typography variant='h6'>
                   {taskCountsByCriticality[level]}
                 </Typography>
               </Paper>

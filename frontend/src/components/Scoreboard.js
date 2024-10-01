@@ -329,7 +329,7 @@ const Scoreboard = () => {
                     </Tooltip>
                   </TableCell>
                   <TableCell>
-                    {action.AssignedBy.username || 'Unknown'} - (
+                    {action.AssignedBy.username || 'Unknown'} (
                     {action.AssignedBy.role || 'Unknown'})
                   </TableCell>
                   {/* <TableCell>

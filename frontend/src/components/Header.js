@@ -7,6 +7,7 @@ import { Box, IconButton, Popover } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications'; // Import bell icon
 import useFetchUser from '../hooks/useCurrentUser'; // Adjust the path if necessary
 import NotificationList from './NotificationList'; // Adjust the import path as needed
+import MailIcon from '@mui/icons-material/Mail';
 
 const Header = ({ title, handleLogout }) => {
   const token = localStorage.getItem('token');
@@ -107,6 +108,21 @@ const Header = ({ title, handleLogout }) => {
                 User not found
               </Typography>
             )}
+          </Box>
+
+          {/* Bell Icon for Notifications */}
+          <Box>
+            <IconButton
+              aria-describedby={open ? 'notification-popover' : undefined}
+              onClick={handlePopoverOpen}
+              color='inherit'
+              sx={{ color: 'black' }} // Change the color to yellow
+            >
+              {/* <NotificationsIcon sx={{ color: 'black' }} />{' '} */}
+              {/* Also change the icon color */}
+            </IconButton>
+            <MailIcon sx={{ color: 'black' }} />
+            {/* Change the icon to a message icon and color it yellow */}
           </Box>
 
           {/* Bell Icon for Notifications */}

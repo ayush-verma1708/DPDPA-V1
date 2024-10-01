@@ -194,7 +194,7 @@ const ActionsPage = () => {
                     {action.control_Id ? action.control_Id.section : 'N/A'}
                   </TableCell>
                   <TableCell>{action.isDPDPA ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {!action.isDPDPA && (
                       <>
                         <IconButton
@@ -214,9 +214,9 @@ const ActionsPage = () => {
                         </IconButton>
                       </>
                     )}
-                  </TableCell>
+                  </TableCell> */}
 
-                  {/* <TableCell>
+                  <TableCell>
                     <IconButton
                       aria-label='edit'
                       color='primary'
@@ -234,7 +234,7 @@ const ActionsPage = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

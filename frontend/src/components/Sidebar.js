@@ -197,7 +197,7 @@ const Sidebar = ({ onSelect }) => {
     //             <FactCheckOutlinedIcon sx={{ color: 'white' }} />
     //           </ListItemIcon>
     //           {open && (
-    //             <ListItemText primary='M.O.S.' sx={{ color: 'white' }} />
+    //             <ListItemText primary='compliance operation' sx={{ color: 'white' }} />
     //           )}
     //         </ListItem>
     //       )}
@@ -449,7 +449,10 @@ const Sidebar = ({ onSelect }) => {
                 {/* Updated */}
               </ListItemIcon>
               {open && (
-                <ListItemText primary='M.O.S.' sx={{ color: 'white' }} />
+                <ListItemText
+                  primary='Compliance Operation'
+                  sx={{ color: 'white' }}
+                />
               )}
             </ListItem>
           )}
