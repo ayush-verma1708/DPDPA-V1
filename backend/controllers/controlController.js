@@ -3,23 +3,57 @@ import ControlFamily from '../models/controlFamily.js';
 import Action from '../models/action.js';
 import { getNextControlId } from '../utils/autoIncrementId.js';
 
+// export const getControls = async (req, res) => {
+//   try {
+//     // Fetch all controls
+//     const controls = await Control.find();
+
+//     // Include associated control family data
+//     const controlsWithFamily = await Promise.all(
+//       controls.map(async (control) => {
+//         const controlFamily = await ControlFamily.findOne({
+//           fixed_id: control.control_Family_Id,
+//         });
+//         return {
+//           ...control._doc,
+//           controlFamily,
+//         };
+//       })
+//     );
+
+//     res.json(controlsWithFamily);
+//   } catch (error) {
+//     console.error('Error fetching controls:', error); // Log the error details
+//     res
+//       .status(500)
+//       .json({ message: 'Error fetching controls', error: error.message });
+//   }
+// };
+
 export const getControls = async (req, res) => {
   try {
     // Fetch all controls
     const controls = await Control.find();
 
-    // Include associated control family data
-    const controlsWithFamily = await Promise.all(
-      controls.map(async (control) => {
-        const controlFamily = await ControlFamily.findOne({
-          fixed_id: control.control_Family_Id,
-        });
-        return {
-          ...control._doc,
-          controlFamily,
-        };
-      })
+    // Fetch control families for all control IDs in one query
+    const controlFamilyIds = controls.map(
+      (control) => control.control_Family_Id
     );
+    const controlFamilies = await ControlFamily.find({
+      fixed_id: { $in: controlFamilyIds },
+    });
+
+    // Create a map for quick lookup of control families by ID
+    const controlFamilyMap = {};
+    controlFamilies.forEach((family) => {
+      controlFamilyMap[family.fixed_id] = family;
+    });
+
+    // Combine controls with their associated control family
+    const controlsWithFamily = controls.map((control) => ({
+      ...control._doc,
+      controlFamily: controlFamilyMap[control.control_Family_Id] || null, // Use null if family is not found
+    }));
 
     res.json(controlsWithFamily);
   } catch (error) {
@@ -29,7 +63,6 @@ export const getControls = async (req, res) => {
       .json({ message: 'Error fetching controls', error: error.message });
   }
 };
-
 export const createControl = async (req, res) => {
   try {
     const {

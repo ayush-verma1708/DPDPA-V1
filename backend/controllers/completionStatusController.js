@@ -142,15 +142,41 @@ export const getStatus = async (req, res) => {
     if (scopeId) query.scopeId = scopeId;
     if (familyId) query.familyId = familyId;
 
+    // Fetching completion statuses with necessary data in one go
     const statuses = await CompletionStatus.find(query)
-      .populate('actionId')
-      .populate('assetId')
-      .populate('scopeId')
-      .populate('controlId')
-      .populate('familyId')
-      .populate('AssignedTo')
-      .populate('AssignedBy')
-      .populate('createdBy');
+      .lean() // Use lean for faster performance
+      .populate({
+        path: 'actionId',
+        select: 'name description', // Specify only needed fields
+      })
+      .populate({
+        path: 'assetId',
+        select: 'name type', // Specify only needed fields
+      })
+      .populate({
+        path: 'scopeId',
+        select: 'name', // Specify only needed fields
+      })
+      .populate({
+        path: 'controlId',
+        select: 'name', // Specify only needed fields
+      })
+      .populate({
+        path: 'familyId',
+        select: 'name', // Specify only needed fields
+      })
+      .populate({
+        path: 'AssignedTo',
+        select: 'name email', // Specify only needed fields
+      })
+      .populate({
+        path: 'AssignedBy',
+        select: 'name email', // Specify only needed fields
+      })
+      .populate({
+        path: 'createdBy',
+        select: 'name email', // Specify only needed fields
+      });
 
     if (statuses.length === 0) {
       return res.status(404).json({ message: 'No completion statuses found.' });
@@ -159,11 +185,43 @@ export const getStatus = async (req, res) => {
     return res.status(200).json(statuses);
   } catch (err) {
     console.error('Error in getStatus:', err);
-    return res
-      .status(500)
-      .json({ error: 'An error occurred while fetching completion statuses.' });
+    return res.status(500).json({
+      error: 'An error occurred while fetching completion statuses.',
+    });
   }
 };
+
+// export const getStatus = async (req, res) => {
+//   const { assetId, scopeId, familyId } = req.query;
+
+//   try {
+//     const query = {};
+//     if (assetId) query.assetId = assetId;
+//     if (scopeId) query.scopeId = scopeId;
+//     if (familyId) query.familyId = familyId;
+
+//     const statuses = await CompletionStatus.find(query)
+//       .populate('actionId')
+//       .populate('assetId')
+//       .populate('scopeId')
+//       .populate('controlId')
+//       .populate('familyId')
+//       .populate('AssignedTo')
+//       .populate('AssignedBy')
+//       .populate('createdBy');
+
+//     if (statuses.length === 0) {
+//       return res.status(404).json({ message: 'No completion statuses found.' });
+//     }
+
+//     return res.status(200).json(statuses);
+//   } catch (err) {
+//     console.error('Error in getStatus:', err);
+//     return res
+//       .status(500)
+//       .json({ error: 'An error occurred while fetching completion statuses.' });
+//   }
+// };
 
 export const getStatusWithHistory = async (req, res) => {
   const { completionStatusId } = req.params;
