@@ -100,50 +100,89 @@ const CompletionStatusPage = ({
       scopeId: selectedScopeId,
       assetId: selectedAssetId,
       familyId: expandedFamilyId,
+      // currentUserId, // You only need currentUserId
+      // role, // And role
     }),
     [selectedScopeId, selectedAssetId, expandedFamilyId]
   );
 
+  // const handleFetchStatus = async () => {
+  //   setLoading(true); // Set loading true when fetching starts
+  //   try {
+  //     const response = await getStatus(query);
+  //     let fetchedStatuses = Array.isArray(response) ? response : [response];
+
+  //     // Apply sorting logic here
+  //     fetchedStatuses = fetchedStatuses.sort((a, b) => {
+  //       const controlFamilyIdA = a.controlId?.controlFamily?.fixed_id || '';
+  //       const controlFamilyIdB = b.controlId?.controlFamily?.fixed_id || '';
+
+  //       const controlIdA = a.controlId?.fixed_id || '';
+  //       const controlIdB = b.controlId?.fixed_id || '';
+
+  //       const actionIdA = a.actionId?.fixed_id || '';
+  //       const actionIdB = b.actionId?.fixed_id || '';
+
+  //       // Compare controlFamily.fixed_id
+  //       const controlFamilyComparison =
+  //         controlFamilyIdA.localeCompare(controlFamilyIdB);
+  //       if (controlFamilyComparison !== 0) {
+  //         return controlFamilyComparison;
+  //       }
+
+  //       // Compare control.fixed_id if controlFamily IDs are the same
+  //       const controlComparison = controlIdA.localeCompare(controlIdB);
+  //       if (controlComparison !== 0) {
+  //         return controlComparison;
+  //       }
+
+  //       // Compare actionId.fixed_id if both controlFamily and control IDs are the same
+  //       return actionIdA.localeCompare(actionIdB);
+  //     });
+
+  //     // Set the sorted statuses
+  //     setFetchedStatuses(fetchedStatuses);
+  //   } catch (error) {
+  //     console.error('Error fetching status:', error);
+  //   } finally {
+  //     setLoading(false); // Set loading false when fetching is done
+  //   }
+  // };
+
   const handleFetchStatus = async () => {
-    setLoading(true); // Set loading true when fetching starts
+    setLoading(true); // Start loading state
+
     try {
       const response = await getStatus(query);
-      let fetchedStatuses = Array.isArray(response) ? response : [response];
+      const fetchedStatuses = Array.isArray(response) ? response : [response];
+      console.log('Query:', query);
 
-      // Apply sorting logic here
-      fetchedStatuses = fetchedStatuses.sort((a, b) => {
-        const controlFamilyIdA = a.controlId?.controlFamily?.fixed_id || '';
-        const controlFamilyIdB = b.controlId?.controlFamily?.fixed_id || '';
-
-        const controlIdA = a.controlId?.fixed_id || '';
-        const controlIdB = b.controlId?.fixed_id || '';
-
-        const actionIdA = a.actionId?.fixed_id || '';
-        const actionIdB = b.actionId?.fixed_id || '';
-
-        // Compare controlFamily.fixed_id
-        const controlFamilyComparison =
-          controlFamilyIdA.localeCompare(controlFamilyIdB);
+      // Apply sorting logic
+      const sortedStatuses = fetchedStatuses.sort((a, b) => {
+        const controlFamilyComparison = (
+          a.controlId?.controlFamily?.fixed_id || ''
+        ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
         if (controlFamilyComparison !== 0) {
           return controlFamilyComparison;
         }
 
-        // Compare control.fixed_id if controlFamily IDs are the same
-        const controlComparison = controlIdA.localeCompare(controlIdB);
+        const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
+          b.controlId?.fixed_id || ''
+        );
         if (controlComparison !== 0) {
           return controlComparison;
         }
 
-        // Compare actionId.fixed_id if both controlFamily and control IDs are the same
-        return actionIdA.localeCompare(actionIdB);
+        return (a.actionId?.fixed_id || '').localeCompare(
+          b.actionId?.fixed_id || ''
+        );
       });
 
-      // Set the sorted statuses
-      setFetchedStatuses(fetchedStatuses);
+      setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
     } catch (error) {
       console.error('Error fetching status:', error);
     } finally {
-      setLoading(false); // Set loading false when fetching is done
+      setLoading(false); // End loading state
     }
   };
 
