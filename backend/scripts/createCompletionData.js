@@ -10,13 +10,13 @@ import { AssetDetails } from '../models/assetDetails.model.js'; // Adjust the im
 
 dotenv.config();
 
-async function createCompletionData(username) {
+export async function createCompletionData(username) {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: false,
-      useUnifiedTopology: false,
-    });
+    // await mongoose.connect(process.env.MONGODB_URI, {
+    //   useNewUrlParser: false,
+    //   useUnifiedTopology: false,
+    // });
 
     console.log('Connected to MongoDB successfully.');
 

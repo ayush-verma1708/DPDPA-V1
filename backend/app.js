@@ -26,6 +26,8 @@ import companyFormRoutes from './routes/companyFormRoutes.js';
 
 import TaskManager from './models/taskManager.js';
 
+import './scripts/scheduler.js'; // Import the scheduler
+
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
