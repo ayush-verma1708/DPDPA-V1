@@ -52,6 +52,9 @@ import EvidenceTableCell from './EvidenceTableCell';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Tooltip } from '@mui/material';
 import { uploadEvidence } from '../api/evidenceApi';
+import EvidenceUpload from './EvidenceUpload';
+// import EvidenceFeedbackModal from './EvidenceFeedbackModal'; // Adjust the import path as needed
+import QueryModal from './EvidenceFeedbackModal';
 
 const CompletionStatusPage = ({
   expandedFamilyId,
@@ -86,6 +89,8 @@ const CompletionStatusPage = ({
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
   const [currentUserId, setCurrentUserId] = useState(null); // Store current username
   const [role, setRole] = useState(''); // To store the role from userData
+  const [isQueryModalOpen, setQueryModalOpen] = useState(false);
+  const [evidenceUrl, setEvidenceUrl] = useState('');
 
   // Pagination state
   const [page, setPage] = useState(0);
@@ -148,6 +153,22 @@ const CompletionStatusPage = ({
   //     setLoading(false); // Set loading false when fetching is done
   //   }
   // };
+
+  const handleQuery = async (actionId, controlId) => {
+    // Open the query modal when the button is clicked
+    setQueryModalOpen(true);
+  };
+
+  const handleQuerySubmit = async (query) => {
+    try {
+      // Handle the query submission logic here
+      console.log('Query submitted:', query);
+      // For example, call your API to submit the query
+      // await submitQuery(actionId, controlId, query);
+    } catch (error) {
+      console.error('Error submitting query:', error);
+    }
+  };
 
   const handleFetchStatus = async () => {
     setLoading(true); // Start loading state
@@ -355,6 +376,8 @@ const CompletionStatusPage = ({
         // Redirect to the file URL or a specific route
         const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
         // window.location.href = fullUrl; // Redirect to the evidence URL
+        console.log(fullUrl);
+        setEvidenceUrl(fullUrl);
         window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
       } else {
         console.log('null');
@@ -388,22 +411,22 @@ const CompletionStatusPage = ({
     }
   };
 
-  const handleQuery = async (actionId, controlId) => {
-    try {
-      // Prompt for feedback
-      const feedback = prompt(
-        'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
-      );
-      // Mark the action as completed
-      await issueInEvidence(actionId, controlId, feedback);
+  // const handleQuery = async (actionId, controlId) => {
+  //   try {
+  //     // Prompt for feedback
+  //     const feedback = prompt(
+  //       'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
+  //     );
+  //     // Mark the action as completed
+  //     // await issueInEvidence(actionId, controlId, feedback);
 
-      // Update status in the list
-      updateStatusInList(actionId, feedback);
-      await handleFetchStatus();
-    } catch (error) {
-      console.error('Error marking action as completed:', error);
-    }
-  };
+  //     // Update status in the list
+  //     // updateStatusInList(actionId, feedback);
+  //     // await handleFetchStatus();
+  //   } catch (error) {
+  //     console.error('Error marking action as completed:', error);
+  //   }
+  // };
 
   const handleUploadEvidence = async (actionId, controlId) => {
     // Mark the action as completed
@@ -542,29 +565,33 @@ const CompletionStatusPage = ({
                           {role !== 'IT Team' && (
                             <TableCell>{status.feedback || 'N/A'}</TableCell>
                           )}
-
                           <TableCell>{status.status || 'N/A'}</TableCell>
                           {role === 'IT Team' && !isCompleted && (
-                            <TableCell>
-                              <input type='file' onChange={handleFileChange} />
-                              <Tooltip title='Upload Evidence'>
-                                <Button
-                                  onClick={() =>
-                                    handleUploadEvidence(
-                                      status.actionId?._id,
-                                      status.controlId?._id
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted ||
-                                    !status.status === 'Delegated to IT Team' ||
-                                    status.isEvidenceUploaded
-                                  } // Disable button if completed
-                                >
-                                  Upload Evidence
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
+                            // <TableCell>
+                            //   <input type='file' onChange={handleFileChange} />
+                            //   <Tooltip title='Upload Evidence'>
+                            //     <Button
+                            //       onClick={() =>
+                            //         handleUploadEvidence(
+                            //           status.actionId?._id,
+                            //           status.controlId?._id
+                            //         )
+                            //       }
+                            //       disabled={
+                            //         isCompleted ||
+                            //         !status.status === 'Delegated to IT Team' ||
+                            //         status.isEvidenceUploaded
+                            //       } // Disable button if completed
+                            //     >
+                            //       Upload Evidence
+                            //     </Button>
+                            //   </Tooltip>
+                            // </TableCell>
+                            <EvidenceUpload
+                              status={status}
+                              isCompleted={isCompleted}
+                              handleUploadEvidence={handleUploadEvidence}
+                            />
                           )}
                           {(role === 'IT Team' ||
                             role === 'Auditor' ||
@@ -665,9 +692,24 @@ const CompletionStatusPage = ({
                             </TableCell>
                           )}
 
-                          {(role === 'Auditor' ||
-                            role === 'Admin' ||
-                            role === 'External Auditor') && (
+                          {role === 'Auditor' && (
+                            // <TableCell>
+                            //   <Tooltip title='Raise Query'>
+                            //     <Button
+                            //       color='error'
+                            //       startIcon={<Warning />}
+                            //       onClick={() =>
+                            //         handleQuery(
+                            //           status.actionId?._id,
+                            //           status.controlId?._id
+                            //         )
+                            //       }
+                            //       // disabled={!isCompleted} // Disable button if completed
+                            //     >
+                            //       Raise Query
+                            //     </Button>
+                            //   </Tooltip>
+                            // </TableCell>
                             <TableCell>
                               <Tooltip title='Raise Query'>
                                 <Button
@@ -686,6 +728,31 @@ const CompletionStatusPage = ({
                               </Tooltip>
                             </TableCell>
                           )}
+                          <QueryModal
+                            open={isQueryModalOpen}
+                            onClose={() => setQueryModalOpen(false)}
+                            onSubmit={handleQuerySubmit}
+                            evidenceUrl={evidenceUrl} // Pass the evidence URL to the modal
+                          />
+                          {role === 'External Auditor' && (
+                            <TableCell>
+                              <Tooltip title='Raise Query'>
+                                <Button
+                                  color='error'
+                                  startIcon={<Warning />}
+                                  onClick={() =>
+                                    handleQuery(
+                                      status.actionId?._id,
+                                      status.controlId?._id
+                                    )
+                                  }
+                                  disabled={!isCompleted} // Disable button if completed
+                                >
+                                  Raise Query
+                                </Button>
+                              </Tooltip>
+                            </TableCell>
+                          )}
                           {(role === 'Admin' || role == 'Auditor') && (
                             <TableCell>
                               <Tooltip title='Delegate to External Auditor'>
@@ -698,7 +765,7 @@ const CompletionStatusPage = ({
                                       currentUserId
                                     )
                                   }
-                                  disabled={!isCompleted}
+                                  disabled={isCompleted}
                                 >
                                   Delegate to External Auditor
                                 </Button>
