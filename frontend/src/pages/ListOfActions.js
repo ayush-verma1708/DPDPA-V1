@@ -28,7 +28,7 @@ const ListOfActions = () => {
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [selectedScopeId, setSelectedScopeId] = useState('');
   // const [notification, setNotification] = useState({ message: '', severity: 'info' });
-  const [selectedFile, setSelectedFile] = useState(null);
+
   const [evidences, setEvidences] = useState([]);
 
   const [actions, setActions] = useState([]);
@@ -64,11 +64,11 @@ const ListOfActions = () => {
     fetchName();
   }, [selectedAssetId]);
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
-  const UploadSelectedEvidence = async (actionId, NewcontrolId) => {
+  const UploadSelectedEvidence = async (
+    actionId,
+    NewcontrolId,
+    selectedFile
+  ) => {
     if (!selectedFile) {
       setNotification({
         message: 'Please select a file first.',
@@ -76,7 +76,6 @@ const ListOfActions = () => {
       });
       return;
     }
-
     try {
       const evidenceData = {
         assetId: selectedAssetId,
@@ -85,28 +84,23 @@ const ListOfActions = () => {
         controlId: NewcontrolId,
         familyId: expandedFamilyId,
       };
-
       // Upload the file and get the response
       const response = await uploadEvidence(selectedFile, evidenceData);
-
       // Check if the URL is present in the response
       const evidenceUrl = response.fileUrl; // Optional chaining to prevent undefined errors
       if (!evidenceUrl) {
         throw new Error('No URL returned from the server.');
       }
-
       setNotification({
         message: 'File uploaded successfully!',
         severity: 'success',
       });
-
       // Update the action with the new evidence URL
       setActions((prevActions) =>
         prevActions.map((action) =>
           action._id === actionId ? { ...action, evidenceUrl } : action
         )
       );
-
       const requestData = {
         actionId: actionId,
         controlId: NewcontrolId,
@@ -115,12 +109,10 @@ const ListOfActions = () => {
         status: 'Evidence Uploaded',
         isEvidenceUploaded: true,
       };
-
       // Conditionally include scopeId if it is defined
       if (selectedScopeId) {
         requestData.scopeId = selectedScopeId;
       }
-
       // Update the status model
       console.log(requestData);
       await createOrUpdateStatus(requestData);
@@ -131,6 +123,7 @@ const ListOfActions = () => {
       });
       console.error('File Upload Error:', error);
     }
+    // console.log('file', selectedFile);
   };
 
   const fetchAllEvidences = async () => {
@@ -541,7 +534,6 @@ const ListOfActions = () => {
           selectedAssetId={selectedAssetId}
           selectedScopeId={selectedScopeId}
           actions={actions}
-          handleFileChange={handleFileChange}
           UploadSelectedEvidence={UploadSelectedEvidence}
           markActionAsCompleted={markActionAsCompleted}
           issueInEvidence={issueInEvidence}

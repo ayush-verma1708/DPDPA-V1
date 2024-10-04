@@ -60,7 +60,7 @@ const CompletionStatusPage = ({
   expandedFamilyId,
   selectedAssetId,
   selectedScopeId,
-  handleFileChange,
+
   UploadSelectedEvidence,
   markActionAsCompleted,
   issueInEvidence,
@@ -428,9 +428,9 @@ const CompletionStatusPage = ({
   //   }
   // };
 
-  const handleUploadEvidence = async (actionId, controlId) => {
-    // Mark the action as completed
-    await UploadSelectedEvidence(actionId, controlId);
+  const handleUploadEvidence = async (actionId, controlId, selectedFile) => {
+    // // Mark the action as completed
+    await UploadSelectedEvidence(actionId, controlId, selectedFile);
 
     await handleFetchStatus();
     {
@@ -591,6 +591,8 @@ const CompletionStatusPage = ({
                               status={status}
                               isCompleted={isCompleted}
                               handleUploadEvidence={handleUploadEvidence}
+                              actionId={status.actionId?._id}
+                              controlId={status.controlId?._id}
                             />
                           )}
                           {(role === 'IT Team' ||
