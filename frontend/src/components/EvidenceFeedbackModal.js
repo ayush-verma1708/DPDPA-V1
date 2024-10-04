@@ -9,16 +9,23 @@ import {
   Typography,
 } from '@mui/material';
 
-const QueryModal = ({ open, onClose, onSubmit, evidenceUrl }) => {
+const QueryModal = ({
+  open,
+  onClose,
+  handleQuerySubmit,
+  evidenceUrl,
+  actionId,
+  controlId,
+}) => {
   const [query, setQuery] = useState('');
 
   const handleSubmit = () => {
-    // if (query) {
-    //   onSubmit(query);
-    //   setQuery(''); // Reset query input
-    //   onClose(); // Close the modal
-    // }
-    console.log(evidenceUrl);
+    if (query) {
+      handleQuerySubmit(query, actionId, controlId);
+      // console.log(actionId, controlId, query);
+      setQuery(''); // Reset query input
+      onClose(); // Close the modal
+    }
   };
 
   return (

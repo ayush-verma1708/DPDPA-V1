@@ -60,10 +60,10 @@ const CompletionStatusPage = ({
   expandedFamilyId,
   selectedAssetId,
   selectedScopeId,
-
   UploadSelectedEvidence,
   markActionAsCompleted,
   issueInEvidence,
+  returnEvidence,
 }) => {
   const [statusData, setStatusData] = useState({
     actionId: '',
@@ -88,6 +88,8 @@ const CompletionStatusPage = ({
   const [role, setRole] = useState(''); // To store the role from userData
   const [isQueryModalOpen, setQueryModalOpen] = useState(false);
   const [evidenceUrl, setEvidenceUrl] = useState('');
+  const [selectedActionId, setSelectedActionId] = useState(null);
+  const [selectedControlId, setSelectedControlId] = useState(null);
 
   // Pagination state
   const [page, setPage] = useState(0);
@@ -110,19 +112,43 @@ const CompletionStatusPage = ({
 
   const handleQuery = async (actionId, controlId) => {
     // Open the query modal when the button is clicked
+    handleEvidence(actionId, controlId);
+    setSelectedActionId(actionId);
+    setSelectedControlId(controlId);
     setQueryModalOpen(true);
   };
 
-  const handleQuerySubmit = async (query) => {
+  const handleQuerySubmit = async (query, actionId, controlId) => {
     try {
-      // Handle the query submission logic here
-      console.log('Query submitted:', query);
-      // For example, call your API to submit the query
-      // await submitQuery(actionId, controlId, query);
+      // Issue the evidence and pass the query
+      await issueInEvidence(actionId, controlId, query);
+
+      // Update the status in the list with the new query and status
+      const newStatus = 'Query Submitted'; // Example of a new status
+      updateStatusInList(actionId, newStatus, 'Submit Query', null, query);
+
+      // Optionally refetch statuses after updating
+      await handleFetchStatus();
     } catch (error) {
       console.error('Error submitting query:', error);
     }
   };
+
+  // const handleQuerySubmit = async (query, actionId, controlId) => {
+  //   try {
+  //     // Handle the query submission logic here
+  //     // console.log('Query submitted:', query);
+  //     // For example, call your API to submit the query
+  //     // await submitQuery(query, actionId, controlId);
+  //     await issueInEvidence(actionId, controlId, query);
+
+  //     // Update status in the list
+  //     updateStatusInList(actionId, query);
+  //     await handleFetchStatus();
+  //   } catch (error) {
+  //     console.error('Error submitting query:', error);
+  //   }
+  // };
 
   const handleFetchStatus = async () => {
     setLoading(true); // Start loading state
@@ -162,7 +188,6 @@ const CompletionStatusPage = ({
   };
 
   useEffect(() => {
-    console.log('Fetching status');
     handleFetchStatus(); // Fetch data on component mount and when query changes
   }, [query]);
 
@@ -292,9 +317,10 @@ const CompletionStatusPage = ({
     statusId,
     newStatus,
     action,
-    assignedTo,
+    assignedTo = null,
     feedback = ''
   ) => {
+    // Update the fetchedStatuses list and update the matching status by ID
     setFetchedStatuses(
       fetchedStatuses.map((status) =>
         status._id === statusId
@@ -303,6 +329,22 @@ const CompletionStatusPage = ({
       )
     );
   };
+
+  // const updateStatusInList = (
+  //   statusId,
+  //   newStatus,
+  //   action,
+  //   assignedTo,
+  //   feedback = ''
+  // ) => {
+  //   setFetchedStatuses(
+  //     fetchedStatuses.map((status) =>
+  //       status._id === statusId
+  //         ? { ...status, status: newStatus, action, assignedTo, feedback }
+  //         : status
+  //     )
+  //   );
+  // };
 
   const handleViewEvidence = async (actionId, controlId) => {
     try {
@@ -330,6 +372,36 @@ const CompletionStatusPage = ({
         window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
       } else {
         console.log('null');
+        return null; // No evidence found
+      }
+    } catch (error) {
+      console.error('Error fetching evidence:', error);
+      return null; // Return null if there's an error or no evidence
+    }
+  };
+
+  const handleEvidence = async (actionId, controlId) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8021/api/evidence/params`,
+        {
+          assetId: selectedAssetId,
+          scopeId: selectedScopeId,
+          actionId,
+          familyId: expandedFamilyId,
+          controlId,
+        }
+      );
+
+      // Check if the response contains a valid file URL
+      if (res.data && res.data.fileUrl) {
+        // return res.data.fileUrl;
+        // Redirect to the file URL or a specific route
+        const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
+        // window.location.href = fullUrl; // Redirect to the evidence URL
+        setEvidenceUrl(fullUrl);
+        // window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
+      } else {
         return null; // No evidence found
       }
     } catch (error) {
@@ -388,7 +460,6 @@ const CompletionStatusPage = ({
   };
 
   useEffect(() => {
-    console.log('fetchCurrentUserData called');
     const fetchCurrentUserData = async () => {
       try {
         const token = window.localStorage.getItem('token'); // Replace with actual token
@@ -579,6 +650,7 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
+
                                   // disabled={!isCompleted} // Disable button if completed
                                 >
                                   Raise Query
@@ -589,8 +661,10 @@ const CompletionStatusPage = ({
                           <QueryModal
                             open={isQueryModalOpen}
                             onClose={() => setQueryModalOpen(false)}
-                            onSubmit={handleQuerySubmit}
+                            handleQuerySubmit={handleQuerySubmit}
                             evidenceUrl={evidenceUrl} // Pass the evidence URL to the modal
+                            actionId={selectedActionId} // Use the state value here
+                            controlId={selectedControlId} // Use the state value here
                           />
                           {role === 'External Auditor' && (
                             <TableCell>

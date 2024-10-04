@@ -199,7 +199,7 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id)
     .select('-password')
     .populate('company');
-  console.log(user);
+
   if (!user) {
     throw new ApiError(404, 'User not found');
   }
