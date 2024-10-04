@@ -68,7 +68,7 @@ export const getUserById = async (id) => {
 // Function to fetch user by ID
 export const getUsernameById = async (id) => {
   try {
-    const response = await axios.get(`${BASE}/api/users/${id}`);
+    const response = await axios.get(`${BASE}/api/users/username/${id}`);
     console.log(response.data.username);
     return response.data.username; // This will return the user data
   } catch (error) {

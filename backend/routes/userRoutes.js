@@ -1,17 +1,27 @@
 // backend/routes/userRoutes.js
 import { Router } from 'express';
-import { createUser, getUsers, updateUser, deleteUser, getCurrentUser, getUserById,checkFormCompletion, updateFormCompletionStatus } from '../controllers/user.controller.js';
+import {
+  createUser,
+  getUsers,
+  updateUser,
+  deleteUser,
+  getCurrentUser,
+  getUserById,
+  checkFormCompletion,
+  updateFormCompletionStatus,
+  getUsernameById,
+} from '../controllers/user.controller.js';
 import authenticateToken from '../middleware/authenticateToken.js';
 
 const router = Router();
 
 router.get('/', getUsers); // Get all users
+router.get('/username/:id', getUsernameById); // Get all users
 router.post('/', createUser); // Create a new user
 router.put('/:id', updateUser); // Update user by ID
 router.delete('/:id', deleteUser); // Delete user by ID
 router.get('/me', authenticateToken, getCurrentUser); // Get current user info
 router.get('/:id', getUserById);
-
 
 // Route to check if the form is completed
 router.get('/:id/form-completion', checkFormCompletion);
@@ -87,6 +97,4 @@ export default router;
 // //     await getCurrentUser(req, res);
 // // }));
 
-
 // // export default userRoutes;
-

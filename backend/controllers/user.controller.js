@@ -226,6 +226,25 @@ const getUserById = async (req, res) => {
   }
 };
 
+// Controller to get only the username by ID
+const getUsernameById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    // Fetch only the username field using the select method
+    const user = await User.findById(id).select('username'); // Only fetches the 'username'
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ username: user.username }); // Return only the username
+  } catch (error) {
+    console.error('Error fetching username:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 export {
   createUser,
   getUsers,
@@ -233,4 +252,5 @@ export {
   deleteUser,
   getCurrentUser,
   getUserById,
+  getUsernameById,
 };

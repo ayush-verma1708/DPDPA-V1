@@ -4,7 +4,8 @@ import Control from './control.js'; // Adjust the path as necessary
 const ChangeHistorySchema = new mongoose.Schema({
   modifiedAt: { type: Date, default: Date.now },
   modifiedBy: {
-    type: mongoose.Schema.Types.Mixed,
+    type: mongoose.Schema.Types.ObjectId,
+
     ref: 'User',
   }, // Username or ID of the person making the modification
   changes: { type: Map, of: String }, // Record of what was changed, in key-value pairs
@@ -250,6 +251,7 @@ const CompletionStatus = mongoose.model(
 );
 
 export default CompletionStatus;
+
 // // Add the risk calculation methods here
 // CompletionStatusSchema.statics.calculateRiskByAsset = async function (assetId) {
 //   try {

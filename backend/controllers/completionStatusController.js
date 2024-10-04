@@ -441,8 +441,19 @@ export const getStatus = async (req, res) => {
       .populate({
         path: 'createdBy',
         select: 'username', // Include username for createdBy
+      })
+      .populate({
+        path: 'history.modifiedBy',
+        select: 'username', // Include username for createdBy
       });
-
+    // .populate('history.modifiedBy');
+    // .populate(
+    //   History.modifiedBy
+    //   // {
+    //   // path: 'modifiedBy',
+    //   // select: 'username', // Include username for createdBy
+    //   // }
+    // );
     // Map through the statuses to format data according to table fields
     const formattedStatuses = statuses.map((status) => ({
       _id: status._id,

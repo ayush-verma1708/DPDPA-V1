@@ -47,7 +47,7 @@ import {
 } from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
 import { getUserById } from '../api/userApi';
-import { fetchCurrentUser } from '../api/userApi';
+import { fetchCurrentUser, getUsernameById } from '../api/userApi';
 import EvidenceTableCell from './EvidenceTableCell';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Tooltip } from '@mui/material';
@@ -78,11 +78,8 @@ const CompletionStatusPage = ({
     feedback: '',
   });
 
-  const [userNames, setUserNames] = useState({});
-
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [usernames, setUsernames] = useState({});
@@ -110,49 +107,6 @@ const CompletionStatusPage = ({
     }),
     [selectedScopeId, selectedAssetId, expandedFamilyId]
   );
-
-  // const handleFetchStatus = async () => {
-  //   setLoading(true); // Set loading true when fetching starts
-  //   try {
-  //     const response = await getStatus(query);
-  //     let fetchedStatuses = Array.isArray(response) ? response : [response];
-
-  //     // Apply sorting logic here
-  //     fetchedStatuses = fetchedStatuses.sort((a, b) => {
-  //       const controlFamilyIdA = a.controlId?.controlFamily?.fixed_id || '';
-  //       const controlFamilyIdB = b.controlId?.controlFamily?.fixed_id || '';
-
-  //       const controlIdA = a.controlId?.fixed_id || '';
-  //       const controlIdB = b.controlId?.fixed_id || '';
-
-  //       const actionIdA = a.actionId?.fixed_id || '';
-  //       const actionIdB = b.actionId?.fixed_id || '';
-
-  //       // Compare controlFamily.fixed_id
-  //       const controlFamilyComparison =
-  //         controlFamilyIdA.localeCompare(controlFamilyIdB);
-  //       if (controlFamilyComparison !== 0) {
-  //         return controlFamilyComparison;
-  //       }
-
-  //       // Compare control.fixed_id if controlFamily IDs are the same
-  //       const controlComparison = controlIdA.localeCompare(controlIdB);
-  //       if (controlComparison !== 0) {
-  //         return controlComparison;
-  //       }
-
-  //       // Compare actionId.fixed_id if both controlFamily and control IDs are the same
-  //       return actionIdA.localeCompare(actionIdB);
-  //     });
-
-  //     // Set the sorted statuses
-  //     setFetchedStatuses(fetchedStatuses);
-  //   } catch (error) {
-  //     console.error('Error fetching status:', error);
-  //   } finally {
-  //     setLoading(false); // Set loading false when fetching is done
-  //   }
-  // };
 
   const handleQuery = async (actionId, controlId) => {
     // Open the query modal when the button is clicked
@@ -321,24 +275,6 @@ const CompletionStatusPage = ({
     }
   };
 
-  // const handleConfirmEvidence = async (statusId) => {
-  //   try {
-  //     const feedback = prompt(
-  //       'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
-  //     );
-  //     await handleFetchStatus(); // Refetch data after action
-  //     const response = await confirmEvidence(statusId, feedback);
-  //     updateStatusInList(
-  //       statusId,
-  //       feedback ? 'Audit Non-Confirm' : 'Audit Closed',
-  //       feedback ? 'Return Evidence' : 'Confirm Evidence',
-  //       feedback
-  //     );
-  //   } catch (error) {
-  //     console.error('Error confirming evidence:', error);
-  //   }
-  // };
-
   const updateStatusInList = (
     statusId,
     newStatus,
@@ -467,28 +403,6 @@ const CompletionStatusPage = ({
           >
             <Table>
               <TableHead>
-                {/* <TableRow>
-                  <TableCell />
-                  {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
-                  
-                  <TableCell>Action</TableCell>
-                  <TableCell>Control</TableCell>
-                  {role !== 'IT Team' && <TableCell>Feedback</TableCell>}
-                  <TableCell>Status</TableCell>
-                  {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
-                  <TableCell>View</TableCell>
-                  {role === 'IT Team' ||
-                    role === 'Auditor' ||
-                    (role === 'External Auditor' && (
-                      <TableCell>Actions</TableCell>
-                    ))}
-                  {role === 'Auditor' && <TableCell>Actions</TableCell>}
-                  {role === 'Auditor' && <TableCell>Confirm</TableCell>}
-                  {role === 'External Auditor' && (
-                    <TableCell>Mark as done</TableCell>
-                  )}
-                  {role === 'IT Team' && <TableCell>Action</TableCell>}
-                </TableRow> */}
                 <TableRow>
                   <TableCell />
                   {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
@@ -567,26 +481,6 @@ const CompletionStatusPage = ({
                           )}
                           <TableCell>{status.status || 'N/A'}</TableCell>
                           {role === 'IT Team' && !isCompleted && (
-                            // <TableCell>
-                            //   <input type='file' onChange={handleFileChange} />
-                            //   <Tooltip title='Upload Evidence'>
-                            //     <Button
-                            //       onClick={() =>
-                            //         handleUploadEvidence(
-                            //           status.actionId?._id,
-                            //           status.controlId?._id
-                            //         )
-                            //       }
-                            //       disabled={
-                            //         isCompleted ||
-                            //         !status.status === 'Delegated to IT Team' ||
-                            //         status.isEvidenceUploaded
-                            //       } // Disable button if completed
-                            //     >
-                            //       Upload Evidence
-                            //     </Button>
-                            //   </Tooltip>
-                            // </TableCell>
                             <EvidenceUpload
                               status={status}
                               isCompleted={isCompleted}
@@ -599,22 +493,6 @@ const CompletionStatusPage = ({
                             role === 'Auditor' ||
                             role === 'External Auditor') && (
                             <TableCell>
-                              {/* <Tooltip title='View Evidence'>
-                                <Button
-                                  variant='contained'
-                                  color='primary'
-                                  startIcon={<Visibility />}
-                                  onClick={() =>
-                                    handleViewEvidence(
-                                      status.actionId?._id,
-                                      status.controlId?._id
-                                    )
-                                  }
-                                  disabled={!status.isEvidenceUploaded} // Disable button if completed
-                                >
-                                  View Evidence
-                                </Button>
-                              </Tooltip> */}
                               <Tooltip title='View Evidence'>
                                 <Button
                                   variant='text' // Change to 'text' to remove contained styling
@@ -634,24 +512,6 @@ const CompletionStatusPage = ({
                           )}
                           {(role === 'Compliance Team' || role === 'Admin') && (
                             <TableCell>
-                              {/* <Tooltip title='Delegate to IT'>
-                                <Button
-                                  variant='outlined'
-                                  color='secondary'
-                                  startIcon={<Edit />}
-                                  onClick={() =>
-                                    onDelegateButtonClick(
-                                      status._id,
-                                      status.assetId._id
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted || status.status !== 'Open'
-                                  } // Disable button if completed
-                                >
-                                  Delegate to IT
-                                </Button>
-                              </Tooltip> */}
                               <Tooltip title='Delegate to IT'>
                                 <Button
                                   variant='text' // Change to 'text' to remove the outlined styling
@@ -695,23 +555,6 @@ const CompletionStatusPage = ({
                           )}
 
                           {role === 'Auditor' && (
-                            // <TableCell>
-                            //   <Tooltip title='Raise Query'>
-                            //     <Button
-                            //       color='error'
-                            //       startIcon={<Warning />}
-                            //       onClick={() =>
-                            //         handleQuery(
-                            //           status.actionId?._id,
-                            //           status.controlId?._id
-                            //         )
-                            //       }
-                            //       // disabled={!isCompleted} // Disable button if completed
-                            //     >
-                            //       Raise Query
-                            //     </Button>
-                            //   </Tooltip>
-                            // </TableCell>
                             <TableCell>
                               <Tooltip title='Raise Query'>
                                 <Button
@@ -821,11 +664,6 @@ const CompletionStatusPage = ({
                                         .reverse() // Reverse the array to show the latest history first
                                         .map((change, index) => (
                                           <TableRow key={index}>
-                                            {/* <TableCell>
-                                            {new Date(
-                                              change.modifiedAt
-                                            ).toLocaleString()}
-                                          </TableCell> */}
                                             <TableCell>
                                               {new Date(
                                                 change.modifiedAt
@@ -833,16 +671,10 @@ const CompletionStatusPage = ({
                                                 day: '2-digit',
                                                 month: '2-digit',
                                                 year: 'numeric',
-                                                // hour: '2-digit',
-                                                // minute: '2-digit',
-                                                // second: '2-digit',
-                                                // hour12: true, // Use 12-hour format with AM/PM
-                                                // timeZone: 'Asia/Kolkata', // Ensures the time is in IST
                                               })}
                                             </TableCell>
-
                                             <TableCell>
-                                              {change.modifiedBy}
+                                              {change.modifiedBy.username}
                                             </TableCell>
                                             <TableCell>
                                               <ul>
