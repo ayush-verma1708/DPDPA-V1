@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import CompletionStatus from '../models/completionStatusSchema.js';
 
 // Helper function to log changes in history
@@ -133,258 +134,6 @@ export const updateStatus = async (req, res) => {
   }
 };
 
-// export const getStatus = async (req, res) => {
-//   const { assetId, scopeId, familyId } = req.query;
-
-//   try {
-//     const query = {};
-//     if (assetId) query.assetId = assetId;
-//     if (scopeId) query.scopeId = scopeId;
-//     if (familyId) query.familyId = familyId;
-
-//     // Fetching completion statuses with necessary data in one go
-//     const statuses = await CompletionStatus.find(query)
-//       .lean() // Use lean for faster performance
-//       .populate({
-//         path: 'actionId',
-//         select: 'fixed_id', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'assetId',
-//         select: 'username', // Include username for assigned to field
-//       })
-//       .populate({
-//         path: 'scopeId',
-//         select: 'name', // Include name for scope
-//       })
-//       .populate({
-//         path: 'controlId',
-//         select: 'section_desc', // Include description for control
-//       })
-//       .populate({
-//         path: 'familyId',
-//         select: 'name', // Include name for family
-//       })
-//       .populate({
-//         path: 'AssignedTo',
-//         select: 'username', // Include username for AssignedTo
-//       })
-//       .populate({
-//         path: 'AssignedBy',
-//         select: 'username', // Include username for AssignedBy
-//       })
-//       .populate({
-//         path: 'createdBy',
-//         select: 'username', // Include username for createdBy
-//       });
-
-//     // Map through the statuses to format data according to table fields
-//     const formattedStatuses = statuses.map((status) => ({
-//       _id: status._id,
-//       actionId: status.actionId, // Will contain only fixed_id
-//       controlId: status.controlId, // Will contain only section_desc
-//       assetId: status.assetId, // Will contain only username
-//       scopeId: status.scopeId, // Will contain only name
-//       familyId: status.familyId, // Will contain only name
-//       AssignedTo: status.AssignedTo, // Will contain only username
-//       AssignedBy: status.AssignedBy, // Will contain only username
-//       createdBy: status.createdBy, // Will contain only username
-//       feedback: status.feedback || 'N/A',
-//       status: status.status || 'N/A',
-//       isEvidenceUploaded: status.isEvidenceUploaded,
-//       history: status.history,
-//     }));
-
-//     if (formattedStatuses.length === 0) {
-//       return res.status(404).json({ message: 'No completion statuses found.' });
-//     }
-
-//     return res.status(200).json(formattedStatuses);
-//   } catch (err) {
-//     console.error('Error in getStatus:', err);
-//     return res.status(500).json({
-//       error: 'An error occurred while fetching completion statuses.',
-//     });
-//   }
-// };
-
-// export const getStatus = async (req, res) => {
-//   const { assetId, scopeId, familyId } = req.query;
-
-//   try {
-//     const query = {};
-//     if (assetId) query.assetId = assetId;
-//     if (scopeId) query.scopeId = scopeId;
-//     if (familyId) query.familyId = familyId;
-
-//     // Fetching completion statuses with necessary data in one go
-//     const statuses = await CompletionStatus.find(query)
-//       .lean() // Use lean for faster performance
-//       .populate({
-//         path: 'actionId',
-//         select: 'name description', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'assetId',
-//         select: 'name type', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'scopeId',
-//         select: 'name', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'controlId',
-//         select: 'name', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'familyId',
-//         select: 'name', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'AssignedTo',
-//         select: 'name email', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'AssignedBy',
-//         select: 'name email', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'createdBy',
-//         select: 'name email', // Specify only needed fields
-//       });
-
-//     if (statuses.length === 0) {
-//       return res.status(404).json({ message: 'No completion statuses found.' });
-//     }
-
-//     return res.status(200).json(statuses);
-//   } catch (err) {
-//     console.error('Error in getStatus:', err);
-//     return res.status(500).json({
-//       error: 'An error occurred while fetching completion statuses.',
-//     });
-//   }
-// };
-
-// export const getStatus = async (req, res) => {
-//   const { assetId, scopeId, familyId } = req.query;
-
-//   try {
-//     const query = {};
-//     if (assetId) query.assetId = assetId;
-//     if (scopeId) query.scopeId = scopeId;
-//     if (familyId) query.familyId = familyId;
-
-//     const statuses = await CompletionStatus.find(query)
-//       .populate('actionId')
-//       .populate('assetId')
-//       .populate('scopeId')
-//       .populate('controlId')
-//       .populate('familyId')
-//       .populate('AssignedTo')
-//       .populate('AssignedBy')
-//       .populate('createdBy');
-
-//     if (statuses.length === 0) {
-//       return res.status(404).json({ message: 'No completion statuses found.' });
-//     }
-
-//     return res.status(200).json(statuses);
-//   } catch (err) {
-//     console.error('Error in getStatus:', err);
-//     return res
-//       .status(500)
-//       .json({ error: 'An error occurred while fetching completion statuses.' });
-//   }
-// };
-
-// export const getStatus = async (req, res) => {
-//   const { assetId, scopeId, familyId, currentUserId, role } = req.query;
-
-//   try {
-//     const query = {};
-
-//     // Add filtering based on query params (assetId, scopeId, familyId)
-//     if (assetId) query.assetId = assetId;
-//     if (scopeId) query.scopeId = scopeId;
-//     if (familyId) query.familyId = familyId;
-
-//     // Role-based filtering logic
-//     if (role === 'Admin' || role === 'Compliance Team') {
-//       // No additional filtering for Admin and Compliance Team, they can view all data
-//     } else {
-//       // For other roles, filter statuses based on assigned roles
-//       query.$or = [
-//         { 'AssignedTo._id': currentUserId },
-//         { 'AssignedBy._id': currentUserId },
-//       ];
-//     }
-
-//     // Fetching completion statuses with necessary data
-//     const statuses = await CompletionStatus.find(query)
-//       .lean() // Use lean for faster performance
-//       .populate({
-//         path: 'actionId',
-//         select: 'fixed_id', // Specify only needed fields
-//       })
-//       .populate({
-//         path: 'assetId',
-//         select: 'username', // Include username for assigned to field
-//       })
-//       .populate({
-//         path: 'scopeId',
-//         select: 'name', // Include name for scope
-//       })
-//       .populate({
-//         path: 'controlId',
-//         select: 'section_desc', // Include description for control
-//       })
-//       .populate({
-//         path: 'familyId',
-//         select: 'name', // Include name for family
-//       })
-//       .populate({
-//         path: 'AssignedTo',
-//         select: 'username', // Include username for AssignedTo
-//       })
-//       .populate({
-//         path: 'AssignedBy',
-//         select: 'username', // Include username for AssignedBy
-//       })
-//       .populate({
-//         path: 'createdBy',
-//         select: 'username', // Include username for createdBy
-//       });
-
-//     // Map through the statuses to format data according to table fields
-//     const formattedStatuses = statuses.map((status) => ({
-//       _id: status._id,
-//       actionId: status.actionId, // Will contain only fixed_id
-//       controlId: status.controlId, // Will contain only section_desc
-//       assetId: status.assetId, // Will contain only username
-//       scopeId: status.scopeId, // Will contain only name
-//       familyId: status.familyId, // Will contain only name
-//       AssignedTo: status.AssignedTo, // Will contain only username
-//       AssignedBy: status.AssignedBy, // Will contain only username
-//       createdBy: status.createdBy, // Will contain only username
-//       feedback: status.feedback || 'N/A',
-//       status: status.status || 'N/A',
-//       isEvidenceUploaded: status.isEvidenceUploaded,
-//       history: status.history,
-//     }));
-
-//     if (formattedStatuses.length === 0) {
-//       return res.status(404).json({ message: 'No completion statuses found.' });
-//     }
-
-//     return res.status(200).json(formattedStatuses);
-//   } catch (err) {
-//     console.error('Error in getStatus:', err);
-//     return res.status(500).json({
-//       error: 'An error occurred while fetching completion statuses.',
-//     });
-//   }
-// };
 export const getStatus = async (req, res) => {
   const { assetId, scopeId, familyId, currentUserId, role } = req.query;
 
@@ -444,6 +193,14 @@ export const getStatus = async (req, res) => {
       })
       .populate({
         path: 'history.modifiedBy',
+        select: 'username', // Include username for createdBy
+      })
+      .populate({
+        path: 'history.changes.AssignedTo',
+        select: 'username', // Include username for createdBy
+      })
+      .populate({
+        path: 'history.changes.AssignedTo',
         select: 'username', // Include username for createdBy
       });
     // .populate('history.modifiedBy');
@@ -551,50 +308,6 @@ export const delegateToIT = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-// export const delegateToAuditor = async (req, res) => {
-//   const { completionStatusId, currentUserId } = req.params; // Extracting ID from request params
-//   // const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
-
-//   // Define default auditor
-//   const defaultAuditor = '66d6d07eef980699d3d64258';
-
-//   try {
-//     // Find the completion status by ID
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
-
-//     // If no completion status is found, return 404 error
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     // Define changes to be made
-//     const changes = {
-//       status: 'Audit Delegated', // Update status
-//       action: 'Delegate to Auditor', // Update action
-//       AssignedBy: currentUserId, // Assign current user ID
-//       AssignedTo: defaultAuditor, // Assign default auditor
-//     };
-
-//     // Merge changes into the completion status object
-//     Object.assign(completionStatus, changes);
-
-//     // Log history for auditing (you might want to ensure logHistory is implemented correctly)
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     // Save the updated completion status document
-//     await completionStatus.save();
-
-//     // Return success response
-//     res.status(200).json({ message: 'Delegated to Auditor', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToAuditor:', err);
-//     // Return 500 error if something goes wrong in the try block
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-import mongoose from 'mongoose';
 
 export const delegateToAuditor = async (req, res) => {
   const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
