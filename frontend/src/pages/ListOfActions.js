@@ -360,11 +360,11 @@ const ListOfActions = () => {
     setNotification({ message: '', severity: 'info' });
   };
 
-  const markActionAsCompleted = async (actionId, newControlId, feedback) => {
+  const markActionAsCompleted = async (actionId, newControlId) => {
     // Prepare the request data, including scopeId only if it's provided
     const token = window.localStorage.getItem('token'); // Replace with actual token
     const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
-    console.log(userData.data.email);
+
     const requestData = {
       actionId: actionId,
       controlId: newControlId,
@@ -373,7 +373,6 @@ const ListOfActions = () => {
       isCompleted: true, // Set isCompleted to true
       status: 'Completed',
       AssignedBy: userData.data._id,
-      feedback,
     };
 
     // Conditionally include scopeId if it is defined
@@ -382,11 +381,9 @@ const ListOfActions = () => {
     }
 
     try {
-      // Make API request to update the completion status
       const response = await createOrUpdateStatus(requestData);
 
       console.log('Status updated successfully:', response);
-      // Optionally refetch statuses here if needed
     } catch (error) {
       console.error('Error updating status:', error);
     }
@@ -405,6 +402,7 @@ const ListOfActions = () => {
 
       status: 'Wrong Evidence',
       AssignedBy: userData.data._id,
+      AssignedTo: '66d6d051ef980699d3d64250', // Default Compliance Guy
       feedback,
     };
 

@@ -363,11 +363,22 @@ export const delegateToAuditor = async (req, res) => {
 };
 
 export const delegateToExternalAuditor = async (req, res) => {
-  const { completionStatusId } = req.params; // Extracting ID from request params
-  const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
+  const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
+  const { currentUserId } = req.body; // Move currentUserId to body instead of params
+
+  // Log incoming parameters for debugging
+  console.log('Received parameters:', { completionStatusId, currentUserId });
 
   // Define default auditor
-  const defaultExternalAuditor = '66f5509b121a8c3a25a91924';
+  const ExternalAuditor = '66f5509b121a8c3a25a91924'; // Ensure this is a valid ObjectId
+
+  // Validate ObjectId format
+  if (
+    !mongoose.Types.ObjectId.isValid(currentUserId) ||
+    !mongoose.Types.ObjectId.isValid(ExternalAuditor)
+  ) {
+    return res.status(400).json({ error: 'Invalid User ID' });
+  }
 
   try {
     // Find the completion status by ID
@@ -380,17 +391,17 @@ export const delegateToExternalAuditor = async (req, res) => {
 
     // Define changes to be made
     const changes = {
-      status: 'External Audit Delegated', // Update status
-      action: 'Delegate to External Auditor', // Update action
-      AssignedBy: currentUserId, // Assign current user ID
-      AssignedTo: defaultExternalAuditor, // Assign default auditor
+      status: 'External Audit Delegated',
+      action: 'Delegate to External Auditor',
+      AssignedBy: currentUserId,
+      AssignedTo: ExternalAuditor,
     };
 
     // Merge changes into the completion status object
     Object.assign(completionStatus, changes);
 
-    // Log history for auditing (you might want to ensure logHistory is implemented correctly)
-    logHistory(completionStatus, changes, username);
+    // Log history for auditing
+    logHistory(completionStatus, changes, currentUserId);
 
     // Save the updated completion status document
     await completionStatus.save();
@@ -400,11 +411,54 @@ export const delegateToExternalAuditor = async (req, res) => {
       .status(200)
       .json({ message: 'Delegated to External Auditor', completionStatus });
   } catch (err) {
-    console.error('Error in delegateToExternalAuditor:', err);
+    console.error('Error in delegateToAuditor:', err);
     // Return 500 error if something goes wrong in the try block
     res.status(500).json({ error: err.message });
   }
 };
+// export const delegateToExternalAuditor = async (req, res) => {
+//   const { completionStatusId } = req.params; // Extracting ID from request params
+//   const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
+
+//   // Define default auditor
+//   const defaultExternalAuditor = '66f5509b121a8c3a25a91924';
+
+//   try {
+//     // Find the completion status by ID
+//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+
+//     // If no completion status is found, return 404 error
+//     if (!completionStatus) {
+//       return res.status(404).json({ error: 'CompletionStatus not found' });
+//     }
+
+//     // Define changes to be made
+//     const changes = {
+//       status: 'External Audit Delegated', // Update status
+//       action: 'Delegate to External Auditor', // Update action
+//       AssignedBy: currentUserId, // Assign current user ID
+//       AssignedTo: defaultExternalAuditor, // Assign default auditor
+//     };
+
+//     // Merge changes into the completion status object
+//     Object.assign(completionStatus, changes);
+
+//     // Log history for auditing (you might want to ensure logHistory is implemented correctly)
+//     logHistory(completionStatus, changes, username);
+
+//     // Save the updated completion status document
+//     await completionStatus.save();
+
+//     // Return success response
+//     res
+//       .status(200)
+//       .json({ message: 'Delegated to External Auditor', completionStatus });
+//   } catch (err) {
+//     console.error('Error in delegateToExternalAuditor:', err);
+//     // Return 500 error if something goes wrong in the try block
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 
 export const confirmEvidence = async (req, res) => {
   const { completionStatusId } = req.params;

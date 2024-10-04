@@ -102,12 +102,12 @@ export const delegateToExternalAuditor = async (
     const response = await axios.put(
       `${API_BASE_URL}/completion-status/${completionStatusId}/delegate-external-auditor`,
       {
-        currentUserId,
+        currentUserId, // Ensure this is sent as expected
       }
     );
     return response.data;
   } catch (error) {
-    console.error('Error in delegateToExternalAuditor:', error);
+    console.error('Error in delegate To external Auditor:', error);
     throw error;
   }
 };

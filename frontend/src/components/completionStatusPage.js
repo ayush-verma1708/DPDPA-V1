@@ -134,22 +134,6 @@ const CompletionStatusPage = ({
     }
   };
 
-  // const handleQuerySubmit = async (query, actionId, controlId) => {
-  //   try {
-  //     // Handle the query submission logic here
-  //     // console.log('Query submitted:', query);
-  //     // For example, call your API to submit the query
-  //     // await submitQuery(query, actionId, controlId);
-  //     await issueInEvidence(actionId, controlId, query);
-
-  //     // Update status in the list
-  //     updateStatusInList(actionId, query);
-  //     await handleFetchStatus();
-  //   } catch (error) {
-  //     console.error('Error submitting query:', error);
-  //   }
-  // };
-
   const handleFetchStatus = async () => {
     setLoading(true); // Start loading state
 
@@ -293,7 +277,6 @@ const CompletionStatusPage = ({
       // Log the response for debugging
       console.log('Delegated to Auditor successfully:', response);
 
-      // Refetch data after action
       await handleFetchStatus();
     } catch (error) {
       // Enhanced error logging
@@ -307,6 +290,8 @@ const CompletionStatusPage = ({
   const handleDelegateToExternalAuditor = async (statusId, currentUserId) => {
     try {
       const response = await delegateToExternalAuditor(statusId, currentUserId);
+      console.log('Delegated to Auditor successfully:', response);
+
       await handleFetchStatus(); // Refetch data after action
     } catch (error) {
       console.error('Error delegating to Auditor:', error);
@@ -413,41 +398,17 @@ const CompletionStatusPage = ({
   const handleMarkAsCompleted = async (actionId, controlId) => {
     try {
       // Prompt for feedback
-      const feedback = prompt(
-        'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
-      );
+
       // Mark the action as completed
-      await markActionAsCompleted(actionId, controlId, feedback);
+      await markActionAsCompleted(actionId, controlId);
 
       // Update status in the list
-      updateStatusInList(
-        actionId,
-        feedback ? 'Audit Non-Confirm' : 'Audit Closed',
-        feedback ? 'Return Evidence' : 'Confirm Evidence',
-        feedback
-      );
+
       await handleFetchStatus();
     } catch (error) {
       console.error('Error marking action as completed:', error);
     }
   };
-
-  // const handleQuery = async (actionId, controlId) => {
-  //   try {
-  //     // Prompt for feedback
-  //     const feedback = prompt(
-  //       'Enter feedback if the evidence is not confirmed (leave blank if confirmed):'
-  //     );
-  //     // Mark the action as completed
-  //     // await issueInEvidence(actionId, controlId, feedback);
-
-  //     // Update status in the list
-  //     // updateStatusInList(actionId, feedback);
-  //     // await handleFetchStatus();
-  //   } catch (error) {
-  //     console.error('Error marking action as completed:', error);
-  //   }
-  // };
 
   const handleUploadEvidence = async (actionId, controlId, selectedFile) => {
     // // Mark the action as completed
@@ -650,8 +611,10 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
-
-                                  // disabled={!isCompleted} // Disable button if completed
+                                  disabled={
+                                    status.status === 'Wrong Evidence' ||
+                                    status.status === 'External Audit Delegated'
+                                  } // Disable button if completed
                                 >
                                   Raise Query
                                 </Button>
@@ -678,7 +641,10 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
-                                  disabled={!isCompleted} // Disable button if completed
+                                  disabled={
+                                    isCompleted ||
+                                    status.status === 'Wrong Evidence'
+                                  }
                                 >
                                   Raise Query
                                 </Button>
@@ -697,7 +663,11 @@ const CompletionStatusPage = ({
                                       currentUserId
                                     )
                                   }
-                                  disabled={isCompleted}
+                                  disabled={
+                                    isCompleted ||
+                                    status.status === 'Wrong Evidence' ||
+                                    status.status === 'External Audit Delegated'
+                                  }
                                 >
                                   Delegate to External Auditor
                                 </Button>
@@ -716,7 +686,10 @@ const CompletionStatusPage = ({
                                       status.controlId?._id
                                     )
                                   }
-                                  disabled={isCompleted} // Disable button if completed
+                                  disabled={
+                                    isCompleted ||
+                                    status.status === 'Wrong Evidence'
+                                  } // Disable button if completed
                                 >
                                   Confirm Evidence
                                 </Button>
