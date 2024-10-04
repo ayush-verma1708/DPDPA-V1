@@ -185,6 +185,57 @@
   color: green; /* Green color for completed message */
 }
 
+.step5-tasks {
+  margin-top: 20px;
+}
+
+.task-progress {
+  margin-bottom: 15px;
+}
+
+.progress-bar {
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  height: 10px;
+  margin-top: 5px;
+}
+
+.progress {
+  background-color: #76c7c0;
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+/* .task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.task-item.completed {
+  background-color: #e6ffe6;
+}
+
+.task-label {
+  margin-left: 10px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.task-item input {
+  transform: scale(1.2);
+} */
+
 /* .steps-container {
   display: flex;
   flex-direction: column;

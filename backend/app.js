@@ -26,6 +26,8 @@ import companyFormRoutes from './routes/companyFormRoutes.js';
 
 import TaskManager from './models/taskManager.js';
 
+import stepTasks from './routes/stepTasks.js';
+
 // import './scripts/scheduler.js'; // Import the scheduler
 
 import path from 'path';
@@ -70,6 +72,8 @@ app.use('/api/evidence', evidenceRoutes);
 app.use('/api/task', TaskManager);
 
 app.use('/api/notifications', notificationRoutes);
+
+app.use('/api/v1', stepTasks);
 
 // Use the company form routes
 app.use('/api/company-form', companyFormRoutes);

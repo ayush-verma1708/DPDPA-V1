@@ -337,9 +337,13 @@ const ControlsPage = () => {
                   <TableCell>{control.section_desc}</TableCell>
                   {/* <TableCell>{control.control_type}</TableCell> */}
                   <TableCell>
-                    {control.control_type === 't'
+                    {control.control_type.toLowerCase() === 'p'
+                      ? 'Process'
+                      : control.control_type.toLowerCase() === 'd'
+                      ? 'Documentation'
+                      : control.control_type.toLowerCase() === 't'
                       ? 'Technical'
-                      : control.control_type === 'i'
+                      : control.control_type.toLowerCase() === 'i'
                       ? 'Information'
                       : 'Other'}
                   </TableCell>
