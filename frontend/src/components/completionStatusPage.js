@@ -258,11 +258,24 @@ const CompletionStatusPage = ({
   };
 
   const handleDelegateToAuditor = async (statusId, currentUserId) => {
+    // Log parameters to ensure they are being passed correctly
+    console.log('Delegating to auditor with:', { statusId, currentUserId });
+
     try {
+      // Call the API to delegate the status to the auditor
       const response = await delegateToAuditor(statusId, currentUserId);
-      await handleFetchStatus(); // Refetch data after action
+
+      // Log the response for debugging
+      console.log('Delegated to Auditor successfully:', response);
+
+      // Refetch data after action
+      await handleFetchStatus();
     } catch (error) {
-      console.error('Error delegating to Auditor:', error);
+      // Enhanced error logging
+      console.error('Error delegating to Auditor:', error.message);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+      }
     }
   };
 

@@ -551,12 +551,68 @@ export const delegateToIT = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// export const delegateToAuditor = async (req, res) => {
+//   const { completionStatusId, currentUserId } = req.params; // Extracting ID from request params
+//   // const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
+
+//   // Define default auditor
+//   const defaultAuditor = '66d6d07eef980699d3d64258';
+
+//   try {
+//     // Find the completion status by ID
+//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+
+//     // If no completion status is found, return 404 error
+//     if (!completionStatus) {
+//       return res.status(404).json({ error: 'CompletionStatus not found' });
+//     }
+
+//     // Define changes to be made
+//     const changes = {
+//       status: 'Audit Delegated', // Update status
+//       action: 'Delegate to Auditor', // Update action
+//       AssignedBy: currentUserId, // Assign current user ID
+//       AssignedTo: defaultAuditor, // Assign default auditor
+//     };
+
+//     // Merge changes into the completion status object
+//     Object.assign(completionStatus, changes);
+
+//     // Log history for auditing (you might want to ensure logHistory is implemented correctly)
+//     logHistory(completionStatus, changes, currentUserId);
+
+//     // Save the updated completion status document
+//     await completionStatus.save();
+
+//     // Return success response
+//     res.status(200).json({ message: 'Delegated to Auditor', completionStatus });
+//   } catch (err) {
+//     console.error('Error in delegateToAuditor:', err);
+//     // Return 500 error if something goes wrong in the try block
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+import mongoose from 'mongoose';
+
 export const delegateToAuditor = async (req, res) => {
-  const { completionStatusId } = req.params; // Extracting ID from request params
-  const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
+  const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
+  const { currentUserId } = req.body; // Move currentUserId to body instead of params
+
+  // Log incoming parameters for debugging
+  console.log('Received parameters:', { completionStatusId, currentUserId });
 
   // Define default auditor
-  const defaultAuditor = '66d6d07eef980699d3d64258';
+  const defaultAuditor = '66d6d07eef980699d3d64258'; // Ensure this is a valid ObjectId
+
+  // Validate ObjectId format
+  if (
+    !mongoose.Types.ObjectId.isValid(currentUserId) ||
+    !mongoose.Types.ObjectId.isValid(defaultAuditor)
+  ) {
+    return res.status(400).json({ error: 'Invalid User ID' });
+  }
 
   try {
     // Find the completion status by ID
@@ -569,17 +625,17 @@ export const delegateToAuditor = async (req, res) => {
 
     // Define changes to be made
     const changes = {
-      status: 'Audit Delegated', // Update status
-      action: 'Delegate to Auditor', // Update action
-      AssignedBy: currentUserId, // Assign current user ID
-      AssignedTo: defaultAuditor, // Assign default auditor
+      status: 'Audit Delegated',
+      action: 'Delegate to Auditor',
+      AssignedBy: currentUserId,
+      AssignedTo: defaultAuditor,
     };
 
     // Merge changes into the completion status object
     Object.assign(completionStatus, changes);
 
-    // Log history for auditing (you might want to ensure logHistory is implemented correctly)
-    logHistory(completionStatus, changes, username);
+    // Log history for auditing
+    logHistory(completionStatus, changes, currentUserId);
 
     // Save the updated completion status document
     await completionStatus.save();

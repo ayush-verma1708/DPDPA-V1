@@ -39,6 +39,7 @@ const ListOfActions = () => {
   });
   const [visibleComponent, setVisibleComponent] = useState(''); // State to track which component is visible
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
+  const [currentUser, setCurrentUser] = useState(null); // Store current user
   const [role, setRole] = useState(''); // To store the role from userData
 
   const statusOptions = [
@@ -77,6 +78,9 @@ const ListOfActions = () => {
       return;
     }
     try {
+      const token = window.localStorage.getItem('token'); // Replace with actual token
+      const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
+
       const evidenceData = {
         assetId: selectedAssetId,
         scopeId: selectedScopeId,
@@ -108,13 +112,12 @@ const ListOfActions = () => {
         assetId: selectedAssetId, // Assuming you have this available in scope
         status: 'Evidence Uploaded',
         isEvidenceUploaded: true,
+        AssignedBy: userData.data._id,
       };
       // Conditionally include scopeId if it is defined
       if (selectedScopeId) {
         requestData.scopeId = selectedScopeId;
       }
-      // Update the status model
-      console.log(requestData);
       await createOrUpdateStatus(requestData);
     } catch (error) {
       setNotification({
@@ -146,6 +149,7 @@ const ListOfActions = () => {
         const token = window.localStorage.getItem('token'); // Replace with actual token
         const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
         setCurrentUsername(userData.username); // Set current username
+        setCurrentUser(userData); // Set current username
         setRole(userData.data.role); // Set role from user data
       } catch (error) {
         console.error('Error fetching current user data:', error);
