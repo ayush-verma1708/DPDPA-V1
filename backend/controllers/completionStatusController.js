@@ -134,58 +134,40 @@ export const updateStatus = async (req, res) => {
   }
 };
 
+// Function to get status based on filters
 export const getStatus = async (req, res) => {
-  const { assetId, scopeId, familyId, currentUserId, role } = req.query;
-
   try {
+    const {
+      actionId,
+      assetId,
+      scopeId,
+      controlId,
+      familyId,
+      AssignedTo,
+      status,
+    } = req.query;
+
+    // Build a query object dynamically based on provided query parameters
     const query = {};
 
-    // Add filtering based on query params (assetId, scopeId, familyId)
+    if (actionId) query.actionId = actionId;
     if (assetId) query.assetId = assetId;
     if (scopeId) query.scopeId = scopeId;
+    if (controlId) query.controlId = controlId;
     if (familyId) query.familyId = familyId;
+    if (AssignedTo) query.AssignedTo = AssignedTo;
+    if (status) query.status = status;
 
-    // Role-based filtering logic
-    if (role === 'Admin' || role === 'Compliance Team') {
-      // No additional filtering for Admin and Compliance Team, they can view all data
-    } else {
-      // For other roles, filter statuses based on assigned roles
-      query.$or = [
-        { 'AssignedTo._id': currentUserId }, // Show statuses assigned to the user
-        { 'AssignedBy._id': currentUserId }, // Show statuses created by the user
-      ];
-    }
-
-    // Fetching completion statuses with necessary data
-    const statuses = await CompletionStatus.find(query)
-      .lean() // Use lean for faster performance
-      .populate({
-        path: 'actionId',
-        select: 'fixed_id', // Specify only needed fields
-      })
-      .populate({
-        path: 'assetId',
-        select: 'username', // Include username for assigned to field
-      })
-      .populate({
-        path: 'scopeId',
-        select: 'name', // Include name for scope
-      })
-      .populate({
-        path: 'controlId',
-        select: 'section_desc', // Include description for control
-      })
-      .populate({
-        path: 'familyId',
-        select: 'name', // Include name for family
-      })
+    // Query the database for CompletionStatus documents that match the query
+    const completionStatuses = await CompletionStatus.find(query)
+      .populate('actionId assetId scopeId controlId familyId AssignedTo')
       .populate({
         path: 'AssignedTo',
         select: 'username', // Include username for AssignedTo
       })
       .populate({
         path: 'AssignedBy',
-        select: 'username', // Include username for AssignedBy
+        select: 'username role', // Include username for AssignedBy
       })
       .populate({
         path: 'createdBy',
@@ -199,45 +181,22 @@ export const getStatus = async (req, res) => {
         path: 'history.changes.AssignedTo',
         select: 'username', // Include username for createdBy
       })
-      .populate({
-        path: 'history.changes.AssignedTo',
-        select: 'username', // Include username for createdBy
-      });
-    // .populate('history.modifiedBy');
-    // .populate(
-    //   History.modifiedBy
-    //   // {
-    //   // path: 'modifiedBy',
-    //   // select: 'username', // Include username for createdBy
-    //   // }
-    // );
-    // Map through the statuses to format data according to table fields
-    const formattedStatuses = statuses.map((status) => ({
-      _id: status._id,
-      actionId: status.actionId, // Will contain only fixed_id
-      controlId: status.controlId, // Will contain only section_desc
-      assetId: status.assetId, // Will contain only username
-      scopeId: status.scopeId, // Will contain only name
-      familyId: status.familyId, // Will contain only name
-      AssignedTo: status.AssignedTo, // Will contain only username
-      AssignedBy: status.AssignedBy, // Will contain only username
-      createdBy: status.createdBy, // Will contain only username
-      feedback: status.feedback || 'N/A',
-      status: status.status || 'N/A',
-      isEvidenceUploaded: status.isEvidenceUploaded,
-      history: status.history,
-    }));
+      .exec();
 
-    if (formattedStatuses.length === 0) {
-      return res.status(404).json({ message: 'No completion statuses found.' });
+    if (completionStatuses.length === 0) {
+      return res
+        .status(404)
+        .json({ message: 'No matching completion status found' });
     }
 
-    return res.status(200).json(formattedStatuses);
-  } catch (err) {
-    console.error('Error in getStatus:', err);
-    return res.status(500).json({
-      error: 'An error occurred while fetching completion statuses.',
-    });
+    // Respond with the completion statuses
+    return res.status(200).json(completionStatuses);
+  } catch (error) {
+    // Handle errors
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -416,49 +375,6 @@ export const delegateToExternalAuditor = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-// export const delegateToExternalAuditor = async (req, res) => {
-//   const { completionStatusId } = req.params; // Extracting ID from request params
-//   const { currentUserId, username } = req.body; // Extracting currentUserId and username from request body
-
-//   // Define default auditor
-//   const defaultExternalAuditor = '66f5509b121a8c3a25a91924';
-
-//   try {
-//     // Find the completion status by ID
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
-
-//     // If no completion status is found, return 404 error
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     // Define changes to be made
-//     const changes = {
-//       status: 'External Audit Delegated', // Update status
-//       action: 'Delegate to External Auditor', // Update action
-//       AssignedBy: currentUserId, // Assign current user ID
-//       AssignedTo: defaultExternalAuditor, // Assign default auditor
-//     };
-
-//     // Merge changes into the completion status object
-//     Object.assign(completionStatus, changes);
-
-//     // Log history for auditing (you might want to ensure logHistory is implemented correctly)
-//     logHistory(completionStatus, changes, username);
-
-//     // Save the updated completion status document
-//     await completionStatus.save();
-
-//     // Return success response
-//     res
-//       .status(200)
-//       .json({ message: 'Delegated to External Auditor', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToExternalAuditor:', err);
-//     // Return 500 error if something goes wrong in the try block
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 export const confirmEvidence = async (req, res) => {
   const { completionStatusId } = req.params;
