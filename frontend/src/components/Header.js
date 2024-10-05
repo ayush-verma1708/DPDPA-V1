@@ -109,22 +109,6 @@ const Header = ({ title, handleLogout }) => {
               </Typography>
             )}
           </Box>
-
-          {/* Bell Icon for Notifications */}
-          <Box>
-            <IconButton
-              aria-describedby={open ? 'notification-popover' : undefined}
-              onClick={handlePopoverOpen}
-              color='inherit'
-              sx={{ color: 'black' }} // Change the color to yellow
-            >
-              {/* <NotificationsIcon sx={{ color: 'black' }} />{' '} */}
-              {/* Also change the icon color */}
-            </IconButton>
-            <MailIcon sx={{ color: 'black' }} />
-            {/* Change the icon to a message icon and color it yellow */}
-          </Box>
-
           {/* Bell Icon for Notifications */}
           <Box>
             <IconButton
@@ -153,6 +137,20 @@ const Header = ({ title, handleLogout }) => {
               <NotificationList />{' '}
               {/* Display the NotificationList component */}
             </Popover>
+          </Box>
+          {/* Bell Icon for Notifications */}
+          <Box>
+            <IconButton
+              aria-describedby={open ? 'notification-popover' : undefined}
+              onClick={handlePopoverOpen}
+              color='inherit'
+              sx={{ color: 'black' }} // Change the color to yellow
+            >
+              {/* <NotificationsIcon sx={{ color: 'black' }} />{' '} */}
+              {/* Also change the icon color */}
+            </IconButton>
+            <MailIcon sx={{ color: 'black' }} />
+            {/* Change the icon to a message icon and color it yellow */}
           </Box>
 
           <div className='flex justify-center items-center gap-3'>
