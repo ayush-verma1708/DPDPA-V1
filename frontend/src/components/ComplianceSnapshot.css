@@ -1,0 +1,46 @@
+/* ComplianceSnapshot.css */
+
+.compliance-snapshot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+  gap: 15px; /* Space between buttons */
+}
+
+.action-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff; /* Bootstrap primary color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:disabled {
+  background-color: #007bff99; /* Slightly transparent when disabled */
+  cursor: not-allowed;
+}
+
+.action-button:hover:not(:disabled) {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.feedback-message {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333;
+}

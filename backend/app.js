@@ -28,6 +28,8 @@ import TaskManager from './models/taskManager.js';
 
 import stepTasks from './routes/stepTasks.js';
 
+import complianceSnapshotRoutes from './routes/complianceSnapshotRoutes.js'; // Adjust the path as necessary
+
 // import './scripts/scheduler.js'; // Import the scheduler
 
 import path from 'path';
@@ -78,6 +80,9 @@ app.use('/api/v1', stepTasks);
 // Use the company form routes
 app.use('/api/company-form', companyFormRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Use compliance snapshot routes
+app.use('/api/v1/compliance-snapshot', complianceSnapshotRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;

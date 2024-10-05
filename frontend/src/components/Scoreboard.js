@@ -33,6 +33,7 @@ import {
 } from 'recharts';
 import { CheckCircleOutline, ErrorOutline } from '@mui/icons-material';
 import { styled } from '@mui/system';
+import ComplianceSnapshot from './ComplianceSnapshot';
 
 const StatusBadge = styled('span')(({ isCompleted }) => ({
   display: 'inline-block',
@@ -184,6 +185,7 @@ const Scoreboard = () => {
   return (
     <div className='p-5 w-full bg-gray-50 min-h-screen'>
       <h2 className='text-3xl font-bold mb-6 text-center'>Action Scoreboard</h2>
+      <ComplianceSnapshot />
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
         <div className='p-6 bg-white shadow rounded-lg'>
