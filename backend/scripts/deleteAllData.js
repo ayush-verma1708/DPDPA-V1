@@ -1,10 +1,10 @@
 // deleteAllEntries.js
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Message from '../models/messageSchema'; // Adjust the path to your Message model
-import CompletionStatus from './models/completionStatus'; // Adjust the path to your CompletionStatus model
-import Notification from './models/notificationSchema'; // Adjust the path to your Notification model
-import Evidence from './models/Evidence'; // Adjust the path to your Evidence model
+import Message from '../models/messageSchema.js'; // Adjust the path to your Message model
+import CompletionStatus from '../models/completionStatusSchema.js';
+import Notification from '../models/notificationSchema.js'; // Adjust the path to your Notification model
+import Evidence from '../models/Evidence.js'; // Adjust the path to your Evidence model
 
 // Load environment variables from .env file
 dotenv.config();
