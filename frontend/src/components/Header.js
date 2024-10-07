@@ -9,6 +9,7 @@ import useFetchUser from '../hooks/useCurrentUser'; // Adjust the path if necess
 import NotificationList from './NotificationList'; // Adjust the import path as needed
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationButton from './NotificationButton'; // Adjust path as needed
+import MessageButton from './MessageButton'; // Import the MessageButton
 
 const Header = ({ title, handleLogout }) => {
   const token = localStorage.getItem('token');
@@ -16,6 +17,8 @@ const Header = ({ title, handleLogout }) => {
 
   // State for managing the notification panel
   const [anchorEl, setAnchorEl] = useState(null);
+  // Check if user is defined before accessing its properties
+  const userId = user ? user._id : null;
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -117,19 +120,10 @@ const Header = ({ title, handleLogout }) => {
           </Box>
           {/* Bell Icon for Messages */}
           <Box>
-            <IconButton
-              aria-describedby={open ? 'notification-popover' : undefined}
-              onClick={handlePopoverOpen}
-              color='inherit'
-              sx={{ color: 'black' }} // Change the color to yellow
-            >
-              {/* <NotificationsIcon sx={{ color: 'black' }} />{' '} */}
-              {/* Also change the icon color */}
-            </IconButton>
-            <MailIcon sx={{ color: 'black' }} />
-            {/* Change the icon to a message icon and color it yellow */}
+            {/* Only render MessageButton if userId is available */}
+            {userId && <MessageButton userId={userId} />}
+            {/* Display the NotificationList component */}
           </Box>
-
           <div className='flex justify-center items-center gap-3'>
             <Button
               color='inherit'

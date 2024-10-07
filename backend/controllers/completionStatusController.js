@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import CompletionStatus from '../models/completionStatusSchema.js';
+import { createMessage } from '../services/messageService.js'; // Adjust the path as necessary
 
 // Helper function to log changes in history
 const logHistory = (completionStatus, changes, userId) => {
@@ -62,6 +63,12 @@ export const createOrUpdateStatus = async (req, res) => {
 
       logHistory(completionStatus, changes, AssignedBy);
       await completionStatus.save();
+
+      // Create a message indicating the status update
+      await createMessage(
+        AssignedBy,
+        `Updated status for actionId ${actionId}`
+      );
     } else {
       // Create new status entry
       completionStatus = new CompletionStatus({
@@ -81,6 +88,12 @@ export const createOrUpdateStatus = async (req, res) => {
         completedAt: isCompleted ? new Date() : null,
       });
       await completionStatus.save();
+
+      // Create a message indicating the creation of a new status
+      await createMessage(
+        createdBy,
+        `Created new status for actionId ${actionId}`
+      );
     }
 
     res.status(200).json(completionStatus);
@@ -127,6 +140,7 @@ export const updateStatus = async (req, res) => {
     logHistory(completionStatus, changes, AssignedBy);
 
     await completionStatus.save();
+
     res.status(200).json(completionStatus);
   } catch (err) {
     console.error('Error in updateStatus:', err);
@@ -260,6 +274,8 @@ export const delegateToIT = async (req, res) => {
     logHistory(completionStatus, changes, currentUserId);
 
     await completionStatus.save();
+    // Create a message indicating delegation to IT
+    await createMessage(itOwnerId, `Delegated to IT Team: ${itOwnerId}`);
 
     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
   } catch (err) {
@@ -311,6 +327,9 @@ export const delegateToAuditor = async (req, res) => {
 
     // Save the updated completion status document
     await completionStatus.save();
+
+    // Create a message indicating delegation to Auditor
+    await createMessage(AssignedTo, `Delegated to Auditor: ${defaultAuditor}`);
 
     // Return success response
     res.status(200).json({ message: 'Delegated to Auditor', completionStatus });
@@ -365,6 +384,12 @@ export const delegateToExternalAuditor = async (req, res) => {
     // Save the updated completion status document
     await completionStatus.save();
 
+    // Create a message indicating delegation to External Auditor
+    await createMessage(
+      AssignedTo,
+      `Delegated to External Auditor: ${AssignedTo}`
+    );
+
     // Return success response
     res
       .status(200)
@@ -404,6 +429,8 @@ export const confirmEvidence = async (req, res) => {
     logHistory(completionStatus, changes, currentUserId);
 
     await completionStatus.save();
+    // Create a message indicating confirmation of evidence
+
     res.status(200).json({ message: 'Evidence processed', completionStatus });
   } catch (err) {
     console.error('Error in confirmEvidence:', err);
@@ -432,6 +459,13 @@ export const raiseQuery = async (req, res) => {
     logHistory(completionStatus, changes, currentUserId);
 
     await completionStatus.save();
+
+    // Create a message indicating a query was raised
+    await createMessage(
+      currentUserId,
+      `Raised query for completionStatusId ${completionStatusId}`
+    );
+
     res.status(200).json({ message: 'Evidence processed', completionStatus });
   } catch (err) {
     console.error('Error in confirmEvidence:', err);

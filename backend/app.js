@@ -30,6 +30,8 @@ import stepTasks from './routes/stepTasks.js';
 
 import complianceSnapshotRoutes from './routes/complianceSnapshotRoutes.js'; // Adjust the path as necessary
 
+import messageRoutes from './routes/messageRoutes.js'; // Adjust the path as necessary
+
 import './scripts/scheduler.js'; // Import the scheduler
 
 import path from 'path';
@@ -83,6 +85,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Use compliance snapshot routes
 app.use('/api/v1/compliance-snapshot', complianceSnapshotRoutes);
+
+// Use the message routes
+app.use('/api/messages', messageRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;
