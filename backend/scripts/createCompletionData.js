@@ -8,7 +8,7 @@ import { Asset } from '../models/asset.model.js';
 import { Scoped } from '../models/scoped.model.js';
 import { AssetDetails } from '../models/assetDetails.model.js'; // Adjust the import path as necessary
 
-dotenv.config();
+// dotenv.config();
 
 export async function createCompletionData(username) {
   try {

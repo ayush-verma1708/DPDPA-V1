@@ -568,7 +568,9 @@ const CompletionStatusPage = ({
                                     )
                                   }
                                   disabled={
-                                    isCompleted || status.status !== 'Open'
+                                    isCompleted ||
+                                    (status.status !== 'Open' &&
+                                      status.status !== 'Wrong Evidence')
                                   } // Disable button if completed
                                 >
                                   Delegate to IT

@@ -1,18 +1,37 @@
 import mongoose from 'mongoose';
 import { DB_NAME } from '../constants.js';
 
-const connectDb = async () => {
+export const connectDB = async () => {
   try {
     const connectionInstance = await mongoose.connect(
-      `${process.env.MONGODB_URI}/${DB_NAME}`
+      `${process.env.MONGODB_URI}/${DB_NAME}`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
     );
-    console.log(
-      `\nMongo DB Connected !! DB Host: ${connectionInstance.connection.host}`
-    );
+    console.log(`MongoDB Connected: ${connectionInstance.connection.host}`);
   } catch (error) {
-    console.log('Mongo Db Connect error ', error);
-    process.exit(1);
+    console.error('MongoDB connection error:', error);
+    throw error; // Ensure the error is propagated
   }
 };
 
-export default connectDb;
+// import mongoose from 'mongoose';
+// import { DB_NAME } from '../constants.js';
+
+// const connectDb = async () => {
+//   try {
+//     const connectionInstance = await mongoose.connect(
+//       `${process.env.MONGODB_URI}/${DB_NAME}`
+//     );
+//     console.log(
+//       `\nMongo DB Connected !! DB Host: ${connectionInstance.connection.host}`
+//     );
+//   } catch (error) {
+//     console.log('Mongo Db Connect error ', error);
+//     process.exit(1);
+//   }
+// };
+
+// export default connectDb;

@@ -168,7 +168,7 @@ const StepsComponent = ({ onClose }) => {
       <button className='close-button' onClick={onClose} aria-label='Close'>
         ×
       </button>
-      <h1 className='steps-heading'>Steps Panel</h1>
+      <h1 className='steps-heading'>Onboarding Panel</h1>
       <div className='progress-bar'>
         <div
           className='progress'

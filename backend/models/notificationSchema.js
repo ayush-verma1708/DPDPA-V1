@@ -13,6 +13,11 @@ const NotificationSchema = new mongoose.Schema({
     ref: 'Asset',
     required: true,
   },
+  status: {
+    type: String,
+    enum: ['completed', 'pending', 'error'], // Define allowed values for status
+    required: true,
+  },
   readAt: { type: Date, default: null }, // New field for the timestamp when marked as read
 });
 

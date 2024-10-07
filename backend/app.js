@@ -30,7 +30,7 @@ import stepTasks from './routes/stepTasks.js';
 
 import complianceSnapshotRoutes from './routes/complianceSnapshotRoutes.js'; // Adjust the path as necessary
 
-// import './scripts/scheduler.js'; // Import the scheduler
+import './scripts/scheduler.js'; // Import the scheduler
 
 import path from 'path';
 import fs from 'fs';
