@@ -8,6 +8,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'; // Import bel
 import useFetchUser from '../hooks/useCurrentUser'; // Adjust the path if necessary
 import NotificationList from './NotificationList'; // Adjust the import path as needed
 import MailIcon from '@mui/icons-material/Mail';
+import NotificationButton from './NotificationButton'; // Adjust path as needed
 
 const Header = ({ title, handleLogout }) => {
   const token = localStorage.getItem('token');
@@ -111,34 +112,10 @@ const Header = ({ title, handleLogout }) => {
           </Box>
           {/* Bell Icon for Notifications */}
           <Box>
-            <IconButton
-              aria-describedby={open ? 'notification-popover' : undefined}
-              onClick={handlePopoverOpen}
-              color='inherit'
-              sx={{ color: 'black' }} // Change the color to yellow
-            >
-              <NotificationsIcon sx={{ color: 'black' }} />{' '}
-              {/* Also change the icon color */}
-            </IconButton>
-            <Popover
-              id='notification-popover'
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handlePopoverClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'center',
-              }}
-            >
-              <NotificationList />{' '}
-              {/* Display the NotificationList component */}
-            </Popover>
+            <NotificationButton />{' '}
+            {/* Display the NotificationList component */}
           </Box>
-          {/* Bell Icon for Notifications */}
+          {/* Bell Icon for Messages */}
           <Box>
             <IconButton
               aria-describedby={open ? 'notification-popover' : undefined}

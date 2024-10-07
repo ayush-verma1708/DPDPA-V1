@@ -436,6 +436,16 @@ const CompletionStatusPage = ({
     fetchCurrentUserData(); // Call the async function inside useEffect
   }, []); // Empty dependency array means it runs once after the component mounts
 
+  const toCamelCase = (str) => {
+    return str
+      .split(' ')
+      .map((word, index) => {
+        // Capitalize the first letter of each word and make the rest lowercase
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(''); // Join without spaces to form camel case
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <section style={{ marginTop: '20px' }}>
@@ -743,9 +753,12 @@ const CompletionStatusPage = ({
                                                 {Object.entries(
                                                   change.changes
                                                 ).map(([key, value]) => (
-                                                  <li
-                                                    key={key}
-                                                  >{`${key}: ${value}`}</li>
+                                                  <li key={key}>
+                                                    <strong>
+                                                      {toCamelCase(key)}:
+                                                    </strong>{' '}
+                                                    {value}
+                                                  </li>
                                                 ))}
                                               </ul>
                                             </TableCell>
