@@ -68,7 +68,7 @@ const Scoreboard = () => {
     const fetchStatuses = async () => {
       try {
         const response = await axios.get(
-          'http://localhost:8021/api/v1/completion-status'
+          'http://localhost:8021/api/v1/completion-status/all/'
         );
         const data = response.data;
         setStatuses(data);

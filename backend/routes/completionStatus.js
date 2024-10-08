@@ -2,6 +2,7 @@ import express from 'express';
 import {
   createOrUpdateStatus,
   getStatus,
+  getAllStatus,
   updateStatus,
   deleteStatus,
   delegateToIT,
@@ -20,6 +21,8 @@ router.post('/', createOrUpdateStatus);
 
 // Route to get status by criteria
 router.get('/', getStatus);
+
+router.get('/all/', getAllStatus);
 
 // Route to update status by ID
 router.put('/:completionStatusId', updateStatus);
