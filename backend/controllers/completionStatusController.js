@@ -149,6 +149,7 @@ export const updateStatus = async (req, res) => {
 };
 
 // Function to get status based on filters
+// Function to get status based on filters
 export const getStatus = async (req, res) => {
   try {
     const {
@@ -159,6 +160,8 @@ export const getStatus = async (req, res) => {
       familyId,
       AssignedTo,
       status,
+      currentUserId, // Ensure you receive currentUserId from query
+      role, // Ensure you receive role from query
     } = req.query;
 
     // Build a query object dynamically based on provided query parameters
@@ -171,6 +174,16 @@ export const getStatus = async (req, res) => {
     if (familyId) query.familyId = familyId;
     if (AssignedTo) query.AssignedTo = AssignedTo;
     if (status) query.status = status;
+
+    // Add condition based on user's role
+    if (role !== 'Compliance Team') {
+      // If the user is not in the Compliance Team, filter based on currentUserId
+      query.$or = [
+        { AssignedTo: currentUserId },
+        { AssignedBy: currentUserId },
+        { createdBy: currentUserId },
+      ];
+    }
 
     // Query the database for CompletionStatus documents that match the query
     const completionStatuses = await CompletionStatus.find(query)
@@ -213,6 +226,71 @@ export const getStatus = async (req, res) => {
       .json({ message: 'Server error', error: error.message });
   }
 };
+
+// export const getStatus = async (req, res) => {
+//   try {
+//     const {
+//       actionId,
+//       assetId,
+//       scopeId,
+//       controlId,
+//       familyId,
+//       AssignedTo,
+//       status,
+//     } = req.query;
+
+//     // Build a query object dynamically based on provided query parameters
+//     const query = {};
+
+//     if (actionId) query.actionId = actionId;
+//     if (assetId) query.assetId = assetId;
+//     if (scopeId) query.scopeId = scopeId;
+//     if (controlId) query.controlId = controlId;
+//     if (familyId) query.familyId = familyId;
+//     if (AssignedTo) query.AssignedTo = AssignedTo;
+//     if (status) query.status = status;
+
+//     // Query the database for CompletionStatus documents that match the query
+//     const completionStatuses = await CompletionStatus.find(query)
+//       .populate('actionId assetId scopeId controlId familyId AssignedTo')
+//       .populate({
+//         path: 'AssignedTo',
+//         select: 'username', // Include username for AssignedTo
+//       })
+//       .populate({
+//         path: 'AssignedBy',
+//         select: 'username role', // Include username for AssignedBy
+//       })
+//       .populate({
+//         path: 'createdBy',
+//         select: 'username', // Include username for createdBy
+//       })
+//       .populate({
+//         path: 'history.modifiedBy',
+//         select: 'username', // Include username for createdBy
+//       })
+//       .populate({
+//         path: 'history.changes.AssignedTo',
+//         select: 'username', // Include username for createdBy
+//       })
+//       .exec();
+
+//     if (completionStatuses.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: 'No matching completion status found' });
+//     }
+
+//     // Respond with the completion statuses
+//     return res.status(200).json(completionStatuses);
+//   } catch (error) {
+//     // Handle errors
+//     console.error(error);
+//     return res
+//       .status(500)
+//       .json({ message: 'Server error', error: error.message });
+//   }
+// };
 
 export const getStatusWithHistory = async (req, res) => {
   const { completionStatusId } = req.params;

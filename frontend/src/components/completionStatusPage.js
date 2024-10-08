@@ -1,13 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import {
-  createOrUpdateStatus,
   getStatus,
   delegateToIT,
   delegateToAuditor,
   delegateToExternalAuditor,
-  confirmEvidence,
-  returnEvidence,
 } from '../api/completionStatusApi';
 import {
   Table,
@@ -17,41 +14,22 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TableSortLabel,
-  // Button,
-  TextField,
-  Select,
-  MenuItem,
   CircularProgress,
-  FormControl,
-  InputLabel,
   TablePagination,
   Collapse,
   IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography,
 } from '@mui/material';
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
-import { getAssets } from '../api/assetApi';
+
 import {
-  Upload,
-  Visibility,
   CheckCircle,
   Warning,
-  Edit,
   KeyboardArrowDown,
   KeyboardArrowUp,
 } from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
-import { getUserById } from '../api/userApi';
 import { fetchCurrentUser, getUsernameById } from '../api/userApi';
-import EvidenceTableCell from './EvidenceTableCell';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Button, Tooltip } from '@mui/material';
-import { uploadEvidence } from '../api/evidenceApi';
 import EvidenceUpload from './EvidenceUpload';
 // import EvidenceFeedbackModal from './EvidenceFeedbackModal'; // Adjust the import path as needed
 import QueryModal from './EvidenceFeedbackModal';
@@ -63,26 +41,10 @@ const CompletionStatusPage = ({
   UploadSelectedEvidence,
   markActionAsCompleted,
   issueInEvidence,
-  returnEvidence,
 }) => {
-  const [statusData, setStatusData] = useState({
-    actionId: '',
-    assetId: '',
-    scopeId: '',
-    controlId: '',
-    familyId: '',
-    isCompleted: false,
-    username: '',
-    status: 'Open',
-    action: '',
-    feedback: '',
-  });
-
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [usernames, setUsernames] = useState({});
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
   const [currentUserId, setCurrentUserId] = useState(null); // Store current username
   const [role, setRole] = useState(''); // To store the role from userData
@@ -104,10 +66,10 @@ const CompletionStatusPage = ({
       scopeId: selectedScopeId,
       assetId: selectedAssetId,
       familyId: expandedFamilyId,
-      // currentUserId, // You only need currentUserId
-      // role, // And role
+      currentUserId, // You only need currentUserId
+      role, // And role
     }),
-    [selectedScopeId, selectedAssetId, expandedFamilyId]
+    [selectedScopeId, selectedAssetId, expandedFamilyId, currentUserId]
   );
 
   const handleQuery = async (actionId, controlId) => {
@@ -211,19 +173,6 @@ const CompletionStatusPage = ({
     };
     fetchData();
   }, []);
-
-  const sortData = (key, direction) => {
-    const sortedData = [...fetchedStatuses].sort((a, b) => {
-      if (a[key] < b[key]) {
-        return direction === 'asc' ? -1 : 1;
-      }
-      if (a[key] > b[key]) {
-        return direction === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
-    setFetchedStatuses(sortedData);
-  };
 
   const onDelegateButtonClick = (statusId, assetId) => {
     handleDelegateToIT(statusId, assetId);

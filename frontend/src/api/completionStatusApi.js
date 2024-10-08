@@ -16,7 +16,7 @@ export const createOrUpdateStatus = async (statusData) => {
   }
 };
 
-// Get Completion Status by Criteria
+// Function to get status from API
 export const getStatus = async (queryParams) => {
   try {
     const response = await axios.get(
@@ -29,6 +29,20 @@ export const getStatus = async (queryParams) => {
     throw error;
   }
 };
+
+// // Get Completion Status by Criteria
+// export const getStatus = async (queryParams) => {
+//   try {
+//     const response = await axios.get(
+//       `http://localhost:8021/api/v1/completion-status`,
+//       { params: queryParams }
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error in getStatus:', error);
+//     throw error;
+//   }
+// };
 
 // Update Specific Completion Status by ID
 export const updateStatus = async (completionStatusId, updateData) => {
