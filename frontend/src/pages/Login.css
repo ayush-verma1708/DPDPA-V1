@@ -1,46 +1,68 @@
-src/pages/Login.css
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  .input-group {
-    margin-bottom: 15px;
-  }
-  
-  input {
-    padding: 10px;
-    font-size: 16px;
-    width: 100%;
-    margin-top: 5px;
-  }
-  
-  button {
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .error {
-    color: red;
-    margin-bottom: 10px;
-  }
-  
-  .bg__login-page{
+src/pages/Login.css .login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  margin-top: 5px;
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+/* .bg__login-page{
     background-image: url("../../public/assets/DPDPAImage.png") !important;
     background-position: center !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
-  }
+  } */
+.bg__login-page {
+  position: relative; /* Ensure the container is positioned relative */
+  background-image: url('../../public/assets/DPDPAImage.png') !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
+.bg__login-page::before {
+  content: ''; /* Required to create a pseudo-element */
+  position: absolute; /* Position it absolutely */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(76, 81, 114, 0.5); /* Adjust color and opacity here */
+  z-index: 1; /* Ensure it overlays the background */
+}
+
+.bg__login-page > * {
+  position: relative; /* Ensure child elements are above the overlay */
+  z-index: 2; /* Above the overlay */
+}
