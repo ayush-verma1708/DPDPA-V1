@@ -8,6 +8,7 @@ export const connectDB = async () => {
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 5000, // Increase this value as needed
       }
     );
     console.log(`MongoDB Connected: ${connectionInstance.connection.host}`);

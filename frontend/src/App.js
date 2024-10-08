@@ -85,7 +85,7 @@ const App = () => {
     };
 
     fetchUserInfo();
-  }, []); // Empty dependency array ensures this runs only once
+  }, [authToken]); // Empty dependency array ensures this runs only once
 
   return (
     <Router>
