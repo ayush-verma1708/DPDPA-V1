@@ -32,7 +32,6 @@ const SettingsPage = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:8021/api/users'); // Adjust the endpoint as needed
-        console.log('API Response:', response.data); // Log response to verify data structure
         if (Array.isArray(response.data)) {
           setUsers(response.data);
         } else {

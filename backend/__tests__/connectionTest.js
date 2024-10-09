@@ -20,15 +20,11 @@ async function testUpdate() {
     await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 30000
+      serverSelectionTimeoutMS: 30000,
     });
 
     const newHash = await bcrypt.hash(newPassword, saltRounds);
     const result = await User.updateOne({ username }, { password: newHash });
-    
-    console.log('Update result:', result);
-    console.log('Password updated successfully');
-
   } catch (error) {
     console.error('Error:', error);
   } finally {

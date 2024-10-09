@@ -29,7 +29,6 @@ const MessageButton = ({ userId }) => {
     const fetchMessages = async () => {
       if (!userId) return; // Ensure userId is available
       try {
-        console.log('Fetching messages for user ID:', userId); // Log before fetching
         const fetchedMessages = await getAllMessages(userId); // Pass userId here
         setMessages(fetchedMessages); // Set messages in state
         // Count unread messages (assuming isRead is a property in your message schema)

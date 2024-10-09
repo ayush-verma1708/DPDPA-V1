@@ -102,7 +102,6 @@ const CompletionStatusPage = ({
     try {
       const response = await getStatus(query);
       const fetchedStatuses = Array.isArray(response) ? response : [response];
-      console.log('Query:', query);
 
       // Apply sorting logic
       const sortedStatuses = fetchedStatuses.sort((a, b) => {
@@ -217,14 +216,10 @@ const CompletionStatusPage = ({
 
   const handleDelegateToAuditor = async (statusId, currentUserId) => {
     // Log parameters to ensure they are being passed correctly
-    console.log('Delegating to auditor with:', { statusId, currentUserId });
 
     try {
       // Call the API to delegate the status to the auditor
       const response = await delegateToAuditor(statusId, currentUserId);
-
-      // Log the response for debugging
-      console.log('Delegated to Auditor successfully:', response);
 
       await handleFetchStatus();
     } catch (error) {
@@ -239,7 +234,6 @@ const CompletionStatusPage = ({
   const handleDelegateToExternalAuditor = async (statusId, currentUserId) => {
     try {
       const response = await delegateToExternalAuditor(statusId, currentUserId);
-      console.log('Delegated to Auditor successfully:', response);
 
       await handleFetchStatus(); // Refetch data after action
     } catch (error) {
@@ -295,17 +289,14 @@ const CompletionStatusPage = ({
 
       // Check if the response contains a valid file URL
       if (res.data && res.data.fileUrl) {
-        console.log(res);
-        console.log(res.data.fileUrl);
         // return res.data.fileUrl;
         // Redirect to the file URL or a specific route
         const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
         // window.location.href = fullUrl; // Redirect to the evidence URL
-        console.log(fullUrl);
+
         setEvidenceUrl(fullUrl);
         window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
       } else {
-        console.log('null');
         return null; // No evidence found
       }
     } catch (error) {

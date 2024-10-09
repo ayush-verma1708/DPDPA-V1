@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 import CompletionStatus from '../models/completionStatusSchema.js';
 import { createMessage } from '../services/messageService.js'; // Adjust the path as necessary
+import {
+  default_Auditor_Id,
+  default_External_Auditor_Id,
+} from '../constants.js';
 
 // Helper function to log changes in history
 const logHistory = (completionStatus, changes, userId) => {
@@ -365,11 +369,8 @@ export const delegateToAuditor = async (req, res) => {
   const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
   const { currentUserId } = req.body; // Move currentUserId to body instead of params
 
-  // Log incoming parameters for debugging
-  console.log('Received parameters:', { completionStatusId, currentUserId });
-
   // Define default auditor
-  const defaultAuditor = '66d6d07eef980699d3d64258'; // Ensure this is a valid ObjectId
+  const defaultAuditor = default_Auditor_Id; // Ensure this is a valid ObjectId
 
   // Validate ObjectId format
   if (
@@ -424,11 +425,8 @@ export const delegateToExternalAuditor = async (req, res) => {
   const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
   const { currentUserId } = req.body; // Move currentUserId to body instead of params
 
-  // Log incoming parameters for debugging
-  console.log('Received parameters:', { completionStatusId, currentUserId });
-
   // Define default auditor
-  const ExternalAuditor = '66f5509b121a8c3a25a91924'; // Ensure this is a valid ObjectId
+  const ExternalAuditor = default_External_Auditor_Id; // Ensure this is a valid ObjectId
 
   // Validate ObjectId format
   if (

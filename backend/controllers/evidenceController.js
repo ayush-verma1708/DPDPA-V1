@@ -42,9 +42,6 @@ export const uploadFile = upload.single('file');
 // Create evidence
 export const createEvidence = async (req, res) => {
   try {
-    console.log('File:', req.file); // Log file details
-    console.log('Body:', req.body); // Log request body
-    
     const fileUrl = req.file ? `/uploads/${req.file.filename}` : '';
     const evidence = new Evidence({
       fileName: req.file ? req.file.originalname : '',
@@ -58,7 +55,6 @@ export const createEvidence = async (req, res) => {
       controlId: req.body.controlId || null,
       uploadedAt: new Date(), // Timestamp of upload
       username: req.body.username || '', // Include username
-
     });
     await evidence.save();
     res.status(201).json(evidence);
@@ -71,7 +67,13 @@ export const createEvidence = async (req, res) => {
 export const getAllEvidences = async (req, res) => {
   const { actionId, assetId, scopeId, controlId, familyId } = req.query;
   try {
-    const status = await Evidence.findOne({ actionId, assetId, scopeId, controlId, familyId });
+    const status = await Evidence.findOne({
+      actionId,
+      assetId,
+      scopeId,
+      controlId,
+      familyId,
+    });
     res.status(200).json(status);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -91,15 +93,12 @@ export const getEvidenceById = async (req, res) => {
   }
 };
 
-
 // Update evidence
 export const updateEvidence = async (req, res) => {
   try {
-    const evidence = await Evidence.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const evidence = await Evidence.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!evidence) {
       return res.status(404).json({ message: 'Evidence not found' });
     }
@@ -122,29 +121,31 @@ export const deleteEvidence = async (req, res) => {
   }
 };
 
-export const getEvidenceByParams = async(req,res) =>{
-    const { assetId, scopeId,actionId, familyId,  controlId } = req.body;
+export const getEvidenceByParams = async (req, res) => {
+  const { assetId, scopeId, actionId, familyId, controlId } = req.body;
   let statuses;
-    try {
-  
-     if(scopeId==""){
-       statuses = await Evidence.findOne({
-        $and:[
-          {assetId},{actionId},{familyId},{controlId}
-        ]
-      })
-     }
-     else{
-     statuses = await Evidence.findOne({
-        $and:[
-          {assetId},{scopeId},{actionId},{familyId},{controlId}
-        ]
-      })
-     }
-  
-      return res.status(200).json(statuses);
-    } catch (err) {
-      console.error('Error in getStatus:', err);
-      return res.status(500).json({ error: 'An error occurred while fetching completion statuses.' });
-  };
-}
+  try {
+    if (scopeId == '') {
+      statuses = await Evidence.findOne({
+        $and: [{ assetId }, { actionId }, { familyId }, { controlId }],
+      });
+    } else {
+      statuses = await Evidence.findOne({
+        $and: [
+          { assetId },
+          { scopeId },
+          { actionId },
+          { familyId },
+          { controlId },
+        ],
+      });
+    }
+
+    return res.status(200).json(statuses);
+  } catch (err) {
+    console.error('Error in getStatus:', err);
+    return res
+      .status(500)
+      .json({ error: 'An error occurred while fetching completion statuses.' });
+  }
+};

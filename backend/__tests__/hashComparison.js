@@ -7,12 +7,9 @@ async function testHashing() {
 
     // Generate a new hash for the test password
     const newHash = await bcrypt.hash(testPassword, saltRounds);
-    console.log('New Hash:', newHash);
 
     // Compare the test password with the new hash
     const isMatch = await bcrypt.compare(testPassword, newHash);
-    console.log('Password Match with New Hash:', isMatch); // Should log true
-
   } catch (error) {
     console.error('Error during hashing and comparison:', error);
   }

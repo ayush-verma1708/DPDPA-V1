@@ -21,24 +21,7 @@ export const createMessage = async (userId, messageContent) => {
       message: messageContent,
     });
     await message.save();
-    console.log('Message created:', message);
   } catch (error) {
     console.error('Error creating message:', error);
   }
 };
-
-// // messageService.js
-// import Message from '../models/messageSchema.js'; // Adjust the path as necessary
-
-// export const createMessage = async (userId, messageContent) => {
-//   try {
-//     const message = new Message({
-//       userId,
-//       message: messageContent,
-//     });
-//     await message.save();
-//     console.log('Message created:', message);
-//   } catch (error) {
-//     console.error('Error creating message:', error);
-//   }
-// };

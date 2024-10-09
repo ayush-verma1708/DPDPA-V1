@@ -100,12 +100,10 @@ const AssetList = () => {
 
     try {
       const assetobj = assets.find((a) => a._id === assetId);
-      console.log('Selected Asset:', assetobj); // Debugging
       if (assetobj && assetobj.isScoped) {
         const { data } = await axios.get(
           `http://localhost:8021/api/v1/assets/${assetId}/scoped`
         );
-        console.log('Fetched Scoped Data:', data); // Debugging
         setScoped(Array.isArray(data) ? data : []);
       } else {
         setScoped([]);

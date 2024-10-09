@@ -21,19 +21,16 @@ const initialState = {
 const stepsReducer = (state, action) => {
   switch (action.type) {
     case 'NEXT_STEP':
-      console.log('Moving to next step:', state.currentStep + 1);
       return {
         ...state,
         currentStep: Math.min(state.currentStep + 1, action.stepsLength - 1),
       };
     case 'PREV_STEP':
-      console.log('Moving to previous step:', state.currentStep - 1);
       return { ...state, currentStep: Math.max(state.currentStep - 1, 0) };
     case 'COMPLETE_STEP':
       const updatedCompleted = state.completedSteps.includes(action.index)
         ? state.completedSteps.filter((step) => step !== action.index)
         : [...state.completedSteps, action.index];
-      console.log('Updated completed steps:', updatedCompleted);
       localStorage.setItem('completedSteps', JSON.stringify(updatedCompleted));
       return {
         ...state,
@@ -41,10 +38,8 @@ const stepsReducer = (state, action) => {
         currentStep: Math.min(state.currentStep + 1, action.stepsLength - 1),
       };
     case 'SET_STEP':
-      console.log('Setting current step to:', action.index);
       return { ...state, currentStep: action.index };
     case 'RESET':
-      console.log('Resetting progress');
       localStorage.removeItem('completedSteps');
       localStorage.removeItem('step5Tasks');
       return {
@@ -56,7 +51,6 @@ const stepsReducer = (state, action) => {
       const updatedTasks = state.step5Tasks.map((task, idx) =>
         idx === action.index ? !task : task
       );
-      console.log('Toggling task', action.index, ':', updatedTasks);
       localStorage.setItem('step5Tasks', JSON.stringify(updatedTasks));
 
       // Check if all tasks are completed
@@ -142,7 +136,6 @@ const StepsComponent = ({ onClose }) => {
       if (firstIncompleteStep !== -1) {
         dispatch({ type: 'SET_STEP', index: firstIncompleteStep });
       } else {
-        console.log('All steps completed. Closing panel.');
         onClose();
       }
     }

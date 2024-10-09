@@ -7,10 +7,13 @@ const revalidateData = async () => {
   for (const action of actions) {
     await checkAndUpdateActionCompletion(action._id);
   }
-  console.log('Revalidation completed');
   mongoose.connection.close();
 };
 
-mongoose.connect('mongodb://localhost:27017/yourdb', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect('mongodb://localhost:27017/yourdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => revalidateData())
-  .catch(err => console.error('Error connecting to database:', err));
+  .catch((err) => console.error('Error connecting to database:', err));

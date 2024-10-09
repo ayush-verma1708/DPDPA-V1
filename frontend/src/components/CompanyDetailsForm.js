@@ -36,7 +36,6 @@ const CompanyDetailsForm = ({ phoneNumber, otp }) => {
 
     try {
       // Create company form entry
-      console.log(data);
       await updateFormCompletionStatus(userId);
       await createCompanyForm(data);
       alert('Company form submitted successfully');

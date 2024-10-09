@@ -51,7 +51,6 @@ const UserCreation = () => {
 
   useEffect(() => {
     fetchUsers();
-    console.log(window.localStorage.getItem('company'));
   }, []);
 
   const handleAddEditUser = async (e) => {

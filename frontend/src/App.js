@@ -54,19 +54,14 @@ const App = () => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          // console.log('Token found:', token);
-
           const res = await axios.get('http://localhost:8021/api/users/me', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
 
-          // console.log('API response:', res);
-
           if (res.data?.data) {
             setUser(res.data.data);
-            // console.log('User data set:', res.data.data);
           } else {
             console.warn('No user data found in response:', res.data);
             setUser(null);
