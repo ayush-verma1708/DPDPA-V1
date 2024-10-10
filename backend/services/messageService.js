@@ -14,11 +14,16 @@ export const getMessagesForUser = async (userId) => {
 };
 
 // Existing createMessage function
-export const createMessage = async (userId, messageContent) => {
+export const createMessage = async (
+  userId,
+  messageContent,
+  completionStatusId
+) => {
   try {
     const message = new Message({
       userId,
       message: messageContent,
+      completionStatusId,
     });
     await message.save();
   } catch (error) {

@@ -12,6 +12,10 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  completionStatusId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CompletionStatus',
+  },
   status: {
     type: String,
     enum: ['pending', 'sent', 'read'],

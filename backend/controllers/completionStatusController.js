@@ -71,7 +71,8 @@ export const createOrUpdateStatus = async (req, res) => {
       // Create a message indicating the status update
       await createMessage(
         AssignedBy,
-        `Updated status for actionId ${actionId}`
+        `Updated status for actionId ${actionId}`,
+        completionStatus
       );
     } else {
       // Create new status entry
@@ -96,7 +97,8 @@ export const createOrUpdateStatus = async (req, res) => {
       // Create a message indicating the creation of a new status
       await createMessage(
         createdBy,
-        `Created new status for actionId ${actionId}`
+        `Created new status for actionId ${actionId}`,
+        completionStatus
       );
     }
 
@@ -356,7 +358,11 @@ export const delegateToIT = async (req, res) => {
 
     await completionStatus.save();
     // Create a message indicating delegation to IT
-    await createMessage(itOwnerId, `Delegated to IT Team: ${itOwnerId}`);
+    await createMessage(
+      itOwnerId,
+      `Delegated to IT Team: ${itOwnerId}`,
+      completionStatusId
+    );
 
     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
   } catch (err) {
@@ -409,7 +415,8 @@ export const delegateToAuditor = async (req, res) => {
     // Create a message indicating delegation to Auditor
     await createMessage(
       defaultAuditor,
-      `Delegated to Auditor: ${defaultAuditor}`
+      `Delegated to Auditor: ${defaultAuditor}`,
+      completionStatusId
     );
 
     // Return success response
@@ -465,7 +472,8 @@ export const delegateToExternalAuditor = async (req, res) => {
     // Create a message indicating delegation to External Auditor
     await createMessage(
       ExternalAuditor,
-      `Delegated to External Auditor: ${ExternalAuditor}`
+      `Delegated to External Auditor: ${ExternalAuditor}`,
+      completionStatusId
     );
 
     // Return success response
@@ -541,7 +549,8 @@ export const raiseQuery = async (req, res) => {
     // Create a message indicating a query was raised
     await createMessage(
       currentUserId,
-      `Raised query for completionStatusId ${completionStatusId}`
+      `Raised query for completionStatusId ${completionStatusId}`,
+      completionStatusId
     );
 
     res.status(200).json({ message: 'Evidence processed', completionStatus });
