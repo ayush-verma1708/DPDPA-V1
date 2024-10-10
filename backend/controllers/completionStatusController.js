@@ -17,6 +17,122 @@ const logHistory = (completionStatus, changes, userId) => {
   }
 };
 
+export const getCompletionStatusById = async (req, res) => {
+  const { id } = req.params; // Extract the ID from the route parameters
+
+  try {
+    const completionStatus = await CompletionStatus.findById(id, { history: 0 }) // Exclude the history field
+      .populate('actionId', '_id') // Populate only the ID of actionId
+      .populate('assetId', '_id') // Populate only the ID of assetId
+      .populate('scopeId', '_id') // Populate only the ID of scopeId
+      .populate('controlId', '_id') // Populate only the ID of controlId
+      .populate('familyId', '_id') // Populate only the ID of familyId
+      .exec();
+
+    if (!completionStatus) {
+      return res.status(404).json({ message: 'Completion status not found' });
+    }
+
+    return res.status(200).json(completionStatus);
+  } catch (error) {
+    console.error('Error finding CompletionStatus by ID:', error);
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: error.message });
+  }
+};
+
+// export const getCompletionStatusById = async (req, res) => {
+//   const { id } = req.params; // Extract the ID from the route parameters
+
+//   try {
+//     const completionStatus = await CompletionStatus.findById(id)
+//       .populate('actionId', '_id') // Populate only the ID of actionId
+//       .populate('assetId', '_id') // Populate only the ID of assetId
+//       .populate('scopeId', '_id') // Populate only the ID of scopeId
+//       .populate('controlId', '_id') // Populate only the ID of controlId
+//       .populate('familyId', '_id') // Populate only the ID of familyId
+//       .exec();
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ message: 'Completion status not found' });
+//     }
+
+//     return res.status(200).json(completionStatus);
+//   } catch (error) {
+//     console.error('Error finding CompletionStatus by ID:', error);
+//     return res
+//       .status(500)
+//       .json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+// export const getCompletionStatusById = async (req, res) => {
+//   const { id } = req.params; // Extract the ID from the route parameters
+
+//   try {
+//     const completionStatus = await CompletionStatus.findById(id)
+//       .populate('actionId', '_id') // Populate only the ID of actionId
+//       .populate('assetId', '_id') // Populate only the ID of assetId
+//       .populate('scopeId', '_id') // Populate only the ID of scopeId
+//       .populate('controlId', '_id') // Populate only the ID of controlId
+//       .populate('familyId', '_id') // Populate only the ID of familyId
+//       .exec();
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ message: 'Completion status not found' });
+//     }
+
+//     return res.status(200).json(completionStatus);
+//   } catch (error) {
+//     console.error('Error finding CompletionStatus by ID:', error);
+//     return res
+//       .status(500)
+//       .json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+// export const getCompletionStatusById = async (req, res) => {
+//   const { id } = req.params; // Extract the ID from the route parameters
+
+//   try {
+//     const completionStatus = await CompletionStatus.findById(id)
+//       .populate('actionId assetId scopeId controlId familyId AssignedTo')
+//       .populate({
+//         path: 'AssignedTo',
+//         select: 'username', // Include username for AssignedTo
+//       })
+//       .populate({
+//         path: 'AssignedBy',
+//         select: 'username role', // Include username and role for AssignedBy
+//       })
+//       .populate({
+//         path: 'createdBy',
+//         select: 'username', // Include username for createdBy
+//       })
+//       .populate({
+//         path: 'history.modifiedBy',
+//         select: 'username', // Include username for modifiedBy in history
+//       })
+//       .populate({
+//         path: 'history.changes.AssignedTo',
+//         select: 'username', // Include username for AssignedTo in changes
+//       })
+//       .exec();
+
+//     if (!completionStatus) {
+//       return res.status(404).json({ message: 'Completion status not found' });
+//     }
+
+//     return res.status(200).json(completionStatus);
+//   } catch (error) {
+//     console.error('Error finding CompletionStatus by ID:', error);
+//     return res
+//       .status(500)
+//       .json({ message: 'Server error', error: error.message });
+//   }
+// };
+
 export const createOrUpdateStatus = async (req, res) => {
   const {
     actionId,

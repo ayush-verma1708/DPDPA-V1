@@ -12,12 +12,16 @@ import {
   getOverallRisk,
   raiseQuery,
   delegateToExternalAuditor,
+  getCompletionStatusById,
 } from '../controllers/completionStatusController.js';
 
 const router = express.Router();
 
 // Route to create or update a status
 router.post('/', createOrUpdateStatus);
+
+//GetStatusbyId
+router.get('/all/:id', getCompletionStatusById);
 
 // Route to get status by criteria
 router.get('/', getStatus);
