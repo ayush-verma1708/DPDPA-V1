@@ -21,6 +21,16 @@ const messageSchema = new mongoose.Schema({
     enum: ['pending', 'sent', 'read'],
     default: 'pending',
   },
+  isRead: {
+    // New field to track if message is read
+    type: Boolean,
+    default: false, // Default is false (not read)
+  },
+  readAt: {
+    // New field to store the timestamp when message is read
+    type: Date,
+    default: null, // Default is null until the message is read
+  },
   createdAt: {
     type: Date,
     default: Date.now,
