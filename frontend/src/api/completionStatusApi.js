@@ -44,6 +44,18 @@ export const getAllStatus = async (queryParams) => {
   }
 };
 
+export const getStatusById = async (completionStatusId) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/completion-status/all/${completionStatusId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error in getById', error);
+    throw error;
+  }
+};
+
 // // Get Completion Status by Criteria
 // export const getStatus = async (queryParams) => {
 //   try {
