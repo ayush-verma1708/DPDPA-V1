@@ -31,8 +31,10 @@ import stepTasks from './routes/stepTasks.js';
 import complianceSnapshotRoutes from './routes/complianceSnapshotRoutes.js'; // Adjust the path as necessary
 
 import messageRoutes from './routes/messageRoutes.js'; // Adjust the path as necessary
+import userResponseRoutes from './routes/userResponseRoutes.js'; // Import user response routes
+import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the import path as necessary
 
-import './scripts/scheduler.js'; // Import the scheduler
+// import './scripts/scheduler.js'; // Import the scheduler
 
 import path from 'path';
 import fs from 'fs';
@@ -54,6 +56,10 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static('public'));
 app.use(express.static('uploads'));
 app.use(cookieParser());
+
+// Use the routes
+app.use('/api/user-responses', userResponseRoutes);
+app.use('/api', productFamilyRoutes); // Mount the product family routes at /api
 
 // routes declaration
 app.use('/api/v1/assets', assetRouter);

@@ -541,7 +541,7 @@ const Sidebar = ({ onSelect }) => {
           )}
 
           {/* Settings Page - accessible to all roles */}
-          {/* <ListItem
+          <ListItem
             button
             component={Link}
             to='/settings'
@@ -551,12 +551,12 @@ const Sidebar = ({ onSelect }) => {
             sx={{ width: '100%' }}
           >
             <ListItemIcon>
-              <SettingsOutlinedIcon sx={{ color: 'white' }} /> 
+              <SettingsOutlinedIcon sx={{ color: 'white' }} />
             </ListItemIcon>
             {open && (
               <ListItemText primary='Settings' sx={{ color: 'white' }} />
             )}
-          </ListItem> */}
+          </ListItem>
         </List>
       </Box>
     </Drawer>

@@ -1,0 +1,56 @@
+/* UserResponsesManager.css */
+
+.responses-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1200px; /* Increased width for better layout */
+  margin: auto;
+}
+
+.loading {
+  color: #007bff;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.responses-list {
+  display: grid; /* Use grid for two-column layout */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(300px, 1fr)
+  ); /* Two columns */
+  gap: 20px; /* Space between cards */
+}
+
+.response-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s; /* Animation effect */
+}
+
+.response-card:hover {
+  transform: scale(1.02); /* Slightly enlarge on hover */
+}
+
+.response-card h3 {
+  margin: 0 0 10px; /* Spacing for the heading */
+  color: #007bff; /* Change heading color */
+}
+
+.response-card strong {
+  color: #333;
+}
+
+.response-card br {
+  margin-bottom: 5px;
+}
