@@ -42,11 +42,16 @@ const ListOfActions = () => {
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
   const [currentUser, setCurrentUser] = useState(null); // Store current user
   const [role, setRole] = useState(''); // To store the role from userData
-  const [showDataProtection, setShowDataProtection] = useState(false);
+  const [showDataProtection, setShowDataProtection] = useState(false); // State to show/hide the component
 
-  // Function to handle button click
+  // Function to handle button click to show the chapter
   const handleClick = () => {
-    setShowDataProtection((prevShow) => !prevShow); // Toggle between true and false
+    setShowDataProtection(true); // Set state to true to show the component
+  };
+
+  // Function to handle closing the chapter
+  const handleChapterClose = () => {
+    setShowDataProtection(false); // Set state to false to remove the component
   };
 
   const statusOptions = [
@@ -360,8 +365,11 @@ const ListOfActions = () => {
   );
 
   const handleFamilyClick = (familyId) => {
-    handleClick();
-    setExpandedFamilyId(expandedFamilyId === familyId ? '' : familyId);
+    handleChapterClose();
+    // Only change the expandedFamilyId if it's not already selected
+    if (expandedFamilyId !== familyId) {
+      setExpandedFamilyId(familyId);
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -437,19 +445,6 @@ const ListOfActions = () => {
   return (
     <div className='new-page'>
       <div className='page-container'>
-        <SelectorsAndNotifications
-          selectedAssetId={selectedAssetId}
-          assetName={assetName}
-          assets={assets}
-          selectedScopeId={selectedScopeId}
-          scopes={scopes}
-          handleScopeChange={handleScopeChange}
-          handleAssetChange={handleAssetChange}
-          error={error}
-          notification={notification}
-          handleSnackbarClose={handleSnackbarClose}
-        />
-
         {error && (
           <Snackbar
             open={!!error}
@@ -500,7 +495,7 @@ const ListOfActions = () => {
           >
             <button
               onClick={handleClick} // Make it clickable
-              className='control-family-header font-[400] bg-gray-200 text-gray-500 px-4 py-2 border border-gray-300 rounded cursor-not-allowed'
+              className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
               data-disabled // Similar to how you had `data-disabled`
             >
               Chapter 1
@@ -577,6 +572,19 @@ const ListOfActions = () => {
         </div>
       ) : (
         <div className='content'>
+          <SelectorsAndNotifications
+            selectedAssetId={selectedAssetId}
+            assetName={assetName}
+            assets={assets}
+            selectedScopeId={selectedScopeId}
+            scopes={scopes}
+            handleScopeChange={handleScopeChange}
+            handleAssetChange={handleAssetChange}
+            error={error}
+            notification={notification}
+            handleSnackbarClose={handleSnackbarClose}
+          />
+
           <CompletionStatusPage
             expandedFamilyId={expandedFamilyId}
             selectedAssetId={selectedAssetId}

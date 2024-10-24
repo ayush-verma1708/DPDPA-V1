@@ -4,7 +4,7 @@ const DataProtectionAct = () => {
   return (
     <div
       style={{
-        maxWidth: '800px',
+        maxWidth: '1200px',
         margin: '0 auto',
         padding: '20px',
         fontFamily: 'Arial, sans-serif',
