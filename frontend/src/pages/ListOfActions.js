@@ -498,7 +498,7 @@ const ListOfActions = () => {
               className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
               data-disabled // Similar to how you had `data-disabled`
             >
-              Chapter 1
+              Chapter 1 – Overview of Legal Foundations{' '}
             </button>
           </div>
         </div>
