@@ -50,12 +50,14 @@ const Login = ({ setAuthToken }) => {
   return (
     <div className='flex items-start pt-[5rem] justify-between w-full px-[5rem] min-h-screen bg__login-page bg-gray-100 '>
       {/* <h1 className='font-bold w-fit'>DPDPA Software</h1> */}
-      <img
-        src='/assets/DPDPA_logo.jpg'
-        alt='DPDPA Software Logo'
-        // className='w-fit h-auto'
-        className='w-1/2 md:w-1/4 lg:w-1/6 h-auto' // Adjusts width based on screen size
-      />
+      <div className='logo'>
+        <img
+          src='/assets/DPDPA_logo.jpg'
+          alt='DPDPA Software Logo'
+          // className='w-fit h-auto'
+          className='w-1/2 md:w-1/4 lg:w-1/6 h-auto' // Adjusts width based on screen size
+        />
+      </div>
 
       <div className='p-8 space-y-8 bg-white rounded shadow-lg'>
         <h2 className='text-2xl font-bold text-center text-gray-900'>Login</h2>
@@ -64,7 +66,7 @@ const Login = ({ setAuthToken }) => {
             {error}
           </div>
         )}
-        <form onSubmit={handleLogin} className='space-y-6'>
+        <form className='login-form' onSubmit={handleLogin}>
           <div>
             <label
               htmlFor='email'

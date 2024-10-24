@@ -1,6 +1,99 @@
+/* Preferences Form Styles */
 .preferences-form {
+  /* max-width: 900px; */
+  padding: 30px;
+  margin: 0 auto;
+  /* background-color: #ffffff; */
+
+  background-color: #f9f9f9;
+  /* border-radius: 12px; */
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
+  transition: all 0.3s ease;
+}
+
+.preferences-form h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  font-size: 24px;
+}
+
+.families-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.family-tile {
+  background-color: #f8f9fa;
   padding: 20px;
-  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s ease;
+}
+
+.family-tile:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.family-tile h3 {
+  margin-bottom: 15px;
+  font-family: 'Roboto', sans-serif;
+  color: #007bff;
+  font-size: 20px;
+}
+
+.radio-group {
+  margin-bottom: 15px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}
+
+.radio-group input[type='radio'] {
+  margin-right: 10px;
+}
+
+.family-tile input[type='text'] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 8px;
+  transition: border 0.3s ease;
+}
+
+.family-tile input[type='text']:focus {
+  border-color: #007bff;
+}
+
+button[type='submit'] {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 30px;
+  transition: background-color 0.3s ease;
+}
+
+button[type='submit']:hover {
+  background-color: #0056b3;
+}
+
+/* .preferences-form {
+  padding: 20px;
   margin: 0 auto;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -34,12 +127,16 @@
   margin: 0 0 10px;
 }
 
-.family-tile label {
-  display: block;
+.radio-group {
   margin-bottom: 10px;
 }
 
-.family-tile input {
+.radio-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.family-tile input[type='text'] {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
@@ -61,4 +158,4 @@ button[type='submit'] {
 
 button[type='submit']:hover {
   background-color: #0056b3;
-}
+} */

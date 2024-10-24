@@ -14,6 +14,7 @@ import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi';
 import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
+import DataProtectionAct from '../components/DataProtectionAct'; // Import your component
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -41,6 +42,12 @@ const ListOfActions = () => {
   const [currentUsername, setCurrentUsername] = useState(null); // Store current username
   const [currentUser, setCurrentUser] = useState(null); // Store current user
   const [role, setRole] = useState(''); // To store the role from userData
+  const [showDataProtection, setShowDataProtection] = useState(false);
+
+  // Function to handle button click
+  const handleClick = () => {
+    setShowDataProtection((prevShow) => !prevShow); // Toggle between true and false
+  };
 
   const statusOptions = [
     'Open',
@@ -353,6 +360,7 @@ const ListOfActions = () => {
   );
 
   const handleFamilyClick = (familyId) => {
+    handleClick();
     setExpandedFamilyId(expandedFamilyId === familyId ? '' : familyId);
   };
 
@@ -474,7 +482,7 @@ const ListOfActions = () => {
       </div>
 
       <div className='sidebar'>
-        <div
+        {/* <div
           className='hover:bg-[white] bg-[#ffffff]'
           style={{ marginBottom: '10px' }}
         >
@@ -483,6 +491,20 @@ const ListOfActions = () => {
             className='control-family-header font-[400] bg-gray-200 text-gray-500 cursor-not-allowed px-4 py-2 border border-gray-300 rounded'
           >
             Chapter 1
+          </div>
+        </div> */}
+        <div>
+          <div
+            className='hover:bg-[white] bg-[#ffffff]'
+            style={{ marginBottom: '10px' }}
+          >
+            <button
+              onClick={handleClick} // Make it clickable
+              className='control-family-header font-[400] bg-gray-200 text-gray-500 px-4 py-2 border border-gray-300 rounded cursor-not-allowed'
+              data-disabled // Similar to how you had `data-disabled`
+            >
+              Chapter 1
+            </button>
           </div>
         </div>
 
@@ -530,6 +552,13 @@ const ListOfActions = () => {
         ))}
       </div>
 
+      {/* Conditionally render DataProtectionAct component */}
+      {/* {showDataProtection && (
+        <div>
+          <DataProtectionAct />
+        </div>
+      )}
+
       <div className='content'>
         <CompletionStatusPage
           expandedFamilyId={expandedFamilyId}
@@ -540,8 +569,25 @@ const ListOfActions = () => {
           markActionAsCompleted={markActionAsCompleted}
           issueInEvidence={issueInEvidence}
         />
-      </div>
-
+      </div> */}
+      {/* Conditionally render either DataProtectionAct or CompletionStatusPage */}
+      {showDataProtection ? (
+        <div>
+          <DataProtectionAct />
+        </div>
+      ) : (
+        <div className='content'>
+          <CompletionStatusPage
+            expandedFamilyId={expandedFamilyId}
+            selectedAssetId={selectedAssetId}
+            selectedScopeId={selectedScopeId}
+            actions={actions}
+            UploadSelectedEvidence={UploadSelectedEvidence}
+            markActionAsCompleted={markActionAsCompleted}
+            issueInEvidence={issueInEvidence}
+          />
+        </div>
+      )}
       {error && (
         <Snackbar
           open={!!error}

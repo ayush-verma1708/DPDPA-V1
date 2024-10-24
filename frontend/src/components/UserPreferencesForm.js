@@ -60,7 +60,6 @@ const UserPreferencesForm = ({ companyId, onFormSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit} className='preferences-form'>
-      <h2>User Preferences Form</h2>
       <div className='families-grid'>
         {productFamilies.map((family) => (
           <div key={family._id} className='family-tile'>

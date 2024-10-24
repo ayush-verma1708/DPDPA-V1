@@ -1,0 +1,122 @@
+/* General Container Padding */
+.container {
+  padding: 16px;
+  box-sizing: border-box; /* Ensure padding and borders are included in the element's total width/height */
+}
+
+/* Dropdowns and Toggles */
+formControl {
+  margin-bottom: 16px;
+}
+
+h6 {
+  font-size: 1.25rem;
+}
+
+/* Table adjustments */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  box-sizing: border-box;
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+}
+
+/* Paper container for criticality counts */
+.paper-container {
+  padding: 16px;
+  text-align: center;
+}
+
+/* Media Queries for smaller screens (Tablets and Mobiles) */
+@media (max-width: 768px) {
+  /* Adjust container padding for tablets */
+  .container {
+    padding: 8px;
+  }
+
+  /* Typography adjustments for smaller screens */
+  h6 {
+    font-size: 1rem;
+  }
+
+  /* Table adjustments for smaller screens */
+  table th,
+  table td {
+    padding: 8px;
+  }
+
+  /* Dropdowns and Toggles for mobile */
+  formControl {
+    margin-bottom: 8px;
+  }
+
+  /* Stack grid items vertically on mobile */
+  .grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .grid-item {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  /* Toggle buttons - full width on mobile */
+  .toggle-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .toggle-group button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+/* Media Queries for very small screens (Mobile) */
+@media (max-width: 480px) {
+  /* Further reduce container padding for very small screens */
+  .container {
+    padding: 4px;
+  }
+
+  /* Further reduce font size on mobile */
+  h6 {
+    font-size: 0.875rem;
+  }
+
+  /* Adjust grid layout and margins on very small screens */
+  .grid-item {
+    margin-bottom: 12px;
+  }
+
+  /* Further reduce padding in tables */
+  table th,
+  table td {
+    padding: 6px;
+  }
+
+  /* Ensure that tables are scrollable horizontally */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Bar chart scaling for small screens */
+  .chart-container {
+    width: 100%;
+    height: auto; /* Let the chart height scale dynamically */
+  }
+
+  .bar-chart {
+    height: 300px; /* Adjust height to prevent overflow */
+    width: 100%;
+  }
+}

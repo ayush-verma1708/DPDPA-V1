@@ -66,7 +66,7 @@ const Header = ({ title, handleLogout }) => {
                   </span>
                   <span>
                     {' '}
-                    is a significant data fiduciary <br /> so all 172 controls
+                    is a significant data fiduciary <br /> so all 95 controls
                     will be applied.
                   </span>
                 </>

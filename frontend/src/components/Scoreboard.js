@@ -187,7 +187,9 @@ const Scoreboard = () => {
       <h2 className='text-3xl font-bold mb-6 text-center'>Action Scoreboard</h2>
       <ComplianceSnapshot />
 
+      {/* Grid layout for progress and status distribution */}
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-6'>
+        {/* Completion Progress */}
         <div className='p-6 bg-white shadow rounded-lg'>
           <h3 className='font-semibold'>Completion Progress</h3>
           <div className='w-full mt-2'>
@@ -202,6 +204,7 @@ const Scoreboard = () => {
           </div>
         </div>
 
+        {/* Status Distribution */}
         <div className='p-6 bg-white shadow rounded-lg'>
           <h3 className='font-semibold'>Status Distribution</h3>
           <ResponsiveContainer width='100%' height={200}>
@@ -227,6 +230,7 @@ const Scoreboard = () => {
         </div>
       </div>
 
+      {/* Control Family Distribution */}
       <div className='p-6 bg-white shadow rounded-lg mb-6'>
         <h3 className='font-semibold'>Control Family Distribution</h3>
         <ResponsiveContainer width='100%' height={300}>
@@ -241,7 +245,9 @@ const Scoreboard = () => {
         </ResponsiveContainer>
       </div>
 
+      {/* Filters Grid */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
+        {/* Asset Filter */}
         <FormControl fullWidth className='mb-4'>
           <InputLabel>Asset</InputLabel>
           <Select
@@ -258,6 +264,7 @@ const Scoreboard = () => {
           </Select>
         </FormControl>
 
+        {/* Control Family Filter */}
         <FormControl fullWidth className='mb-4'>
           <InputLabel>Control Family</InputLabel>
           <Select
@@ -276,6 +283,7 @@ const Scoreboard = () => {
           </Select>
         </FormControl>
 
+        {/* Status Filter */}
         <FormControl fullWidth className='mb-4'>
           <InputLabel>Status</InputLabel>
           <Select

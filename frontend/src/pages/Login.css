@@ -1,14 +1,16 @@
-src/pages/Login.css .login-container {
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  padding: 0 20px; /* Add padding to avoid content touching the edges */
 }
 
-form {
+.login-form {
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -37,14 +39,9 @@ button {
   margin-bottom: 10px;
 }
 
-/* .bg__login-page{
-    background-image: url("../../public/assets/DPDPAImage.png") !important;
-    background-position: center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-  } */
+/* Background image styling */
 .bg__login-page {
-  position: relative; /* Ensure the container is positioned relative */
+  position: relative;
   background-image: url('../../public/assets/DPDPAImage.png') !important;
   background-position: center !important;
   background-size: cover !important;
@@ -52,17 +49,42 @@ button {
 }
 
 .bg__login-page::before {
-  content: ''; /* Required to create a pseudo-element */
-  position: absolute; /* Position it absolutely */
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(76, 81, 114, 0.5); /* Adjust color and opacity here */
-  z-index: 1; /* Ensure it overlays the background */
+  background-color: rgba(76, 81, 114, 0.5);
+  z-index: 1;
 }
 
 .bg__login-page > * {
-  position: relative; /* Ensure child elements are above the overlay */
-  z-index: 2; /* Above the overlay */
+  position: relative;
+  z-index: 2;
+}
+
+/* Media Query for mobile view */
+@media (max-width: 768px) {
+  /* Remove the logo or any other unnecessary elements */
+  .logo {
+    display: none; /* Assuming there's a .logo class for the logo */
+  }
+
+  .login-container {
+    height: auto; /* Make the height auto to fit mobile screen */
+    padding: 20px;
+  }
+
+  .login-form {
+    width: 100%; /* Ensure the form takes the full width */
+    max-width: 100%; /* Remove max-width for mobile screens */
+    padding: 15px; /* Slightly reduce padding for smaller screens */
+  }
+
+  input,
+  button {
+    font-size: 14px; /* Adjust font-size for mobile view */
+    padding: 8px; /* Adjust padding for mobile view */
+  }
 }

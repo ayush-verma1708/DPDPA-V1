@@ -1,4 +1,101 @@
-/* App.css */
+.App {
+  text-align: center;
+}
+
+.App-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+  background-color: #282c34;
+  color: white;
+}
+
+.App-header button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+  padding: 0 20px; /* Add padding to avoid content touching screen edges */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Limit the form width on larger screens */
+}
+
+input {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .App-header {
+    justify-content: center; /* Center the header content for mobile */
+    padding: 15px;
+  }
+
+  .App-header button {
+    font-size: 14px; /* Adjust font size for smaller screens */
+  }
+
+  .login-container {
+    padding: 0 15px; /* Reduce padding on mobile */
+    height: auto; /* Make height flexible to fit content */
+  }
+
+  form {
+    padding: 15px; /* Reduce padding inside the form */
+    width: 100%;
+    max-width: 100%; /* Remove width limit for mobile */
+  }
+
+  input {
+    padding: 8px; /* Reduce padding for inputs */
+    font-size: 14px; /* Adjust font size for mobile */
+  }
+
+  button {
+    padding: 8px; /* Reduce padding for button */
+    font-size: 14px; /* Adjust button font size */
+  }
+}
+
+/* App.css
 .App {
   text-align: center;
 }
@@ -56,4 +153,4 @@ button {
 .error {
   color: red;
   margin-bottom: 10px;
-}
+} */

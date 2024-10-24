@@ -8,7 +8,7 @@ import {
   checkFormCompletion,
 } from '../api/userApi'; // Assume this gets the current logged-in user
 import { useNavigate } from 'react-router-dom';
-
+import './dashboard.css';
 import RiskDashboard from '../components/RiskDashboard';
 
 const Dashboard = () => {
@@ -44,9 +44,9 @@ const Dashboard = () => {
       <button
         className={buttonClass}
         onClick={toggleSteps}
-        style={{ float: 'right', margin: '10px' }}
+        style={{ float: 'right', margin: '10px', zaxis: '10' }}
       >
-        {showSteps ? 'Hide Steps' : 'Show Steps'}
+        {showSteps ? '❌' : '✔️'}
       </button>
       {showSteps ? <StepsComponent onClose={toggleSteps} /> : <Scoreboard />}
     </div>

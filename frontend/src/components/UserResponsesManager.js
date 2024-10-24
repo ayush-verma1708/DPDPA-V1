@@ -87,6 +87,7 @@ const UserResponsesManager = ({ companyId }) => {
       ) : showForm ? ( // Display the form if no responses and the form state is true
         <div>
           <UserPreferencesForm
+            className='user-form'
             companyId={companyId}
             onFormSubmit={handleFormSubmit}
           />

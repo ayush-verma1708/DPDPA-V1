@@ -26,8 +26,12 @@
   grid-template-columns: repeat(
     auto-fill,
     minmax(300px, 1fr)
-  ); /* Two columns */
+  ); /* Adjust for responsiveness */
   gap: 20px; /* Space between cards */
+}
+
+.form-container {
+  margin-top: 20px; /* Add some margin to separate form from responses */
 }
 
 .response-card {
@@ -53,4 +57,14 @@
 
 .response-card br {
   margin-bottom: 5px;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
