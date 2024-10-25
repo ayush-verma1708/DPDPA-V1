@@ -1,3 +1,35 @@
+/* UserPreferencesForm.css */
+
+.families-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.family-tile {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+}
+
+.other-software {
+  margin-top: 10px;
+}
+
 /* Preferences Form Styles */
 .preferences-form {
   /* max-width: 900px; */

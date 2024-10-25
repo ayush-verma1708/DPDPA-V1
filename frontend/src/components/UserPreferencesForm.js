@@ -3,13 +3,21 @@ import {
   getAllProductFamilies,
   addUserResponse,
 } from '../api/productFamilyApi';
-import './UserPreferencesForm.css'; // Importing the CSS file for styles
+import './UserPreferencesForm.css';
 
 const UserPreferencesForm = ({ companyId, onFormSubmit }) => {
   const [productFamilies, setProductFamilies] = useState([]);
   const [preferences, setPreferences] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Options for selecting software
+  const softwareOptions = [
+    'Microsoft Tools',
+    'Other Software',
+    'None of these',
+    'Others',
+  ];
 
   useEffect(() => {
     const fetchProductFamilies = async () => {
@@ -39,7 +47,6 @@ const UserPreferencesForm = ({ companyId, onFormSubmit }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // Submit preferences for each family
       for (const familyId in preferences) {
         const userResponse = {
           companyId,
@@ -47,9 +54,9 @@ const UserPreferencesForm = ({ companyId, onFormSubmit }) => {
           selectedSoftware: preferences[familyId]?.selectedSoftware,
           otherSoftware: preferences[familyId]?.otherSoftware,
         };
-        await addUserResponse(userResponse); // Call the API to save the response
+        await addUserResponse(userResponse);
       }
-      onFormSubmit(); // Call the function passed as prop after successful submission
+      onFormSubmit(); // Callback after successful submission
     } catch (err) {
       setError('Failed to submit preferences.');
     }
@@ -64,30 +71,41 @@ const UserPreferencesForm = ({ companyId, onFormSubmit }) => {
         {productFamilies.map((family) => (
           <div key={family._id} className='family-tile'>
             <h3>{family.family_name}</h3>
-            <label>
-              Selected Software:
-              <input
-                type='text'
-                placeholder='Enter selected software'
-                onChange={(e) =>
-                  handleInputChange(
-                    family._id,
-                    'selectedSoftware',
-                    e.target.value
-                  )
-                }
-              />
-            </label>
-            <label>
-              Other Software:
-              <input
-                type='text'
-                placeholder='Enter other software (if any)'
-                onChange={(e) =>
-                  handleInputChange(family._id, 'otherSoftware', e.target.value)
-                }
-              />
-            </label>
+            <div className='options-grid'>
+              {softwareOptions.map((option) => (
+                <label key={option} className='checkbox-option'>
+                  <input
+                    type='radio'
+                    name={`software-${family._id}`}
+                    value={option}
+                    checked={
+                      preferences[family._id]?.selectedSoftware === option
+                    }
+                    onChange={() =>
+                      handleInputChange(family._id, 'selectedSoftware', option)
+                    }
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+            {preferences[family._id]?.selectedSoftware === 'Others' && (
+              <label className='other-software'>
+                <strong>Specify Other Software:</strong>
+                <input
+                  type='text'
+                  placeholder='Enter other software'
+                  value={preferences[family._id]?.otherSoftware || ''}
+                  onChange={(e) =>
+                    handleInputChange(
+                      family._id,
+                      'otherSoftware',
+                      e.target.value
+                    )
+                  }
+                />
+              </label>
+            )}
           </div>
         ))}
       </div>

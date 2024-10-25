@@ -287,6 +287,7 @@ const ControlsPage = () => {
               <TableCell>Control Type</TableCell>
               <TableCell>Criticality</TableCell>
               <TableCell>Control Family</TableCell>
+              <TableCell>Product Family</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -349,13 +350,9 @@ const ControlsPage = () => {
                   </TableCell>
 
                   <TableCell>{control.criticality}</TableCell>
-                  <TableCell>
-                    {
-                      controlFamilies.find(
-                        (cf) => cf._id === control.control_Family_Id
-                      )?.variable_id
-                    }
-                  </TableCell>
+                  <TableCell>{control.control_Family_Id.variable_id}</TableCell>
+
+                  <TableCell>{control.product_family_Id.family_name}</TableCell>
                   <TableCell>
                     <IconButton
                       color='primary'

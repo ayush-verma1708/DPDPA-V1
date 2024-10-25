@@ -11,6 +11,11 @@ const controlSchema = new mongoose.Schema({
     ref: 'ControlFamily',
     required: true,
   },
+  product_family_Id: {
+    // Ensure field name matches your document structure
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProductFamily',
+  },
   isDPDPA: { type: Boolean, default: false },
   criticality: {
     type: String,
