@@ -9,6 +9,8 @@ const actionSchema = new mongoose.Schema({
     required: true,
   },
   isDPDPA: { type: Boolean, default: false },
+  isAction: { type: String, default: true },
+
   remarks: { type: String }, // Add remarks field
   ProductFamily: { type: mongoose.Schema.Types.Mixed },
   software: { type: String }, // Add Software field

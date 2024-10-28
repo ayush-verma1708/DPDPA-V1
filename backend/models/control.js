@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const controlSchema = new mongoose.Schema({
   fixed_id: { type: String, unique: true },
+  isControl: { type: String, default: true },
   section: { type: String, required: true },
   section_main_desc: { type: String, required: true },
   section_desc: { type: String, required: true },

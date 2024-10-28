@@ -1,4 +1,73 @@
 /* UserPreferencesForm.css */
+.preferences-form {
+  max-width: 800px; /* Max width for the form */
+  margin: auto; /* Center the form */
+  padding: 20px; /* Padding around the form */
+  border: 1px solid #ddd; /* Light border around the form */
+  border-radius: 8px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light background color */
+}
+
+.families-grid {
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(250px, 1fr)
+  ); /* Responsive grid */
+  gap: 20px; /* Space between grid items */
+}
+
+.family-tile {
+  background-color: #fff; /* White background for family tiles */
+  padding: 15px; /* Padding inside each tile */
+  border: 1px solid #ccc; /* Border around each tile */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+.input-group {
+  margin-bottom: 15px; /* Space below each input group */
+}
+
+.dropdown-label,
+.other-software,
+.not-available {
+  display: block; /* Block display for labels */
+  margin-bottom: 5px; /* Space between label and input */
+}
+
+select,
+input[type='text'] {
+  width: 100%; /* Full width for inputs */
+  padding: 8px; /* Padding inside inputs */
+  border: 1px solid #ccc; /* Border around inputs */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.submit-button {
+  background-color: #007bff; /* Button color */
+  color: white; /* Button text color */
+  padding: 10px 15px; /* Button padding */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.submit-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.loading,
+.error {
+  text-align: center; /* Center text for loading and error messages */
+  margin: 20px 0; /* Space around messages */
+}
+
+.error {
+  color: red; /* Red color for error messages */
+}
 
 .families-grid {
   display: flex;

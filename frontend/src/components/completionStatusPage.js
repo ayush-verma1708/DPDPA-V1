@@ -18,6 +18,8 @@ import {
   TablePagination,
   Collapse,
   IconButton,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
 
@@ -59,6 +61,13 @@ const CompletionStatusPage = ({
 
   // New state to manage row expansion for history details
   const [openRows, setOpenRows] = useState({});
+
+  const [showOnlyTasks, setShowOnlyTasks] = useState(false);
+
+  // Toggle function
+  const handleToggleTaskView = () => {
+    setShowOnlyTasks(!showOnlyTasks);
+  };
 
   // Memoize query object to prevent unnecessary re-renders
   const query = useMemo(
@@ -389,6 +398,16 @@ const CompletionStatusPage = ({
   return (
     <div style={{ padding: '20px' }}>
       <section style={{ marginTop: '20px' }}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={showOnlyTasks}
+              onChange={handleToggleTaskView}
+              color='primary'
+            />
+          }
+          label='Show only rows with task'
+        />
         {loading ? (
           <CircularProgress />
         ) : (
@@ -440,6 +459,9 @@ const CompletionStatusPage = ({
                       currentUserId === status.AssignedBy?._id
                     );
                   })
+                  .filter(
+                    (status) => !showOnlyTasks || status.isTask === true // Filter based on toggle state
+                  )
                   .map((status) => {
                     const isCompleted = status.status === 'Completed';
 
@@ -451,7 +473,6 @@ const CompletionStatusPage = ({
                               size='small'
                               onClick={() => handleToggleRow(status._id)}
                               color='primary'
-                              // disabled={isCompleted} // Disable toggle button if completed
                             >
                               {openRows[status._id] ? (
                                 <KeyboardArrowUp />
@@ -460,195 +481,230 @@ const CompletionStatusPage = ({
                               )}
                             </IconButton>
                           </TableCell>
-                          {role !== 'IT Team' && (
-                            <TableCell>{status.AssignedTo?.username}</TableCell>
-                          )}
-                          {/* <TableCell>{status.AssignedBy?.username}</TableCell> */}
-                          <TableCell>
-                            {status.actionId?.fixed_id || 'N/A'}
-                          </TableCell>
-                          <TableCell>
-                            {status.controlId?.section_desc || 'N/A'}
-                          </TableCell>
-                          {/* <TableCell>{status.feedback || 'N/A'}</TableCell> */}
-                          {role !== 'IT Team' && (
-                            <TableCell>{status.feedback || 'N/A'}</TableCell>
-                          )}
-                          <TableCell>{status.status || 'N/A'}</TableCell>
-                          {role === 'IT Team' && !isCompleted && (
-                            <EvidenceUpload
-                              status={status}
-                              isCompleted={isCompleted}
-                              handleUploadEvidence={handleUploadEvidence}
-                              actionId={status.actionId?._id}
-                              controlId={status.controlId?._id}
-                            />
-                          )}
-                          {(role === 'IT Team' ||
-                            role === 'Auditor' ||
-                            role === 'External Auditor') && (
-                            <TableCell>
-                              <Tooltip title='View Evidence'>
-                                <Button
-                                  variant='text' // Change to 'text' to remove contained styling
-                                  color='primary'
-                                  onClick={() =>
-                                    handleViewEvidence(
-                                      status.actionId?._id,
-                                      status.controlId?._id
-                                    )
-                                  }
-                                  disabled={!status.isEvidenceUploaded} // Disable button if evidence is not uploaded
-                                >
-                                  View Evidence
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
-                          )}
-                          {(role === 'Compliance Team' || role === 'Admin') && (
-                            <TableCell>
-                              <Tooltip title='Delegate to IT'>
-                                <Button
-                                  variant='text' // Change to 'text' to remove the outlined styling
-                                  color='secondary'
-                                  onClick={() =>
-                                    onDelegateButtonClick(
-                                      status._id,
-                                      status.assetId._id
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted ||
-                                    (status.status !== 'Open' &&
-                                      status.status !== 'Wrong Evidence')
-                                  } // Disable button if completed
-                                >
-                                  Delegate to IT
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
-                          )}
-                          {(role === 'IT Team' || role === 'Admin') && (
-                            <TableCell>
-                              <Tooltip title='Delegate to Auditor'>
-                                <Button
-                                  variant='text' // Change to 'text' to remove outlined styling
-                                  color='secondary'
-                                  onClick={() =>
-                                    handleDelegateToAuditor(
-                                      status._id,
-                                      currentUserId
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted ||
-                                    status.status !== 'Evidence Uploaded'
-                                  } // Disable button if completed
-                                >
-                                  Delegate to Auditor
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
-                          )}
 
-                          {role === 'Auditor' && (
-                            <TableCell>
-                              <Tooltip title='Raise Query'>
-                                <Button
-                                  color='error'
-                                  startIcon={<Warning />}
-                                  onClick={() =>
-                                    handleQuery(
-                                      status.actionId?._id,
-                                      status.controlId?._id
-                                    )
-                                  }
-                                  disabled={
-                                    status.status === 'Wrong Evidence' ||
-                                    status.status === 'External Audit Delegated'
-                                  } // Disable button if completed
-                                >
-                                  Raise Query
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
-                          )}
-                          <QueryModal
-                            open={isQueryModalOpen}
-                            onClose={() => setQueryModalOpen(false)}
-                            handleQuerySubmit={handleQuerySubmit}
-                            evidenceUrl={evidenceUrl} // Pass the evidence URL to the modal
-                            actionId={selectedActionId} // Use the state value here
-                            controlId={selectedControlId} // Use the state value here
-                          />
-                          {role === 'External Auditor' && (
-                            <TableCell>
-                              <Tooltip title='Raise Query'>
-                                <Button
-                                  color='error'
-                                  startIcon={<Warning />}
-                                  onClick={() =>
-                                    handleQuery(
-                                      status.actionId?._id,
-                                      status.controlId?._id
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted ||
-                                    status.status === 'Wrong Evidence'
-                                  }
-                                >
-                                  Raise Query
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
-                          )}
-                          {(role === 'Admin' || role == 'Auditor') && (
-                            <TableCell>
-                              <Tooltip title='Delegate to External Auditor'>
-                                <Button
-                                  variant='text' // Change to 'text' to remove outlined styling
-                                  color='secondary'
-                                  onClick={() =>
-                                    handleDelegateToExternalAuditor(
-                                      status._id,
-                                      currentUserId
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted ||
-                                    status.status === 'Wrong Evidence' ||
-                                    status.status === 'External Audit Delegated'
-                                  }
-                                >
-                                  Delegate to External Auditor
-                                </Button>
-                              </Tooltip>
-                            </TableCell>
-                          )}
-                          {role === 'External Auditor' && (
-                            <TableCell>
-                              <Tooltip title='Confirm Evidence'>
-                                <Button
-                                  color='primary'
-                                  startIcon={<CheckCircle />}
-                                  onClick={() =>
-                                    handleMarkAsCompleted(
-                                      status.actionId?._id,
-                                      status.controlId?._id
-                                    )
-                                  }
-                                  disabled={
-                                    isCompleted ||
-                                    status.status === 'Wrong Evidence'
-                                  } // Disable button if completed
-                                >
-                                  Confirm Evidence
-                                </Button>
-                              </Tooltip>
+                          {status.isTask ? (
+                            <>
+                              {role !== 'IT Team' && (
+                                <TableCell>
+                                  {status.AssignedTo?.username}
+                                </TableCell>
+                              )}
+                              <TableCell>
+                                {status.actionId?.fixed_id || 'N/A'}
+                              </TableCell>
+                              <TableCell>
+                                {status.controlId?.section_desc || 'N/A'}
+                              </TableCell>
+
+                              {role !== 'IT Team' && (
+                                <TableCell>
+                                  {status.feedback || 'N/A'}
+                                </TableCell>
+                              )}
+                              <TableCell>{status.status || 'N/A'}</TableCell>
+
+                              {/* Evidence upload button for IT Team */}
+                              {role === 'IT Team' && !isCompleted && (
+                                <EvidenceUpload
+                                  status={status}
+                                  isCompleted={isCompleted}
+                                  handleUploadEvidence={handleUploadEvidence}
+                                  actionId={status.actionId?._id}
+                                  controlId={status.controlId?._id}
+                                />
+                              )}
+
+                              {/* View Evidence Button for IT Team, Auditor, or External Auditor */}
+                              {(role === 'IT Team' ||
+                                role === 'Auditor' ||
+                                role === 'External Auditor') && (
+                                <TableCell>
+                                  <Tooltip title='View Evidence'>
+                                    <Button
+                                      variant='text'
+                                      color='primary'
+                                      onClick={() =>
+                                        handleViewEvidence(
+                                          status.actionId?._id,
+                                          status.controlId?._id
+                                        )
+                                      }
+                                      disabled={!status.isEvidenceUploaded}
+                                    >
+                                      View Evidence
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/* Delegate to IT Button for Compliance Team or Admin */}
+                              {(role === 'Compliance Team' ||
+                                role === 'Admin') && (
+                                <TableCell>
+                                  <Tooltip title='Delegate to IT'>
+                                    <Button
+                                      variant='text'
+                                      color='secondary'
+                                      onClick={() =>
+                                        onDelegateButtonClick(
+                                          status._id,
+                                          status.assetId._id
+                                        )
+                                      }
+                                      disabled={
+                                        isCompleted ||
+                                        (status.status !== 'Open' &&
+                                          status.status !== 'Wrong Evidence')
+                                      }
+                                    >
+                                      Delegate to IT
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/* Delegate to Auditor Button for IT Team or Admin */}
+                              {(role === 'IT Team' || role === 'Admin') && (
+                                <TableCell>
+                                  <Tooltip title='Delegate to Auditor'>
+                                    <Button
+                                      variant='text'
+                                      color='secondary'
+                                      onClick={() =>
+                                        handleDelegateToAuditor(
+                                          status._id,
+                                          currentUserId
+                                        )
+                                      }
+                                      disabled={
+                                        isCompleted ||
+                                        status.status !== 'Evidence Uploaded'
+                                      }
+                                    >
+                                      Delegate to Auditor
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/* Raise Query Button for Auditor */}
+                              {role === 'Auditor' && (
+                                <TableCell>
+                                  <Tooltip title='Raise Query'>
+                                    <Button
+                                      color='error'
+                                      startIcon={<Warning />}
+                                      onClick={() =>
+                                        handleQuery(
+                                          status.actionId?._id,
+                                          status.controlId?._id
+                                        )
+                                      }
+                                      disabled={
+                                        status.status === 'Wrong Evidence' ||
+                                        status.status ===
+                                          'External Audit Delegated'
+                                      }
+                                    >
+                                      Raise Query
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/* Query Modal */}
+                              <QueryModal
+                                open={isQueryModalOpen}
+                                onClose={() => setQueryModalOpen(false)}
+                                handleQuerySubmit={handleQuerySubmit}
+                                evidenceUrl={evidenceUrl}
+                                actionId={selectedActionId}
+                                controlId={selectedControlId}
+                              />
+
+                              {/* Raise Query Button for External Auditor */}
+                              {role === 'External Auditor' && (
+                                <TableCell>
+                                  <Tooltip title='Raise Query'>
+                                    <Button
+                                      color='error'
+                                      startIcon={<Warning />}
+                                      onClick={() =>
+                                        handleQuery(
+                                          status.actionId?._id,
+                                          status.controlId?._id
+                                        )
+                                      }
+                                      disabled={
+                                        isCompleted ||
+                                        status.status === 'Wrong Evidence'
+                                      }
+                                    >
+                                      Raise Query
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/* Delegate to External Auditor Button for Admin or Auditor */}
+                              {(role === 'Admin' || role === 'Auditor') && (
+                                <TableCell>
+                                  <Tooltip title='Delegate to External Auditor'>
+                                    <Button
+                                      variant='text'
+                                      color='secondary'
+                                      onClick={() =>
+                                        handleDelegateToExternalAuditor(
+                                          status._id,
+                                          currentUserId
+                                        )
+                                      }
+                                      disabled={
+                                        isCompleted ||
+                                        status.status === 'Wrong Evidence' ||
+                                        status.status ===
+                                          'External Audit Delegated'
+                                      }
+                                    >
+                                      Delegate to External Auditor
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/* Confirm Evidence Button for External Auditor */}
+                              {role === 'External Auditor' && (
+                                <TableCell>
+                                  <Tooltip title='Confirm Evidence'>
+                                    <Button
+                                      color='primary'
+                                      startIcon={<CheckCircle />}
+                                      onClick={() =>
+                                        handleMarkAsCompleted(
+                                          status.actionId?._id,
+                                          status.controlId?._id
+                                        )
+                                      }
+                                      disabled={
+                                        isCompleted ||
+                                        status.status === 'Wrong Evidence'
+                                      }
+                                    >
+                                      Confirm Evidence
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+                            </>
+                          ) : (
+                            // Render only the control description if isTask is false
+                            <TableCell colSpan={13}>
+                              {status.controlId?.section_desc ||
+                                'Control description not available'}
                             </TableCell>
                           )}
                         </TableRow>
+
                         <TableRow>
                           <TableCell
                             style={{ paddingBottom: 0, paddingTop: 0 }}
@@ -672,7 +728,7 @@ const CompletionStatusPage = ({
                                     </TableHead>
                                     <TableBody>
                                       {status.history
-                                        .slice() // Create a shallow copy to avoid mutating the original array
+                                        .slice()
                                         .reverse() // Reverse the array to show the latest history first
                                         .map((change, index) => (
                                           <TableRow key={index}>

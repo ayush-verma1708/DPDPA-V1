@@ -41,6 +41,7 @@ const CompletionStatusSchema = new mongoose.Schema(
     isCompleted: { type: Boolean, default: false },
     isEvidenceUploaded: { type: Boolean, default: false },
     completedAt: { type: Date, default: null },
+    isTask: { type: Boolean, default: false },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
