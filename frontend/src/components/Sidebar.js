@@ -116,8 +116,8 @@ const Sidebar = ({ onSelect }) => {
             <ListItem
               button
               component={Link}
-              to='/'
-              className={clsx({ active: activePath === '/' })}
+              to='/dashboard'
+              className={clsx({ active: activePath === '/dashboard' })}
               aria-label='Home'
               onClick={() => onSelect('Home')}
               sx={{ width: '100%' }}
