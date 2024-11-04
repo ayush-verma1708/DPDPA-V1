@@ -106,7 +106,7 @@ const StepsComponent = ({ onClose }) => {
         description:
           'Access control families and complete actions to upload evidence.',
         imageUrl: 'assets/3.png',
-        linkUrl: '/list-of-actions',
+        linkUrl: '/Compliance-Operation',
         icon: '📝',
       },
       {

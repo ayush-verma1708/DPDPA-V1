@@ -29,7 +29,7 @@ const MessageList = ({ messages = [], onMarkAsRead, onDeleteMessage }) => {
     try {
       const data = await getStatusById(completionStatusId);
       console.log('Completion Status Data:', data); // You can do whatever you want with the data
-      navigate('/list-of-actions'); // Change this to your desired route
+      navigate('/Compliance-Operation'); // Change this to your desired route
     } catch (error) {
       console.error('Error fetching status by ID:', error);
     }

@@ -90,7 +90,7 @@ const CompletionStatusSchema = new mongoose.Schema(
 
 CompletionStatusSchema.statics.calculateRiskByAsset = async function (assetId) {
   try {
-    const assetStatuses = await this.find({ assetId });
+    const assetStatuses = await this.find({ assetId, isTask: true });
     let riskScore = 0;
     let criticality = 'low'; // Default value
 
@@ -157,7 +157,7 @@ CompletionStatusSchema.statics.calculateRiskByAsset = async function (assetId) {
 
 CompletionStatusSchema.statics.calculateOverallRisk = async function () {
   try {
-    const allStatuses = await this.find();
+    const allStatuses = await this.find({ isTask: true });
     const riskMap = new Map();
     const criticalityMap = new Map(); // Track criticality for each asset
     const scopeMap = new Map(); // Track scopeId for each asset

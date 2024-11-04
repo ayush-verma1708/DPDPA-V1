@@ -14,11 +14,8 @@ const DataProtectionAppeals = () => {
       }}
     >
       <h1 style={{ textAlign: 'center', color: '#2c3e50' }}>
-        Digital Personal Data Protection Act, 2023
-      </h1>
-      <h2 style={{ textAlign: 'center', color: '#34495e' }}>
         CHAPTER VII: Appeal and Alternate Dispute Resolution
-      </h2>
+      </h1>
 
       <section style={{ marginBottom: '20px' }}>
         <h3 style={{ color: '#2980b9' }}>29. Appeal to Appellate Tribunal</h3>

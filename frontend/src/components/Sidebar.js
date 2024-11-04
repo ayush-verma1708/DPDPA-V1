@@ -199,8 +199,10 @@ const Sidebar = ({ onSelect }) => {
             <ListItem
               button
               component={Link}
-              to='/list-of-actions'
-              className={clsx({ active: activePath === '/list-of-actions' })}
+              to='/Compliance-Operation'
+              className={clsx({
+                active: activePath === '/Compliance-Operation',
+              })}
               aria-label='List of Actions'
               onClick={() => onSelect('List of Actions')}
               sx={{ width: '100%' }}

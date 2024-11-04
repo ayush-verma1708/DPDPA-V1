@@ -101,6 +101,9 @@ const Scoreboard = () => {
   const applyFilters = (filters) => {
     let updatedActions = statuses;
 
+    // First filter by isTask
+    updatedActions = updatedActions.filter((action) => action.isTask);
+
     if (filters.asset) {
       updatedActions = updatedActions.filter(
         (action) => action.assetId?.name === filters.asset

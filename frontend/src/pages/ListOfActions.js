@@ -15,7 +15,8 @@ import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi';
 import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
 import DataProtectionAct from '../components/DataProtectionAct'; // Import your component
-import DataProtectionActChapter6 from '../components/DataProtectionActChapter6';
+import DataProtectionActChapter7 from '../components/DataProtectionActChapter7';
+import DataProtectionActChapter8 from '../components/DataProtectionActChapter8';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -35,19 +36,26 @@ const ListOfActions = () => {
     message: '',
     severity: 'info',
   });
-  const [showDataProtection, setShowDataProtection] = useState(false); // State to show/hide the component
-
-  // Function to handle button click to show the chapter
-  const handleClick = () => {
-    setShowDataProtection(true); // Set state to true to show the component
-  };
-
-  // Function to handle closing the chapter
-  const handleChapterClose = () => {
-    setShowDataProtection(false); // Set state to false to remove the component
-  };
-
   const [assetName, setAssetName] = useState('');
+
+  const [showDataProtection, setShowDataProtection] = useState(false); // State to show/hide the component
+  const [selectedChapter, setSelectedChapter] = useState(null); // State to track which chapter to show
+
+  // Functions to handle button clicks for each chapter
+  const handleChapter1Click = () => {
+    setSelectedChapter(1); // Set state to show Chapter 1 component
+  };
+  const handleChapter7Click = () => {
+    setSelectedChapter(7); // Set state to show Chapter 6 component
+  };
+  const handleChapter8Click = () => {
+    setSelectedChapter(8); // Set state to show Chapter 7 component
+  };
+
+  // Function to handle closing the chapter view
+  const handleChapterClose = () => {
+    setSelectedChapter(null); // Reset state to hide the chapter component
+  };
 
   useEffect(() => {
     const fetchName = async () => {
@@ -338,6 +346,8 @@ const ListOfActions = () => {
   };
 
   const markActionAsCompleted = async (actionId, newControlId) => {
+    if (!checkAssetSelection()) return; // Check if asset is selected before proceeding
+
     // Prepare the request data, including scopeId only if it's provided
     const token = window.localStorage.getItem('token'); // Replace with actual token
     const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
@@ -367,6 +377,8 @@ const ListOfActions = () => {
   };
 
   const issueInEvidence = async (actionId, newControlId, feedback) => {
+    if (!checkAssetSelection()) return; // Check if asset is selected before proceeding
+
     // Prepare the request data, including scopeId only if it's provided
     const token = window.localStorage.getItem('token'); // Replace with actual token
     const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
@@ -444,7 +456,7 @@ const ListOfActions = () => {
             style={{ marginBottom: '10px' }}
           >
             <button
-              onClick={handleClick} // Make it clickable
+              onClick={handleChapter1Click} // Make it clickable
               className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
               data-disabled // Similar to how you had `data-disabled`
             >
@@ -478,7 +490,7 @@ const ListOfActions = () => {
             style={{ marginBottom: '10px' }}
           >
             <button
-              onClick={handleClick} // Make it clickable
+              onClick={handleChapter7Click} // Make it clickable
               className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
               data-disabled // Similar to how you had `data-disabled`
             >
@@ -492,7 +504,7 @@ const ListOfActions = () => {
             style={{ marginBottom: '10px' }}
           >
             <button
-              onClick={handleClick} // Make it clickable
+              onClick={handleChapter8Click} // Make it clickable
               className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
               data-disabled // Similar to how you had `data-disabled`
             >
@@ -501,13 +513,28 @@ const ListOfActions = () => {
           </div>
         </div>
       </div>
-
-      {showDataProtection ? (
+      {/* Conditional rendering based on selectedChapter */}
+      {selectedChapter === 1 && (
         <div>
           <DataProtectionAct />
-          <DataProtectionActChapter6 />
+          <button onClick={handleChapterClose}>Close Chapter</button>
         </div>
-      ) : (
+      )}
+      {selectedChapter === 7 && (
+        <div>
+          <DataProtectionActChapter7 />
+          <button onClick={handleChapterClose}>Close Chapter</button>
+        </div>
+      )}
+      {selectedChapter === 8 && (
+        <div>
+          <DataProtectionActChapter8 />
+          <button onClick={handleChapterClose}>Close Chapter</button>
+        </div>
+      )}
+
+      {/* Default content if no chapter is selected */}
+      {selectedChapter === null && (
         <div className='content'>
           <SelectorsAndNotifications
             selectedAssetId={selectedAssetId}

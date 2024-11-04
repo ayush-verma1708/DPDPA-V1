@@ -208,7 +208,7 @@ const App = () => {
           }
         />
         <Route
-          path='/list-of-actions'
+          path='/Compliance-Operation'
           element={
             <MiscLayout
               authToken={authToken}
