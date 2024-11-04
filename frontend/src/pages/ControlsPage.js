@@ -352,7 +352,9 @@ const ControlsPage = () => {
                   <TableCell>{control.criticality}</TableCell>
                   <TableCell>{control.control_Family_Id.variable_id}</TableCell>
 
-                  <TableCell>{control.product_family_Id.family_name}</TableCell>
+                  <TableCell>
+                    {control.product_family_Id?.family_name}
+                  </TableCell>
                   <TableCell>
                     <IconButton
                       color='primary'

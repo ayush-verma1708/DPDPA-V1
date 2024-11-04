@@ -85,10 +85,11 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        <Route path='/' element={<Login setAuthToken={setAuthToken} />} />
         <Route path='/login' element={<Login setAuthToken={setAuthToken} />} />
         <Route path='/onboarding' element={<PostLoginOnboarding />} />
         <Route
-          path='/'
+          path='/dashboard'
           element={
             <MiscLayout
               authToken={authToken}
