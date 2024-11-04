@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DataProtectionAct = () => {
+const DataProtectionAppeals = () => {
   return (
     <div
       style={{
@@ -17,97 +17,87 @@ const DataProtectionAct = () => {
         Digital Personal Data Protection Act, 2023
       </h1>
       <h2 style={{ textAlign: 'center', color: '#34495e' }}>
-        CHAPTER I: PRELIMINARY
+        CHAPTER VII: Appeal and Alternate Dispute Resolution
       </h2>
 
       <section style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#2980b9' }}>1. Short Title and Commencement</h3>
+        <h3 style={{ color: '#2980b9' }}>29. Appeal to Appellate Tribunal</h3>
         <p>
-          (1) This Act may be called the Digital Personal Data Protection Act,
-          2023.
+          (1) Any person aggrieved by an order or direction made by the Board
+          under this Act may prefer an appeal before the Appellate Tribunal.
           <br />
-          (2) It shall come into force on such date as the Central Government
-          may, by notification in the Official Gazette, appoint and different
-          dates may be appointed for different provisions of this Act and any
-          reference in any such provision to the commencement of this Act shall
-          be construed as a reference to the coming into force of that
-          provision.
+          (2) Every appeal shall be filed within sixty days of the receipt of
+          the order or direction, in such form, manner, and with the prescribed
+          fee.
+          <br />
+          (3) The Tribunal may entertain an appeal beyond this period if
+          sufficient cause for delay is demonstrated.
+        </p>
+        <p>
+          (4) On receipt of an appeal, the Tribunal may pass orders confirming,
+          modifying, or setting aside the appealed order after hearing all
+          parties.
+          <br />
+          (5) Copies of Tribunal orders shall be sent to the Board and all
+          parties.
+          <br />
+          (6) Appeals should be resolved as expeditiously as possible, aiming
+          for completion within six months.
+          <br />
+          (7) If unresolved in six months, reasons shall be recorded in writing.
+        </p>
+        <p>
+          (8) The Tribunal shall handle appeals in accordance with the procedure
+          prescribed under this Act.
+          <br />
+          (9) For appeals against Tribunal orders, section 18 of the Telecom
+          Regulatory Authority of India Act, 1997 applies.
+          <br />
+          (10) The Tribunal shall, as practicable, function digitally, with
+          digital filing, hearing, and decision-making.
         </p>
       </section>
 
       <section style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#2980b9' }}>2. Definitions</h3>
-        <p>In this Act, unless the context otherwise requires—</p>
-        <ul style={{ paddingLeft: '20px', lineHeight: '1.6' }}>
-          <li>
-            (a) “Appellate Tribunal” means the Telecom Disputes Settlement and
-            Appellate Tribunal established under section 14 of the Telecom
-            Regulatory Authority of India Act, 1997;
-          </li>
-          <li>
-            (b) “automated” means any digital process capable of operating
-            automatically in response to instructions given or otherwise for the
-            purpose of processing data;
-          </li>
-          <li>
-            (c) “Board” means the Data Protection Board of India established by
-            the Central Government under section 18;
-          </li>
-          {/* Add more definitions as needed */}
-        </ul>
+        <h3 style={{ color: '#2980b9' }}>30. Execution of Orders</h3>
+        <p>
+          (1) Orders by the Tribunal are executable as decrees of a civil court,
+          with all relevant powers vested in the Tribunal.
+          <br />
+          (2) Orders may also be transmitted to a local civil court, which shall
+          execute them as civil decrees.
+        </p>
       </section>
 
       <section style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#2980b9' }}>3. Application of the Act</h3>
+        <h3 style={{ color: '#2980b9' }}>31. Mediation</h3>
         <p>
-          Subject to the provisions of this Act, it shall—
-          <br />
-          (a) apply to the processing of digital personal data within the
-          territory of India where the personal data is collected—
-          <br />
-          (i) in digital form; or
-          <br />
-          (ii) in non-digital form and digitised subsequently;
+          If the Board deems mediation suitable for a complaint, it may direct
+          parties to pursue mediation through a mutually agreed mediator, or as
+          per existing Indian law.
         </p>
-        <p>
-          (b) also apply to processing of digital personal data outside the
-          territory of India, if such processing is in connection with any
-          activity related to offering of goods or services to Data Principals
-          within the territory of India;
-        </p>
-        <p>
-          (c) not apply to—
-          <ul style={{ paddingLeft: '20px', lineHeight: '1.6' }}>
-            <li>
-              (i) personal data processed by an individual for any personal or
-              domestic purpose; and
-            </li>
-            <li>
-              (ii) personal data that is made or caused to be made publicly
-              available by—
-              <ul style={{ paddingLeft: '20px', lineHeight: '1.6' }}>
-                <li>
-                  (A) the Data Principal to whom such personal data relates; or
-                </li>
-                <li>
-                  (B) any other person who is under an obligation under any law
-                  for the time being in force in India to make such personal
-                  data publicly available.
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </p>
+      </section>
 
-        <h4 style={{ color: '#2980b9' }}>Illustration</h4>
+      <section style={{ marginBottom: '20px' }}>
+        <h3 style={{ color: '#2980b9' }}>32. Voluntary Undertakings</h3>
         <p>
-          X, an individual, while blogging her views, has publicly made
-          available her personal data on social media. In such a case, the
-          provisions of this Act shall not apply.
+          (1) The Board may accept voluntary undertakings related to compliance
+          with this Act from any party at any proceeding stage.
+          <br />
+          (2) Such undertakings may specify actions within a set timeframe or
+          commitments to refrain from certain actions, and may be publicized.
+          <br />
+          (3) The Board may, with consent, modify undertaking terms.
+          <br />
+          (4) Acceptance of an undertaking bars further proceedings on its
+          contents, except as per sub-section (5).
+          <br />
+          (5) Breach of undertaking terms will be treated as a breach of this
+          Act, and the Board may proceed as per section 33.
         </p>
       </section>
     </div>
   );
 };
 
-export default DataProtectionAct;
+export default DataProtectionAppeals;

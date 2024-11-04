@@ -43,6 +43,7 @@ const CompletionStatusPage = ({
   UploadSelectedEvidence,
   markActionAsCompleted,
   issueInEvidence,
+  checkAssetSelection,
 }) => {
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
@@ -83,6 +84,7 @@ const CompletionStatusPage = ({
 
   const handleQuery = async (actionId, controlId) => {
     // Open the query modal when the button is clicked
+    if (!checkAssetSelection()) return;
     handleEvidence(actionId, controlId);
     setSelectedActionId(actionId);
     setSelectedControlId(controlId);
@@ -90,6 +92,7 @@ const CompletionStatusPage = ({
   };
 
   const handleQuerySubmit = async (query, actionId, controlId) => {
+    if (!checkAssetSelection()) return;
     try {
       // Issue the evidence and pass the query
       await issueInEvidence(actionId, controlId, query);
@@ -183,10 +186,12 @@ const CompletionStatusPage = ({
   }, []);
 
   const onDelegateButtonClick = (statusId, assetId) => {
+    if (!checkAssetSelection()) return;
     handleDelegateToIT(statusId, assetId);
   };
 
   const handleDelegateToIT = async (statusId, assetId) => {
+    if (!checkAssetSelection()) return;
     try {
       // Fetch asset details
       const assetDetails = await getAssetDetails();
@@ -225,7 +230,7 @@ const CompletionStatusPage = ({
 
   const handleDelegateToAuditor = async (statusId, currentUserId) => {
     // Log parameters to ensure they are being passed correctly
-
+    if (!checkAssetSelection()) return;
     try {
       // Call the API to delegate the status to the auditor
       const response = await delegateToAuditor(statusId, currentUserId);
@@ -241,6 +246,7 @@ const CompletionStatusPage = ({
   };
 
   const handleDelegateToExternalAuditor = async (statusId, currentUserId) => {
+    if (!checkAssetSelection()) return;
     try {
       const response = await delegateToExternalAuditor(statusId, currentUserId);
 
@@ -284,6 +290,7 @@ const CompletionStatusPage = ({
   // };
 
   const handleViewEvidence = async (actionId, controlId) => {
+    if (!checkAssetSelection()) return;
     try {
       const res = await axios.post(
         `http://localhost:8021/api/evidence/params`,
@@ -315,6 +322,7 @@ const CompletionStatusPage = ({
   };
 
   const handleEvidence = async (actionId, controlId) => {
+    if (!checkAssetSelection()) return;
     try {
       const res = await axios.post(
         `http://localhost:8021/api/evidence/params`,
@@ -345,6 +353,7 @@ const CompletionStatusPage = ({
   };
 
   const handleMarkAsCompleted = async (actionId, controlId) => {
+    if (!checkAssetSelection()) return;
     try {
       // Prompt for feedback
 
@@ -361,6 +370,7 @@ const CompletionStatusPage = ({
 
   const handleUploadEvidence = async (actionId, controlId, selectedFile) => {
     // // Mark the action as completed
+    if (!checkAssetSelection()) return;
     await UploadSelectedEvidence(actionId, controlId, selectedFile);
 
     await handleFetchStatus();
@@ -511,6 +521,7 @@ const CompletionStatusPage = ({
                                   handleUploadEvidence={handleUploadEvidence}
                                   actionId={status.actionId?._id}
                                   controlId={status.controlId?._id}
+                                  checkAssetSelection={checkAssetSelection}
                                 />
                               )}
 

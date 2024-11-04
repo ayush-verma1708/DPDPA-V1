@@ -15,11 +15,11 @@ import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi';
 import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
 import DataProtectionAct from '../components/DataProtectionAct'; // Import your component
+import DataProtectionActChapter6 from '../components/DataProtectionActChapter6';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
   const [controls, setControls] = useState([]);
-  // const [actions, setActions] = useState([]);
   const [expandedFamilyId, setExpandedFamilyId] = useState('');
   const [selectedControlId, setSelectedControlId] = useState('');
   const [error, setError] = useState('');
@@ -28,9 +28,6 @@ const ListOfActions = () => {
   const [scopes, setScopes] = useState([]);
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [selectedScopeId, setSelectedScopeId] = useState('');
-  // const [notification, setNotification] = useState({ message: '', severity: 'info' });
-
-  const [evidences, setEvidences] = useState([]);
 
   const [actions, setActions] = useState([]);
 
@@ -38,10 +35,6 @@ const ListOfActions = () => {
     message: '',
     severity: 'info',
   });
-  const [visibleComponent, setVisibleComponent] = useState(''); // State to track which component is visible
-  const [currentUsername, setCurrentUsername] = useState(null); // Store current username
-  const [currentUser, setCurrentUser] = useState(null); // Store current user
-  const [role, setRole] = useState(''); // To store the role from userData
   const [showDataProtection, setShowDataProtection] = useState(false); // State to show/hide the component
 
   // Function to handle button click to show the chapter
@@ -54,19 +47,6 @@ const ListOfActions = () => {
     setShowDataProtection(false); // Set state to false to remove the component
   };
 
-  const statusOptions = [
-    'Open',
-    'Delegated to IT Team',
-    'Evidence Ready',
-    'Misconfigured',
-    'Audit Delegated',
-    'Audit Non-Confirm',
-    'Audit Closed',
-    'Closed',
-    'Not Applicable',
-    'Risk Accepted',
-  ];
-
   const [assetName, setAssetName] = useState('');
 
   useEffect(() => {
@@ -77,11 +57,25 @@ const ListOfActions = () => {
     fetchName();
   }, [selectedAssetId]);
 
+  // Add this helper function in your component
+  const checkAssetSelection = () => {
+    if (!selectedAssetId) {
+      setNotification({
+        message: 'Please select an asset before proceeding.',
+        severity: 'error',
+      });
+      return false;
+    }
+    return true;
+  };
+
   const UploadSelectedEvidence = async (
     actionId,
     NewcontrolId,
     selectedFile
   ) => {
+    if (!checkAssetSelection()) return; // Check if asset is selected before proceeding
+
     if (!selectedFile) {
       setNotification({
         message: 'Please select a file first.',
@@ -144,7 +138,6 @@ const ListOfActions = () => {
   const fetchAllEvidences = async () => {
     try {
       const evidenceList = await getAllEvidences();
-      setEvidences(evidenceList);
     } catch (error) {
       setNotification({
         message: 'Failed to fetch evidences. Please try again later.',
@@ -160,9 +153,6 @@ const ListOfActions = () => {
       try {
         const token = window.localStorage.getItem('token'); // Replace with actual token
         const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
-        setCurrentUsername(userData.username); // Set current username
-        setCurrentUser(userData); // Set current username
-        setRole(userData.data.role); // Set role from user data
       } catch (error) {
         console.error('Error fetching current user data:', error);
       }
@@ -217,6 +207,15 @@ const ListOfActions = () => {
     };
     fetchControlData();
   }, [controlFamilies]);
+
+  useEffect(() => {
+    if (!selectedAssetId) {
+      setNotification({
+        message: 'Please select an asset to proceed.',
+        severity: 'warning',
+      });
+    }
+  }, [selectedAssetId]);
 
   useEffect(() => {
     const fetchActionData = async () => {
@@ -287,24 +286,6 @@ const ListOfActions = () => {
     fetchAssetDetails();
   }, []);
 
-  // Update scopes based on selected asset
-  // useEffect(() => {
-  //   if (selectedAssetId) {
-  //     const selectedAsset = assets.find((asset) => {
-  //       return asset.asset._id === selectedAssetId;
-  //     });
-  //     if (selectedAsset && selectedAsset.asset.isScoped) {
-  //       setScopes([selectedAsset.scoped]);
-  //       setSelectedScopeId(selectedAsset.scoped._id);
-  //     } else {
-  //       setScopes([]);
-  //       setSelectedScopeId('');
-  //     }
-  //   } else {
-  //     setScopes([]);
-  //     setSelectedScopeId('');
-  //   }
-  // }, [selectedAssetId, assets]);
   useEffect(() => {
     if (selectedAssetId) {
       // Find all scopes related to the selected asset
@@ -324,26 +305,6 @@ const ListOfActions = () => {
       setSelectedScopeId(''); // Clear selected scope if no asset is selected
     }
   }, [selectedAssetId, assets]);
-
-  // useEffect(() => {
-  //   if (selectedAssetId) {
-  //     // Find all entries related to the selected asset
-  //     const selectedAssetScopes = assets
-  //       .filter((asset) => asset.asset._id === selectedAssetId) // Get all matching assets
-  //       .map((asset) => asset.scoped); // Extract scopes
-
-  //     if (selectedAssetScopes.length > 0) {
-  //       setScopes(selectedAssetScopes); // Set all scopes for the selected asset
-  //       setSelectedScopeId(''); // Optionally, reset scope selection until user picks one
-  //     } else {
-  //       setScopes([]); // If no scopes are available, reset scopes
-  //       setSelectedScopeId('');
-  //     }
-  //   } else {
-  //     setScopes([]);
-  //     setSelectedScopeId('');
-  //   }
-  // }, [selectedAssetId, assets]);
 
   const handleAssetChange = (event) => {
     setSelectedAssetId(event.target.value);
@@ -477,17 +438,6 @@ const ListOfActions = () => {
       </div>
 
       <div className='sidebar'>
-        {/* <div
-          className='hover:bg-[white] bg-[#ffffff]'
-          style={{ marginBottom: '10px' }}
-        >
-          <div
-            data-disabled
-            className='control-family-header font-[400] bg-gray-200 text-gray-500 cursor-not-allowed px-4 py-2 border border-gray-300 rounded'
-          >
-            Chapter 1
-          </div>
-        </div> */}
         <div>
           <div
             className='hover:bg-[white] bg-[#ffffff]'
@@ -498,34 +448,11 @@ const ListOfActions = () => {
               className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
               data-disabled // Similar to how you had `data-disabled`
             >
-              Chapter 1 – Overview of Legal Foundations{' '}
+              Chapter 1
             </button>
           </div>
         </div>
 
-        {/* {controlFamilies
-          .sort((a, b) => a.variable_id - b.variable_id) // Sort control families by variable_id
-          .map((family) => (
-            <div
-              key={family._id}
-              className={`control-family ${
-                expandedFamilyId === family._id ? 'expanded' : ''
-              }`}
-            >
-              <Tooltip title={family.description} placement='right'>
-                <div
-                  className={`control-family-header ${
-                    expandedFamilyId === family._id ? 'expanded' : ''
-                  } ${
-                    expandedFamilyId === family._id ? 'selected-family' : ''
-                  }`}
-                  onClick={() => handleFamilyClick(family._id)}
-                >
-                  Chapter {family.variable_id}
-                </div>
-              </Tooltip>
-            </div>
-          ))} */}
         {sortedFamilies.map((family) => (
           <div
             key={family._id}
@@ -545,30 +472,40 @@ const ListOfActions = () => {
             </Tooltip>
           </div>
         ))}
+        <div>
+          <div
+            className='hover:bg-[white] bg-[#ffffff]'
+            style={{ marginBottom: '10px' }}
+          >
+            <button
+              onClick={handleClick} // Make it clickable
+              className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
+              data-disabled // Similar to how you had `data-disabled`
+            >
+              Chapter 7
+            </button>
+          </div>
+        </div>
+        <div>
+          <div
+            className='hover:bg-[white] bg-[#ffffff]'
+            style={{ marginBottom: '10px' }}
+          >
+            <button
+              onClick={handleClick} // Make it clickable
+              className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
+              data-disabled // Similar to how you had `data-disabled`
+            >
+              Chapter 8
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Conditionally render DataProtectionAct component */}
-      {/* {showDataProtection && (
-        <div>
-          <DataProtectionAct />
-        </div>
-      )}
-
-      <div className='content'>
-        <CompletionStatusPage
-          expandedFamilyId={expandedFamilyId}
-          selectedAssetId={selectedAssetId}
-          selectedScopeId={selectedScopeId}
-          actions={actions}
-          UploadSelectedEvidence={UploadSelectedEvidence}
-          markActionAsCompleted={markActionAsCompleted}
-          issueInEvidence={issueInEvidence}
-        />
-      </div> */}
-      {/* Conditionally render either DataProtectionAct or CompletionStatusPage */}
       {showDataProtection ? (
         <div>
           <DataProtectionAct />
+          <DataProtectionActChapter6 />
         </div>
       ) : (
         <div className='content'>
@@ -593,6 +530,7 @@ const ListOfActions = () => {
             UploadSelectedEvidence={UploadSelectedEvidence}
             markActionAsCompleted={markActionAsCompleted}
             issueInEvidence={issueInEvidence}
+            checkAssetSelection={checkAssetSelection} // Pass the function here
           />
         </div>
       )}

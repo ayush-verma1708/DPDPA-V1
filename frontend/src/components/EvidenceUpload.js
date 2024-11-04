@@ -15,12 +15,15 @@ const EvidenceUpload = ({
   handleUploadEvidence,
   actionId,
   controlId,
+  checkAssetSelection,
 }) => {
   const [open, setOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null); // Unified file state
 
   const handleClickOpen = () => {
+    if (!checkAssetSelection()) return;
+
     setOpen(true);
   };
 
