@@ -71,15 +71,28 @@ const Scoreboard = () => {
           'http://localhost:8021/api/v1/completion-status/all/'
         );
         const data = response.data;
-        setStatuses(data);
-        setFilteredActions(data);
-        setLoading(false);
 
-        const assets = [...new Set(data.map((action) => action.assetId?.name))];
-        const controlFamilies = [
-          ...new Set(data.map((action) => action.familyId?.fixed_id)),
+        // Filter data to only include items where isTask is true
+        const filteredData = data.filter(
+          (action) =>
+            action.isTask === true &&
+            action.familyId?.fixed_id !== 4 &&
+            action.familyId?.fixed_id !== 6
+        );
+
+        setStatuses(filteredData);
+        setFilteredActions(filteredData);
+        setLoading(false);
+        // Filter out control families 4 and 6 from uniqueControlFamilies
+        const assets = [
+          ...new Set(filteredData.map((action) => action.assetId?.name)),
         ];
-        const statuses = [...new Set(data.map((action) => action.status))];
+        const controlFamilies = [
+          ...new Set(filteredData.map((action) => action.familyId?.fixed_id)),
+        ];
+        const statuses = [
+          ...new Set(filteredData.map((action) => action.status)),
+        ];
 
         setUniqueAssets(assets);
         setUniqueControlFamilies(controlFamilies);
@@ -163,15 +176,28 @@ const Scoreboard = () => {
   ];
 
   // Data for bar chart (control family distribution)
-  const barData = uniqueControlFamilies.map((family) => {
-    return {
-      family: family,
-      count: filteredActions.filter(
-        (action) => action.familyId?.fixed_id === family
-      ).length,
-    };
-  });
+  // const barData = uniqueControlFamilies.map((family) => {
+  //   return {
+  //     family: family,
+  //     count: filteredActions.filter(
+  //       (action) =>
+  //         action.familyId?.fixed_id === family &&
+  //         action.familyId?.fixed_id !== 4 &&
+  //         action.familyId?.fixed_id !== 5
+  //     ).length,
+  //   };
+  // });
 
+  const barData = uniqueControlFamilies
+    .filter((family) => family !== 4 && family !== 6) // Exclude 4 and 6
+    .map((family) => {
+      return {
+        family: family,
+        count: filteredActions.filter(
+          (action) => action.familyId?.fixed_id === family
+        ).length,
+      };
+    });
   if (loading)
     return (
       <div className='flex justify-center items-center h-screen'>
@@ -268,7 +294,7 @@ const Scoreboard = () => {
         </FormControl>
 
         {/* Control Family Filter */}
-        <FormControl fullWidth className='mb-4'>
+        {/* <FormControl fullWidth className='mb-4'>
           <InputLabel>Control Family</InputLabel>
           <Select
             value={filters.controlFamily}
@@ -285,7 +311,28 @@ const Scoreboard = () => {
             ))}
           </Select>
         </FormControl>
+         */}
 
+        {/* Control Family Filter */}
+        <FormControl fullWidth className='mb-4'>
+          <InputLabel>Control Family</InputLabel>
+          <Select
+            value={filters.controlFamily}
+            onChange={(e) =>
+              handleFilterChange('controlFamily', e.target.value)
+            }
+            label='Control Family'
+          >
+            <MenuItem value=''>All Control Families</MenuItem>
+            {uniqueControlFamilies
+              .filter((family) => family !== 4 && family !== 6) // Exclude 4 and 6
+              .map((family, index) => (
+                <MenuItem key={index} value={family}>
+                  {family}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
         {/* Status Filter */}
         <FormControl fullWidth className='mb-4'>
           <InputLabel>Status</InputLabel>

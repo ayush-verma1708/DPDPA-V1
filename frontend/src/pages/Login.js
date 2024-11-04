@@ -52,7 +52,7 @@ const Login = ({ setAuthToken }) => {
       {/* <h1 className='font-bold w-fit'>DPDPA Software</h1> */}
       <div className='logo'>
         <img
-          src='/assets/DPDPA_logo.jpg'
+          src='/assets/DPDPA_logo.png'
           alt='DPDPA Software Logo'
           // className='w-fit h-auto'
           className='w-1/2 md:w-1/4 lg:w-1/6 h-auto' // Adjusts width based on screen size
