@@ -4,6 +4,45 @@
   gap: 20px; /* Space between the tables */
 }
 
+.download-container {
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  margin-bottom: 40px; /* Space above */
+}
+
+.download-link {
+  display: inline-flex; /* Horizontal layout */
+  align-items: center; /* Center vertically */
+  padding: 8px 16px; /* Reduced padding for smaller size */
+  background: linear-gradient(
+    135deg,
+    #007bff,
+    #0056b3
+  ); /* Gradient background */
+  color: white; /* Text color */
+  text-decoration: none; /* No underline */
+  border-radius: 30px; /* Rounded corners */
+  font-size: 14px; /* Decreased font size */
+  font-weight: bold; /* Bold text for emphasis */
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.2); /* Soft shadow effect */
+  transition: all 0.3s ease; /* Smooth transitions for hover effects */
+}
+
+.download-link i {
+  margin-right: 8px; /* Space between icon and text */
+  font-size: 16px; /* Adjusted icon size */
+}
+
+.download-link:hover {
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); /* Enhanced shadow on hover */
+}
+
+.download-link:active {
+  transform: translateY(0); /* Reset lift on click */
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.2); /* Reset shadow on click */
+}
+
 .table-container {
   border: 1px solid #ddd; /* Light border for the table container */
   border-radius: 8px; /* Rounded corners for the table container */

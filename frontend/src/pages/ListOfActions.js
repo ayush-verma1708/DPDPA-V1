@@ -448,8 +448,27 @@ const ListOfActions = () => {
           </Alert>
         </Snackbar>
       </div>
-
       <div className='sidebar'>
+        <>
+          {/* Include Font Awesome CDN */}
+          <link
+            rel='stylesheet'
+            href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'
+          />
+
+          <div className='download-container'>
+            <a
+              href='https://www.meity.gov.in/writereaddata/files/Digital%20Personal%20Data%20Protection%20Act%202023.pdf'
+              target='_blank'
+              rel='noopener noreferrer' // Security feature
+              className='download-link'
+            >
+              <i className='fas fa-download'></i> {/* Add download icon */}
+              Digital Personal Data Protection Act 2023
+            </a>
+          </div>
+        </>
+
         <div>
           <div
             className='hover:bg-[white] bg-[#ffffff]'

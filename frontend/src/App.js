@@ -53,6 +53,13 @@ const App = () => {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem('token');
+
+        // Check if the token exists, if not, set user to null and log out
+        if (!token) {
+          console.warn('No token found, user is not authenticated');
+          handleLogout(); // Call logout if no token
+          return; // Exit early since no user info can be fetched
+        }
         if (token) {
           const res = await axios.get('http://localhost:8021/api/users/me', {
             headers: {
