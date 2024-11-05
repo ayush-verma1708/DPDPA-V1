@@ -3,17 +3,40 @@ import ControlFamily from '../models/controlFamily.js';
 import Action from '../models/action.js';
 import { getNextControlId } from '../utils/autoIncrementId.js';
 
+// export const getControls = async (req, res) => {
+//   try {
+//     // Fetch all controls and populate associated control and product families, including embedded software list
+//     const controls = await Control.find()
+//       .populate({ path: 'control_Family_Id', model: 'ControlFamily' }) // Populate control family
+//       .populate({
+//         path: 'product_family_Id', // Update path to match the field name in the schema
+//         model: 'ProductFamily',
+//         populate: {
+//           path: 'software_list', // Populate the embedded software list in product family
+//         },
+//       });
+
+//     res.json(controls);
+//   } catch (error) {
+//     console.error('Error fetching controls:', error);
+//     res
+//       .status(500)
+//       .json({ message: 'Error fetching controls', error: error.message });
+//   }
+// };
+
 export const getControls = async (req, res) => {
   try {
-    // Fetch all controls and populate associated control and product families, including embedded software list
+    // Fetch all controls and populate associated control family and product family names only
     const controls = await Control.find()
-      .populate({ path: 'control_Family_Id', model: 'ControlFamily' }) // Populate control family
       .populate({
-        path: 'product_family_Id', // Update path to match the field name in the schema
+        path: 'control_Family_Id',
+        model: 'ControlFamily',
+      })
+      .populate({
+        path: 'product_family_Id', // Path to product family
         model: 'ProductFamily',
-        populate: {
-          path: 'software_list', // Populate the embedded software list in product family
-        },
+        select: 'family_name', // Only select the family_name field
       });
 
     res.json(controls);

@@ -28,6 +28,10 @@ export const getAllProductFamilies = async () => {
 
 // Function to add a user response
 export const addUserResponse = async (data) => {
-  const response = await axios.post(`${API_BASE_URL}/user-responses`, data);
+  // console.log(data);
+  const response = await axios.post(
+    `${API_BASE_URL}/user-responses/add-responses`,
+    data
+  );
   return response.data; // Return the response data
 };

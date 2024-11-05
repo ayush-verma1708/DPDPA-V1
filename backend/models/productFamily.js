@@ -1,12 +1,7 @@
+// models/productFamily.js
 import mongoose from 'mongoose';
 
-const softwareSchema = new mongoose.Schema({
-  software_name: {
-    type: String,
-    required: true,
-  },
-});
-
+// Product Family model
 const productFamilySchema = new mongoose.Schema({
   family_name: {
     type: String,
@@ -16,7 +11,13 @@ const productFamilySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  software_list: [softwareSchema], // Embedding software documents here
+  // Referencing software by ObjectId, making it an array of references to Software documents
+  software_list: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Software', // Reference to Software model
+    },
+  ],
 });
 
 export const ProductFamily = mongoose.model(
