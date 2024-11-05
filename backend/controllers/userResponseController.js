@@ -153,6 +153,40 @@ export const addUserResponses = async (req, res) => {
   }
 };
 
+// export const getUserResponsesByCompanyId = async (req, res) => {
+//   const { companyId } = req.params; // Assuming companyId is passed as a URL parameter
+
+//   console.log(`Received companyId: ${companyId}`); // Log the incoming companyId
+
+//   try {
+//     // Ensure the companyId is valid
+//     if (!mongoose.isValidObjectId(companyId)) {
+//       return res.status(400).json({ message: 'Invalid company ID format' });
+//     }
+
+//     // Fetch user responses associated with the provided companyId
+//     const userResponses = await UserResponse.find({ companyId })
+//       .populate('productFamily', 'family_name category')
+//       .lean(); // Use lean for better performance if you don't need Mongoose documents
+
+//     // Check if any responses were found
+//     if (userResponses.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: 'No responses found for this company' });
+//     }
+
+//     // Return the found user responses
+//     return res.status(200).json({
+//       message: 'User responses retrieved successfully',
+//       data: userResponses,
+//     });
+//   } catch (error) {
+//     console.error('Error retrieving user responses:', error);
+//     return res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// };
+
 export const getUserResponsesByCompanyId = async (req, res) => {
   const { companyId } = req.params; // Assuming companyId is passed as a URL parameter
 
@@ -167,6 +201,7 @@ export const getUserResponsesByCompanyId = async (req, res) => {
     // Fetch user responses associated with the provided companyId
     const userResponses = await UserResponse.find({ companyId })
       .populate('productFamily', 'family_name category')
+      .populate('selectedSoftware', 'software_name') // Populate software names
       .lean(); // Use lean for better performance if you don't need Mongoose documents
 
     // Check if any responses were found

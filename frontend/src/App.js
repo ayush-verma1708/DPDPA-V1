@@ -25,7 +25,7 @@ import RiskAnalysis from './pages/RiskAnalysis';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import SettingsPage from './pages/SettingsPage';
+import ProductFamilyPage from './pages/ProductFamilyPage';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -198,7 +198,7 @@ const App = () => {
           }
         />{' '}
         <Route
-          path='/settings'
+          path='/Product-Family'
           element={
             <MiscLayout
               authToken={authToken}
@@ -209,7 +209,7 @@ const App = () => {
               user={user}
             >
               <PrivateRoute>
-                <SettingsPage />
+                <ProductFamilyPage />
               </PrivateRoute>
             </MiscLayout>
           }
