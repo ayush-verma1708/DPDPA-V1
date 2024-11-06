@@ -29,6 +29,7 @@ const Dashboard = () => {
 
     if (first) {
       navigate('/onboarding');
+
       return;
     } else {
       return;

@@ -16,14 +16,14 @@ const companyId = '66dc1719f8bc41880e8da7ae';
 
 export async function createCompletionData(username) {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      connectTimeoutMS: 30000,
-      socketTimeoutMS: 45000,
-    });
+    // await mongoose.connect(process.env.MONGODB_URI, {
+    //   useNewUrlParser: true,
+    //   useUnifiedTopology: true,
+    //   connectTimeoutMS: 30000,
+    //   socketTimeoutMS: 45000,
+    // });
 
-    console.log('Connected to MongoDB successfully.');
+    // console.log('Connected to MongoDB successfully.');
 
     // Fetch all user responses for the specified company
     const userResponses = await UserResponse.find({ companyId }).populate(
@@ -191,8 +191,10 @@ export async function createCompletionData(username) {
   }
 }
 
+export default createCompletionData;
+
 // Run the script with a specified username
-createCompletionData('66d2b72f9561977c7f364ea8');
+// createCompletionData('66d2b72f9561977c7f364ea8');
 
 // import mongoose from 'mongoose';
 // import dotenv from 'dotenv';

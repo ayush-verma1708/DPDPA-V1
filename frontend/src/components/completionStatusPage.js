@@ -420,6 +420,16 @@ const CompletionStatusPage = ({
         />
         {loading ? (
           <CircularProgress />
+        ) : fetchedStatuses.length === 0 ? (
+          <div>
+            <p>No data available.</p>
+            <a
+              href='http://localhost:3000/Product-Family'
+              style={{ color: 'blue', textDecoration: 'underline' }}
+            >
+              Go to Product Family
+            </a>
+          </div>
         ) : (
           <TableContainer
             component={Paper}
@@ -434,6 +444,8 @@ const CompletionStatusPage = ({
                   <TableCell>Control</TableCell>
                   {role !== 'IT Team' && <TableCell>Feedback</TableCell>}
                   <TableCell>Status</TableCell>
+                  <TableCell>Control Type</TableCell>
+                  <TableCell>Software Selected</TableCell>
 
                   {/* Conditional rendering for Upload Evidence based on role */}
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
@@ -512,6 +524,13 @@ const CompletionStatusPage = ({
                                 </TableCell>
                               )}
                               <TableCell>{status.status || 'N/A'}</TableCell>
+                              <TableCell>
+                                {status.controlId.control_type}
+                              </TableCell>
+                              <TableCell>
+                                {status?.selectedSoftware?.software_name ||
+                                  'N/A'}
+                              </TableCell>
 
                               {/* Evidence upload button for IT Team */}
                               {role === 'IT Team' && !isCompleted && (
