@@ -3,86 +3,90 @@ import Control from '../models/control.js';
 import Action from '../models/action.js';
 import { getNextControlFamilyId } from '../utils/autoIncrementId.js';
 
-export const getControlFamilies = async (req, res) => {
-  try {
-    const { id } = req.query; // Use query parameter to fetch by ID
+// export const getControlFamilies = async (req, res) => {
+//   try {
+//     const { id } = req.query; // Use query parameter to fetch by ID
 
-    if (id) {
-      // Fetch single control family by ID
-      const controlFamily = await ControlFamily.findById(id);
-      if (!controlFamily) {
-        return res.status(404).json({ message: 'Control family not found' });
-      }
+//     if (id) {
+//       // Fetch single control family by ID
+//       const controlFamily = await ControlFamily.findById(id);
+//       if (!controlFamily) {
+//         return res.status(404).json({ message: 'Control family not found' });
+//       }
 
-      // Fetch controls and actions associated with the control family
-      const controls = await Control.find({
-        control_Family_Id: controlFamily._id,
-      }).lean(); // Using lean() for faster retrieval
+//       // Fetch controls and actions associated with the control family
+//       const controls = await Control.find({
+//         control_Family_Id: controlFamily._id,
+//       }).lean(); // Using lean() for faster retrieval
 
-      // Fetch actions for all controls concurrently using a single query
-      const actions = await Action.find({
-        control_Id: { $in: controls.map((control) => control._id) },
-      }).lean(); // Using lean() for faster retrieval
+//       // Fetch actions for all controls concurrently using a single query
+//       const actions = await Action.find({
+//         control_Id: { $in: controls.map((control) => control._id) },
+//       }).lean(); // Using lean() for faster retrieval
 
-      // Map actions to controls
-      const actionsMap = actions.reduce((map, action) => {
-        const controlId = action.control_Id.toString();
-        if (!map[controlId]) {
-          map[controlId] = [];
-        }
-        map[controlId].push(action);
-        return map;
-      }, {});
+//       // Map actions to controls
+//       const actionsMap = actions.reduce((map, action) => {
+//         const controlId = action.control_Id.toString();
+//         if (!map[controlId]) {
+//           map[controlId] = [];
+//         }
+//         map[controlId].push(action);
+//         return map;
+//       }, {});
 
-      // Combine controls with their actions
-      const controlsWithActions = controls.map((control) => ({
-        ...control,
-        actions: actionsMap[control._id] || [], // Use empty array if no actions
-      }));
+//       // Combine controls with their actions
+//       const controlsWithActions = controls.map((control) => ({
+//         ...control,
+//         actions: actionsMap[control._id] || [], // Use empty array if no actions
+//       }));
 
-      // Return the control family with its controls and actions
-      return res.json({
-        ...controlFamily.toObject(),
-        controls: controlsWithActions,
-      });
-    } else {
-      // Fetch all control families
-      const controlFamilies = await ControlFamily.find().lean(); // Using lean() for faster retrieval
+//       // Return the control family with its controls and actions
+//       return res.json({
+//         ...controlFamily.toObject(),
+//         controls: controlsWithActions,
+//       });
+//     } else {
+//       // Fetch all control families
+//       const controlFamilies = await ControlFamily.find().lean(); // Using lean() for faster retrieval
 
-      // Fetch all controls and actions in bulk
-      const controls = await Control.find().lean();
-      const actions = await Action.find().lean();
+//       // Fetch all controls and actions in bulk
+//       const controls = await Control.find().lean();
+//       const actions = await Action.find().lean();
 
-      // Map actions to controls
-      const actionsMap = actions.reduce((map, action) => {
-        const controlId = action.control_Id.toString();
-        if (!map[controlId]) {
-          map[controlId] = [];
-        }
-        map[controlId].push(action);
-        return map;
-      }, {});
+//       // Map actions to controls
+//       const actionsMap = actions.reduce((map, action) => {
+//         const controlId = action.control_Id.toString();
+//         if (!map[controlId]) {
+//           map[controlId] = [];
+//         }
+//         map[controlId].push(action);
+//         return map;
+//       }, {});
 
-      // Combine controls with their actions and assign them to their respective families
-      const familiesWithControls = controlFamilies.map((family) => {
-        const familyControls = controls.filter((control) =>
-          control.control_Family_Id.equals(family._id)
-        );
-        const controlsWithActions = familyControls.map((control) => ({
-          ...control,
-          actions: actionsMap[control._id] || [], // Use empty array if no actions
-        }));
+//       // Combine controls with their actions and assign them to their respective families
+//       const familiesWithControls = controlFamilies.map((family) => {
+//         const familyControls = controls.filter((control) =>
+//           control.control_Family_Id.equals(family._id)
+//         );
+//         const controlsWithActions = familyControls.map((control) => ({
+//           ...control,
+//           actions: actionsMap[control._id] || [], // Use empty array if no actions
+//         }));
 
-        return { ...family, controls: controlsWithActions };
-      });
+//         return { ...family, controls: controlsWithActions };
+//       });
 
-      return res.json(familiesWithControls);
-    }
-  } catch (error) {
-    console.error('Error fetching control families:', error);
-    return res.status(500).json({ message: 'Error fetching control families' });
-  }
-};
+//       return res.json(familiesWithControls);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching control families:', {
+//       message: error.message,
+//       stack: error.stack,
+//       requestParams: req.query, // Log request parameters for better debugging
+//     });
+//     return res.status(500).json({ message: 'Error fetching control families' });
+//   }
+// };
 
 // Fetch control families with controls and actions without using populate
 // export const getControlFamilies = async (req, res) => {
@@ -182,6 +186,94 @@ export const getControlFamilies = async (req, res) => {
 // };
 
 // Function to generate the next FixedID
+
+export const getControlFamilies = async (req, res) => {
+  try {
+    const { id } = req.query; // Use query parameter to fetch by ID
+
+    if (id) {
+      // Fetch single control family by ID
+      const controlFamily = await ControlFamily.findById(id);
+      if (!controlFamily) {
+        return res.status(404).json({ message: 'Control family not found' });
+      }
+
+      // Fetch controls and actions associated with the control family
+      const controls = await Control.find({
+        control_Family_Id: controlFamily._id,
+      }).lean(); // Using lean() for faster retrieval
+
+      // Fetch actions for all controls concurrently using a single query
+      const actions = await Action.find({
+        control_Id: { $in: controls.map((control) => control._id) },
+      }).lean();
+
+      // Map actions to controls
+      const actionsMap = actions.reduce((map, action) => {
+        const controlId = action.control_Id.toString();
+        if (!map[controlId]) {
+          map[controlId] = [];
+        }
+        map[controlId].push(action);
+        return map;
+      }, {});
+
+      // Combine controls with their actions
+      const controlsWithActions = controls.map((control) => ({
+        ...control,
+        actions: actionsMap[control._id] || [], // Use empty array if no actions
+      }));
+
+      // Return the control family with its controls and actions
+      return res.json({
+        ...controlFamily.toObject(),
+        controls: controlsWithActions,
+      });
+    } else {
+      // Fetch all control families
+      const controlFamilies = await ControlFamily.find().lean(); // Using lean() for faster retrieval
+
+      // Fetch all controls and actions in bulk
+      const controls = await Control.find().lean();
+      const actions = await Action.find().lean();
+
+      // Map actions to controls
+      const actionsMap = actions.reduce((map, action) => {
+        const controlId = action.control_Id.toString();
+        if (!map[controlId]) {
+          map[controlId] = [];
+        }
+        map[controlId].push(action);
+        return map;
+      }, {});
+
+      // Combine controls with their actions and assign them to their respective families
+      const familiesWithControls = controlFamilies.map((family) => {
+        const familyControls = controls.filter(
+          (control) =>
+            control.control_Family_Id &&
+            control.control_Family_Id.equals(family._id) // Check if control_Family_Id is defined
+        );
+
+        const controlsWithActions = familyControls.map((control) => ({
+          ...control,
+          actions: actionsMap[control._id] || [], // Use empty array if no actions
+        }));
+
+        return { ...family, controls: controlsWithActions };
+      });
+
+      return res.json(familiesWithControls);
+    }
+  } catch (error) {
+    console.error('Error fetching control families:', {
+      message: error.message,
+      stack: error.stack,
+      requestParams: req.query, // Log request parameters for better debugging
+    });
+    return res.status(500).json({ message: 'Error fetching control families' });
+  }
+};
 
 const generateNextFixedID = async () => {
   try {

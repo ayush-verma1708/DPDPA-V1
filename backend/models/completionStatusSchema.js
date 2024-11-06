@@ -38,6 +38,17 @@ const CompletionStatusSchema = new mongoose.Schema(
       ref: 'ControlFamily',
       required: true,
     },
+    selectedSoftware: {
+      // New field for selected software
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Software', // Reference to the Software model
+      default: null,
+    },
+    isSoftwareSelected: {
+      // Boolean field to indicate if software is selected
+      type: Boolean,
+      default: false,
+    },
     isCompleted: { type: Boolean, default: false },
     isEvidenceUploaded: { type: Boolean, default: false },
     completedAt: { type: Date, default: null },
