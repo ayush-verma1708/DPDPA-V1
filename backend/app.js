@@ -24,7 +24,7 @@ import completionRoutes from './routes/completionRoutes.js';
 
 import companyFormRoutes from './routes/companyFormRoutes.js';
 
-import TaskManager from './models/taskManager.js';
+// import TaskManager from './models/taskManager.js';
 
 import stepTasks from './routes/stepTasks.js';
 
@@ -79,7 +79,7 @@ app.use('/api/v1/assetDetails', assetDetailRouter);
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
 
 app.use('/api/evidence', evidenceRoutes);
-app.use('/api/task', TaskManager);
+// app.use('/api/task', TaskManager);
 
 app.use('/api/notifications', notificationRoutes);
 
