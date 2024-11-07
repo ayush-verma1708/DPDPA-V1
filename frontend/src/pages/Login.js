@@ -9,33 +9,36 @@ const Login = ({ setAuthToken }) => {
   const [email, setEmail] = useState(''); // Changed from username to email
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Make API call to login
-      const res = await axios.post('http://localhost:8021/api/auth/login', {
-        email, // Use email instead of username
-        password,
-      });
+      // API call for login
+      const { data: loginData } = await axios.post(
+        'http://localhost:8021/api/auth/login',
+        {
+          email, // Use email for login
+          password,
+        }
+      );
 
-      // Access token from the response
-      const token = res.data?.data.token;
+      const token = loginData?.data.token;
 
       if (token) {
         setAuthToken(token);
-        const { data } = await fetchCurrentUser(token);
-        const { hasCompletedCompanyForm } = checkFormCompletion(data._id);
         localStorage.setItem('token', token);
 
-        if (!hasCompletedCompanyForm && data.role === 'Admin') {
+        // Fetch current user data and form completion status
+        const { data: userData } = await fetchCurrentUser(token);
+        const hasCompletedCompanyForm = await checkFormCompletion(userData._id);
+
+        // Navigate based on form completion and role
+        if (!hasCompletedCompanyForm && userData.role === 'Admin') {
           navigate('/onboarding');
         } else {
           navigate('/dashboard');
         }
       } else {
-        setError('Login failed');
+        setError('Login failed: No token provided');
         console.warn('No token found in response');
       }
     } catch (err) {
@@ -43,9 +46,46 @@ const Login = ({ setAuthToken }) => {
         'Login error:',
         err.response ? err.response.data : err.message
       );
-      setError('Invalid credentials');
+      setError('Invalid credentials or server error');
     }
   };
+  const navigate = useNavigate();
+
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     // Make API call to login
+  //     const res = await axios.post('http://localhost:8021/api/auth/login', {
+  //       email, // Use email instead of username
+  //       password,
+  //     });
+
+  //     // Access token from the response
+  //     const token = res.data?.data.token;
+
+  //     if (token) {
+  //       setAuthToken(token);
+  //       const { data } = await fetchCurrentUser(token);
+  //       const { hasCompletedCompanyForm } = checkFormCompletion(data._id);
+  //       localStorage.setItem('token', token);
+
+  //       if (!hasCompletedCompanyForm && data.role === 'Admin') {
+  //         navigate('/onboarding');
+  //       } else {
+  //         navigate('/dashboard');
+  //       }
+  //     } else {
+  //       setError('Login failed');
+  //       console.warn('No token found in response');
+  //     }
+  //   } catch (err) {
+  //     console.error(
+  //       'Login error:',
+  //       err.response ? err.response.data : err.message
+  //     );
+  //     setError('Invalid credentials');
+  //   }
+  // };
 
   return (
     <div className='flex items-start pt-[5rem] justify-between w-full px-[5rem] min-h-screen bg__login-page bg-gray-100 '>

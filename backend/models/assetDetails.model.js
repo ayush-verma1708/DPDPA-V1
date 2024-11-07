@@ -25,6 +25,14 @@ const assetDetailsSchema = new Schema(
       type: String,
       // required: true
     },
+    auditorName: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    auditorEmail: {
+      type: String,
+      // required: true
+    },
     itOwnerName: {
       type: Schema.Types.ObjectId,
       ref: 'User',

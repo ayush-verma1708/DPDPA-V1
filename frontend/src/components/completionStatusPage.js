@@ -421,16 +421,63 @@ const CompletionStatusPage = ({
         {loading ? (
           <CircularProgress />
         ) : fetchedStatuses.length === 0 ? (
-          <div>
-            <p>No data available.</p>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100vh',
+              backgroundColor: '#f9f9f9',
+              color: '#333',
+              fontFamily: 'Arial, sans-serif',
+              textAlign: 'center',
+              padding: '20px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '1.2em',
+                color: '#888',
+                marginBottom: '15px',
+              }}
+            >
+              No data available.
+            </p>
             <a
               href='http://localhost:3000/Product-Family'
-              style={{ color: 'blue', textDecoration: 'underline' }}
+              style={{
+                color: '#007bff',
+                textDecoration: 'none',
+                fontSize: '1.1em',
+                border: '1px solid #007bff',
+                padding: '10px 20px',
+                borderRadius: '5px',
+                transition: 'all 0.3s ease',
+                display: 'inline-block',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#007bff';
+                e.target.style.color = '#fff';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.color = '#007bff';
+              }}
             >
-              Go to Product Family
+              Submit Product Family
             </a>
           </div>
         ) : (
+          // <div>
+          //   <p>No data available.</p>
+          //   <a
+          //     href='http://localhost:3000/Product-Family'
+          //     style={{ color: 'blue', textDecoration: 'underline' }}
+          //   >
+          //     Go to Product Family
+          //   </a>
+          // </div>
           <TableContainer
             component={Paper}
             style={{ maxHeight: 900, overflow: 'auto' }}

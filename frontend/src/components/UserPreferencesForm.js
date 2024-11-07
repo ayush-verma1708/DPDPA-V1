@@ -94,26 +94,46 @@ const UserPreferencesForm = ({ companyId }) => {
 
       {/* Show loading indicator if the form is being submitted */}
       {loading && (
-        <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-          <p>Saving your preferences, please wait...</p>
-
-          {/* Simulate Progress Bar */}
-          <div
+        <div
+          style={{ marginBottom: '20px', textAlign: 'center', color: '#444' }}
+        >
+          <p
             style={{
-              width: '100%',
-              backgroundColor: '#f3f3f3',
-              borderRadius: '8px',
+              fontSize: '18px',
+              fontWeight: '500',
+              margin: '0 0 10px 0',
             }}
           >
+            Saving your preferences, please wait...
+          </p>
+
+          {/* Progress Bar Container */}
+          <div
+            style={{
+              width: '80%',
+              maxWidth: '400px',
+              height: '20px',
+              margin: '0 auto',
+              backgroundColor: '#e0e0e0',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            {/* Progress Bar */}
             <div
               style={{
-                height: '20px',
+                height: '100%',
                 width: `${progress}%`,
                 backgroundColor: '#0073e6',
-                borderRadius: '8px',
-                textAlign: 'center',
+                borderRadius: '10px 0 0 10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 color: '#fff',
-                lineHeight: '20px',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                transition: 'width 0.3s ease-in-out',
               }}
             >
               {progress}%

@@ -304,7 +304,7 @@ const Sidebar = ({ onSelect }) => {
           )}
 
           {/* Settings Page - accessible to all roles */}
-          <ListItem
+          {/* <ListItem
             button
             component={Link}
             to='/Product-Family'
@@ -313,17 +313,13 @@ const Sidebar = ({ onSelect }) => {
             onClick={() => onSelect('Product-Family')}
             sx={{ width: '100%' }}
           >
-            {/* <ListItemIcon>
-              <SettingsOutlinedIcon sx={{ color: 'white' }} />
-            </ListItemIcon> */}
             <ListItemIcon>
               <InventoryOutlinedIcon sx={{ color: 'white' }} />{' '}
-              {/* Represents inventory or products */}
             </ListItemIcon>
             {open && (
               <ListItemText primary='Product Family' sx={{ color: 'white' }} />
             )}
-          </ListItem>
+          </ListItem> */}
         </List>
       </Box>
     </Drawer>

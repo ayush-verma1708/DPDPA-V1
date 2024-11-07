@@ -52,6 +52,10 @@ const AssetList = () => {
 
   const [users, setUsers] = useState([]);
 
+  //auditor
+  const [auditorName, setAuditorName] = useState('');
+  const [auditorEmail, setAuditorEmail] = useState('');
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -151,6 +155,8 @@ const AssetList = () => {
       criticality,
       businessOwnerName,
       businessOwnerEmail,
+      auditorName,
+      auditorEmail,
       itOwnerName: itOwnerName, // Ensure this is the selected user ID or name
       itOwnerEmail: itOwnerEmail, // Ensure this is the selected user's email
       asset: selectedAsset,
@@ -282,6 +288,19 @@ const AssetList = () => {
     }
   };
 
+  const handleAuditorChange = (event) => {
+    const selectedUserId = event.target.value;
+    const selectedUser = users.find((user) => user._id === selectedUserId);
+
+    if (selectedUser) {
+      setAuditorName(selectedUser._id);
+      setAuditorEmail(selectedUser.email);
+    } else {
+      setAuditorName('');
+      setAuditorEmail('');
+    }
+  };
+
   const handleBusinessOwnerChange = (event) => {
     const selectedUserId = event.target.value;
     const selectedUser = users.find((user) => user._id === selectedUserId);
@@ -322,7 +341,7 @@ const AssetList = () => {
     { field: 'criticality', headerName: 'Criticality', width: 150 },
     {
       field: 'businessOwnerName',
-      headerName: 'Business Owner Id',
+      headerName: 'Business Owner Name',
       width: 200,
     },
     {
@@ -330,33 +349,36 @@ const AssetList = () => {
       headerName: 'Business Owner Email',
       width: 250,
     },
-    { field: 'itOwnerName', headerName: 'IT Owner Id', width: 200 },
+    { field: 'itOwnerName', headerName: 'IT Owner Name', width: 200 },
     { field: 'itOwnerEmail', headerName: 'IT Owner Email', width: 250 },
+
+    { field: 'auditorName', headerName: 'Auditor Name', width: 200 },
+    { field: 'auditorEmail', headerName: 'Auditor Email', width: 250 },
     // { field: "coverages", headerName: "Coverages", width: 150 },
     { field: 'createdAt', headerName: 'Created Date', width: 150 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      renderCell: (params) => (
-        <div>
-          <IconButton
-            color='primary'
-            onClick={() => handleEdit(params.row)}
-            size='small'
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            color='secondary'
-            onClick={() => handleDelete(params.row.id)}
-            size='small'
-          >
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      ),
-    },
+    // {
+    //   field: 'actions',
+    //   headerName: 'Actions',
+    //   width: 100,
+    //   renderCell: (params) => (
+    //     <div>
+    //       <IconButton
+    //         color='primary'
+    //         onClick={() => handleEdit(params.row)}
+    //         size='small'
+    //       >
+    //         <EditIcon />
+    //       </IconButton>
+    //       <IconButton
+    //         color='secondary'
+    //         onClick={() => handleDelete(params.row.id)}
+    //         size='small'
+    //       >
+    //         <DeleteIcon />
+    //       </IconButton>
+    //     </div>
+    //   ),
+    // },
   ];
 
   const rows = assetDetails.map((assetDet) => ({
@@ -368,6 +390,8 @@ const AssetList = () => {
     businessOwnerEmail: assetDet.businessOwnerEmail || '',
     itOwnerName: assetDet.itOwnerName?.username || '',
     itOwnerEmail: assetDet.itOwnerEmail || '',
+    auditorName: assetDet.auditorName?.username || '',
+    auditorEmail: assetDet.auditorEmail || '',
     coverages: assetDet.coverages,
     createdAt: moment(assetDet.createdAt).format('DD-MM-YYYY'),
   }));
@@ -502,6 +526,33 @@ const AssetList = () => {
                   value={itOwnerEmail}
                   onChange={(e) => setItOwnerEmail(e.target.value)}
                   disabled // Disable manual input
+                />
+                <FormControl fullWidth margin='normal'>
+                  <InputLabel id='auditor-select-label'>
+                    Select Auditor
+                  </InputLabel>
+                  <Select
+                    labelId='auditor-select-label'
+                    id='auditor-select'
+                    value={auditorName}
+                    onChange={handleAuditorChange}
+                    fullWidth
+                  >
+                    {users.map((user) => (
+                      <MenuItem key={user._id} value={user._id}>
+                        {user.username} ({user.role})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <TextField
+                  id='auditor-email'
+                  label='Auditor Email'
+                  value={auditorEmail}
+                  fullWidth
+                  margin='normal'
+                  disabled
                 />
 
                 <Box mt={2}>
