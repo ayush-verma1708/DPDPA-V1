@@ -3,6 +3,8 @@ import { UserResponse } from '../models/UserResponse.js'; // Adjust the import p
 import { ProductFamily } from '../models/productFamily.js'; // To fetch product families
 import { CompanyForm } from '../models/CompanyForm.js'; // Assuming you have a company model
 import createCompletionData from '../scripts/createCompletionData.js';
+import { generateGroupedNotificationsForAssets } from '../scripts/notificationCreate.js';
+
 import { default_TaskCreator } from '../constants.js';
 
 // export const addUserResponses = async (req, res) => {
@@ -164,6 +166,17 @@ export const addUserResponses = async (req, res) => {
     try {
       // Trigger the task to create completion data (replace with correct ID if needed)
       await createCompletionData(default_TaskCreator);
+      console.log('Completion data created successfully!');
+    } catch (taskError) {
+      console.error(
+        'Error running tasks after response submission:',
+        taskError
+      );
+    }
+    // Once all responses are saved, trigger the task
+    try {
+      // Trigger the task to create completion data (replace with correct ID if needed)
+      await generateGroupedNotificationsForAssets();
       console.log('Completion data created successfully!');
     } catch (taskError) {
       console.error(
