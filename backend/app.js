@@ -36,6 +36,8 @@ import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the
 
 // import './scripts/scheduler.js'; // Import the scheduler
 
+import newActionRoutes from './routes/newActionRoutes.js';
+
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -84,6 +86,8 @@ app.use('/api/evidence', evidenceRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 app.use('/api/v1', stepTasks);
+
+app.use('/api', newActionRoutes);
 
 // Use the company form routes
 app.use('/api/company-form', companyFormRoutes);

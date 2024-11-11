@@ -35,6 +35,7 @@ import { Button, Tooltip } from '@mui/material';
 import EvidenceUpload from './EvidenceUpload';
 // import EvidenceFeedbackModal from './EvidenceFeedbackModal'; // Adjust the import path as needed
 import QueryModal from './EvidenceFeedbackModal';
+import ActionCell from './ActionCell.js'; // Import the ActionCell component
 
 const CompletionStatusPage = ({
   expandedFamilyId,
@@ -493,6 +494,7 @@ const CompletionStatusPage = ({
                   <TableCell>Status</TableCell>
                   <TableCell>Control Type</TableCell>
                   <TableCell>Software Selected</TableCell>
+                  <TableCell>Task:</TableCell>
 
                   {/* Conditional rendering for Upload Evidence based on role */}
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
@@ -574,11 +576,19 @@ const CompletionStatusPage = ({
                               <TableCell>
                                 {status.controlId.control_type}
                               </TableCell>
+
                               <TableCell>
                                 {status?.selectedSoftware?.software_name ||
                                   'N/A'}
                               </TableCell>
-
+                              <ActionCell
+                                actionId={status.actionId?._id}
+                                controlId={status.controlId?._id}
+                                productFamilyId={
+                                  status.controlId.product_family_Id
+                                } // Assuming this exists
+                                softwareId={status.selectedSoftware?._id} // Assuming this exists
+                              />
                               {/* Evidence upload button for IT Team */}
                               {role === 'IT Team' && !isCompleted && (
                                 <EvidenceUpload
