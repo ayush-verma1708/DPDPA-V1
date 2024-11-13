@@ -1,3 +1,4 @@
+// v2
 import React, { useEffect, useState } from 'react';
 import { TableCell } from '@mui/material';
 import { getActionByVariableId } from '../api/actionInfoCellApi'; // Import the API function
