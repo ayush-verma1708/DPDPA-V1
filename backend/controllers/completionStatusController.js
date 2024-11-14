@@ -10,7 +10,8 @@ const logHistory = (completionStatus, changes, userId) => {
   if (Object.keys(changes).length > 0) {
     completionStatus.history.push({
       modifiedAt: new Date(),
-      modifiedBy: userId || 'Unknown',
+      // modifiedBy: userId || 'Unknown',
+      modifiedBy: userId ? userId : null, // Use null instead of 'Unknown'
       changes,
     });
   }
@@ -41,97 +42,6 @@ export const getCompletionStatusById = async (req, res) => {
       .json({ message: 'Server error', error: error.message });
   }
 };
-
-// export const getCompletionStatusById = async (req, res) => {
-//   const { id } = req.params; // Extract the ID from the route parameters
-
-//   try {
-//     const completionStatus = await CompletionStatus.findById(id)
-//       .populate('actionId', '_id') // Populate only the ID of actionId
-//       .populate('assetId', '_id') // Populate only the ID of assetId
-//       .populate('scopeId', '_id') // Populate only the ID of scopeId
-//       .populate('controlId', '_id') // Populate only the ID of controlId
-//       .populate('familyId', '_id') // Populate only the ID of familyId
-//       .exec();
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ message: 'Completion status not found' });
-//     }
-
-//     return res.status(200).json(completionStatus);
-//   } catch (error) {
-//     console.error('Error finding CompletionStatus by ID:', error);
-//     return res
-//       .status(500)
-//       .json({ message: 'Server error', error: error.message });
-//   }
-// };
-
-// export const getCompletionStatusById = async (req, res) => {
-//   const { id } = req.params; // Extract the ID from the route parameters
-
-//   try {
-//     const completionStatus = await CompletionStatus.findById(id)
-//       .populate('actionId', '_id') // Populate only the ID of actionId
-//       .populate('assetId', '_id') // Populate only the ID of assetId
-//       .populate('scopeId', '_id') // Populate only the ID of scopeId
-//       .populate('controlId', '_id') // Populate only the ID of controlId
-//       .populate('familyId', '_id') // Populate only the ID of familyId
-//       .exec();
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ message: 'Completion status not found' });
-//     }
-
-//     return res.status(200).json(completionStatus);
-//   } catch (error) {
-//     console.error('Error finding CompletionStatus by ID:', error);
-//     return res
-//       .status(500)
-//       .json({ message: 'Server error', error: error.message });
-//   }
-// };
-
-// export const getCompletionStatusById = async (req, res) => {
-//   const { id } = req.params; // Extract the ID from the route parameters
-
-//   try {
-//     const completionStatus = await CompletionStatus.findById(id)
-//       .populate('actionId assetId scopeId controlId familyId AssignedTo')
-//       .populate({
-//         path: 'AssignedTo',
-//         select: 'username', // Include username for AssignedTo
-//       })
-//       .populate({
-//         path: 'AssignedBy',
-//         select: 'username role', // Include username and role for AssignedBy
-//       })
-//       .populate({
-//         path: 'createdBy',
-//         select: 'username', // Include username for createdBy
-//       })
-//       .populate({
-//         path: 'history.modifiedBy',
-//         select: 'username', // Include username for modifiedBy in history
-//       })
-//       .populate({
-//         path: 'history.changes.AssignedTo',
-//         select: 'username', // Include username for AssignedTo in changes
-//       })
-//       .exec();
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ message: 'Completion status not found' });
-//     }
-
-//     return res.status(200).json(completionStatus);
-//   } catch (error) {
-//     console.error('Error finding CompletionStatus by ID:', error);
-//     return res
-//       .status(500)
-//       .json({ message: 'Server error', error: error.message });
-//   }
-// };
 
 export const createOrUpdateStatus = async (req, res) => {
   const {
@@ -456,135 +366,6 @@ export const deleteStatus = async (req, res) => {
   }
 };
 
-// const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
-// const path = require('path');
-// const fs = require('fs');
-
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(
-//       completionStatusId
-//     ).populate('selectedSoftware');
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const softwareName = completionStatus.selectedSoftware?.software_name;
-//     console.log('Software Name:', softwareName);
-
-//     if (softwareName) {
-//       // Use relative path to 'backend/uploads'
-//       const folderPath = path.join(__dirname, '..', 'uploads', softwareName);
-
-//       // Check if folder already exists, create if not
-//       if (!fs.existsSync(folderPath)) {
-//         fs.mkdirSync(folderPath, { recursive: true });
-//         console.log(
-//           `Folder created for software: ${softwareName} at ${folderPath}`
-//         );
-//       } else {
-//         console.log(`Folder already exists for software: ${softwareName}`);
-//       }
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Proceed with the delegation logic
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId,
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// import path from 'path';
-// import fs from 'fs';
-
-// const __dirname = path
-//   .dirname(new URL(import.meta.url).pathname)
-//   .replace(/^\/([A-Za-z]):\//, '$1:/');
-
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(
-//       completionStatusId
-//     ).populate('selectedSoftware');
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const softwareName = completionStatus.selectedSoftware?.software_name;
-//     console.log('Software Name:', softwareName);
-
-//     if (softwareName) {
-//       // Use relative path to 'backend/uploads'
-//       const folderPath = path.join(__dirname, '..', 'uploads', softwareName);
-
-//       // Check if folder already exists, create if not
-//       if (!fs.existsSync(folderPath)) {
-//         fs.mkdirSync(folderPath, { recursive: true });
-//         console.log(
-//           `Folder created for software: ${softwareName} at ${folderPath}`
-//         );
-//       } else {
-//         console.log(`Folder already exists for software: ${softwareName}`);
-//       }
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Proceed with the delegation logic
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId,
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 import path from 'path';
 import fs from 'fs';
 
@@ -692,55 +473,6 @@ export const delegateToAuditor = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-// export const delegateToAuditor = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { currentUserId, auditorId } = req.body; // auditorId is now passed in the body
-
-//   try {
-//     // Find the completion status by ID
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
-
-//     // If no completion status is found, return 404 error
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     // If an auditorId is provided, use that; otherwise, use default auditor
-//     const selectedAuditor = auditorId || default_Auditor_Id; // If auditorId is passed, use it; otherwise, use default.
-
-//     // Define changes to be made
-//     const changes = {
-//       status: 'Audit Delegated',
-//       action: 'Delegate to Auditor',
-//       AssignedBy: currentUserId,
-//       AssignedTo: selectedAuditor,
-//     };
-
-//     // Merge changes into the completion status object
-//     Object.assign(completionStatus, changes);
-
-//     // Log history for auditing
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     // Save the updated completion status document
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to Auditor
-//     await createMessage(
-//       selectedAuditor,
-//       `Delegated to Auditor: ${selectedAuditor}`,
-//       completionStatusId
-//     );
-
-//     // Return success response
-//     res.status(200).json({ message: 'Delegated to Auditor', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToAuditor:', err);
-//     // Return 500 error if something goes wrong in the try block
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 export const delegateToExternalAuditor = async (req, res) => {
   const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
@@ -895,330 +627,89 @@ export const getOverallRisk = async (req, res) => {
   }
 };
 
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
+// Setting status to "Not Applicable (Pending Auditor Confirmation)"
+export const setNotApplicable = async (req, res) => {
+  const { id } = req.params; // ID of the completion status
+  const { userId } = req.body;
 
-//   try {
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+  try {
+    const completionStatus = await CompletionStatus.findById(id);
+    if (!completionStatus) {
+      return res.status(404).json({ message: 'Completion Status not found' });
+    }
 
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
+    // Log changes before updating
+    const changes = {};
+    if (
+      completionStatus.status !==
+      'Not Applicable (Pending Auditor Confirmation)'
+    ) {
+      changes.status = 'Not Applicable (Pending Auditor Confirmation)';
+    }
+    if (completionStatus.isAuditorConfirmedForNotApplicable !== false) {
+      changes.isAuditorConfirmedForNotApplicable = false;
+    }
 
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId, // Update the username field
-//     };
+    // Update status and confirmation fields
+    completionStatus.status = 'Not Applicable (Pending Auditor Confirmation)';
+    completionStatus.isAuditorConfirmedForNotApplicable = false;
 
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
+    // Log history
+    logHistory(completionStatus, changes, userId);
 
-//     await completionStatus.save();
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
+    await completionStatus.save();
+    res.status(200).json({
+      message:
+        'Status updated to Not Applicable (Pending Auditor Confirmation)',
+      completionStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating status', error });
+  }
+};
 
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+// Auditor confirms "Not Applicable" status
+export const confirmNotApplicable = async (req, res) => {
+  const { id } = req.params; // ID of the completion status
+  const { userId } = req.body;
 
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
+  try {
+    const completionStatus = await CompletionStatus.findById(id);
+    if (!completionStatus) {
+      return res.status(404).json({ message: 'Completion Status not found' });
+    }
 
-//   try {
-//     let completionStatus = await CompletionStatus.findById(completionStatusId);
+    if (
+      completionStatus.status !==
+      'Not Applicable (Pending Auditor Confirmation)'
+    ) {
+      return res
+        .status(400)
+        .json({ message: 'Status is not pending confirmation' });
+    }
 
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
+    // Log changes before updating
+    const changes = {};
+    if (completionStatus.status !== 'Not Applicable') {
+      changes.status = 'Not Applicable';
+    }
+    if (completionStatus.isAuditorConfirmedForNotApplicable !== true) {
+      changes.isAuditorConfirmedForNotApplicable = true;
+    }
 
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId, // Update the username field
-//     };
+    // Update status and confirmation fields
+    completionStatus.status = 'Not Applicable';
+    completionStatus.isAuditorConfirmedForNotApplicable = true;
 
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
+    // Log history
+    logHistory(completionStatus, changes, userId);
 
-//     // Save the updated completion status
-//     await completionStatus.save();
-//     console.log('Completion Status:', completionStatus);
-
-//     // Get the software name from the selectedSoftware field
-//     const softwareName = completionStatus?.selectedSoftware?.software_name;
-//     console.log(softwareName);
-//     if (softwareName) {
-//       // Define the path for the new folder
-//       const folderPath = path.join(__dirname, 'software_folders', softwareName);
-
-//       // Create the directory if it doesn't exist
-//       if (!fs.existsSync(folderPath)) {
-//         fs.mkdir(folderPath, { recursive: true }, (err) => {
-//           if (err) {
-//             console.error('Error creating folder:', err);
-//             return res
-//               .status(500)
-//               .json({ error: 'Error creating folder for software' });
-//           }
-//           console.log(`Folder created for software: ${softwareName}`);
-//         });
-//       }
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(
-//       completionStatusId
-//     ).populate('selectedSoftware'); // Populate the selectedSoftware field with the full document
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const softwareName = completionStatus.selectedSoftware?.software_name; // Access software_name after population
-
-//     console.log('Software Name:', softwareName);
-
-//     if (softwareName) {
-//       // Folder creation logic (use softwareName here)
-//       console.log(`Creating folder for software: ${softwareName}`);
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Proceed with the delegation logic
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId, // Update the username field
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// import fs from 'fs';
-// import path from 'path';
-
-// To get __dirname in ES modules
-
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(
-//       completionStatusId
-//     ).populate('selectedSoftware'); // Populate the selectedSoftware field with the full document
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const softwareName = completionStatus.selectedSoftware?.software_name; // Access software_name after population
-
-//     console.log('Software Name:', softwareName);
-
-//     if (softwareName) {
-//       // Create a folder for the software in a specific directory
-//       const folderPath = path.join(__dirname, 'softwareFolders', softwareName); // Specify where you want to create the folder
-
-//       // Check if folder already exists, create if not
-//       if (!fs.existsSync(folderPath)) {
-//         fs.mkdirSync(folderPath, { recursive: true }); // 'recursive' ensures parent directories are also created
-//         console.log(
-//           `Folder created for software: ${softwareName} at ${folderPath}`
-//         );
-//       } else {
-//         console.log(`Folder already exists for software: ${softwareName}`);
-//       }
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Proceed with the delegation logic
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId, // Update the username field
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(
-//       completionStatusId
-//     ).populate('selectedSoftware'); // Populate the selectedSoftware field with the full document
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const softwareName = completionStatus.selectedSoftware?.software_name; // Access software_name after population
-
-//     console.log('Software Name:', softwareName);
-
-//     if (softwareName) {
-//       // Create a folder for the software in a specific directory
-//       const folderPath = path.join(__dirname, 'softwareFolders', softwareName); // Specify where you want to create the folder
-
-//       // Check if folder already exists, create if not
-//       if (!fs.existsSync(folderPath)) {
-//         fs.mkdirSync(folderPath, { recursive: true }); // 'recursive' ensures parent directories are also created
-//         console.log(
-//           `Folder created for software: ${softwareName} at ${folderPath}`
-//         );
-//       } else {
-//         console.log(`Folder already exists for software: ${softwareName}`);
-//       }
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Proceed with the delegation logic
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId, // Update the username field
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-// export const delegateToIT = async (req, res) => {
-//   const { completionStatusId } = req.params;
-//   const { itOwnerId, currentUserId } = req.body;
-
-//   try {
-//     let completionStatus = await CompletionStatus.findById(
-//       completionStatusId
-//     ).populate('selectedSoftware');
-
-//     if (!completionStatus) {
-//       return res.status(404).json({ error: 'CompletionStatus not found' });
-//     }
-
-//     const softwareName = completionStatus.selectedSoftware?.software_name;
-//     console.log('Software Name:', softwareName);
-
-//     if (softwareName) {
-//       // Set the folder path inside 'backend/uploads'
-//       const folderPath = path.resolve(__dirname, 'uploads', softwareName);
-
-//       // Check if folder already exists, create if not
-//       if (!fs.existsSync(folderPath)) {
-//         fs.mkdirSync(folderPath, { recursive: true });
-//         console.log(
-//           `Folder created for software: ${softwareName} at ${folderPath}`
-//         );
-//       } else {
-//         console.log(`Folder already exists for software: ${softwareName}`);
-//       }
-//     } else {
-//       console.warn('No software selected, skipping folder creation.');
-//     }
-
-//     // Proceed with the delegation logic
-//     const changes = {
-//       status: 'Delegated to IT Team',
-//       action: 'Delegate to IT',
-//       AssignedTo: itOwnerId,
-//     };
-
-//     Object.assign(completionStatus, changes);
-//     logHistory(completionStatus, changes, currentUserId);
-
-//     await completionStatus.save();
-
-//     // Create a message indicating delegation to IT
-//     await createMessage(
-//       itOwnerId,
-//       `Delegated to IT Team: ${itOwnerId}`,
-//       completionStatusId
-//     );
-
-//     res.status(200).json({ message: 'Delegated to IT Team', completionStatus });
-//   } catch (err) {
-//     console.error('Error in delegateToIT:', err);
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+    await completionStatus.save();
+    res.status(200).json({
+      message: 'Status confirmed as Not Applicable',
+      completionStatus,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error confirming status', error });
+  }
+};

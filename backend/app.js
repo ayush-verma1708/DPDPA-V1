@@ -20,7 +20,7 @@ import evidenceRoutes from './routes/evidenceRoutes.js';
 
 import notificationRoutes from './routes/notificationsRoutes.js';
 
-import completionRoutes from './routes/completionRoutes.js';
+// import completionRoutes from './routes/completionRoutes.js';
 
 import companyFormRoutes from './routes/companyFormRoutes.js';
 
@@ -105,15 +105,15 @@ app.get('/:filename', async (req, res) => {
   return res.download(filepath);
   // return res.send(filepath)
 }),
-  app.use('/api/v1', completionRoutes);
+  // app.use('/api/v1', completionRoutes);
 
-// Global error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({
-    message: err.message || 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err : {},
+  // Global error handling middleware
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.statusCode || 500).json({
+      message: err.message || 'Internal Server Error',
+      error: process.env.NODE_ENV === 'development' ? err : {},
+    });
   });
-});
 
 export { app };

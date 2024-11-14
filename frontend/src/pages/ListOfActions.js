@@ -12,7 +12,7 @@ import SelectorsAndNotifications from '../components/assetSelection';
 
 import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
-import { getAssetNameById } from '../api/assetApi';
+import { getAssetNameById } from '../api/assetApi.js';
 import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
 import DataProtectionAct from '../components/DataProtectionAct'; // Import your component
 import DataProtectionActChapter7 from '../components/DataProtectionActChapter7';

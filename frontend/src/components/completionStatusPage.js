@@ -5,6 +5,8 @@ import {
   delegateToIT,
   delegateToAuditor,
   delegateToExternalAuditor,
+  setNotApplicableStatus,
+  confirmNotApplicableStatus,
 } from '../api/completionStatusApi';
 import {
   Table,
@@ -406,6 +408,27 @@ const CompletionStatusPage = ({
       .join(''); // Join without spaces to form camel case
   };
 
+  const handleSetNotApplicable = async (statusId) => {
+    try {
+      await setNotApplicableStatus(statusId, currentUserId);
+      // setCompletionStatus(updatedStatus); // Update the status in UI
+      await handleFetchStatus();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleConfirmNotApplicable = async (statusId) => {
+    try {
+      await confirmNotApplicableStatus(statusId, currentUserId);
+      await handleFetchStatus();
+
+      // setCompletionStatus(updatedStatus); // Update the status in UI
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <section style={{ marginTop: '20px' }}>
@@ -499,10 +522,19 @@ const CompletionStatusPage = ({
                   {/* Conditional rendering for Upload Evidence based on role */}
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
 
-                  <TableCell>View</TableCell>
+                  <TableCell>View Evidence </TableCell>
+                  {(role === 'IT Team' || role === 'Compliance Team') && (
+                    <TableCell>Mark as Not Applicable</TableCell>
+                  )}
+                  {role === 'Auditor' && (
+                    <TableCell>Confirm as Not Applicable</TableCell>
+                  )}
 
                   {/* Actions for different roles */}
-                  {role === 'IT Team' && <TableCell>Actions</TableCell>}
+                  {role === 'IT Team' ||
+                    (role === 'Compliance Team' && (
+                      <TableCell>Actions</TableCell>
+                    ))}
                   {role === 'Auditor' && (
                     <>
                       <TableCell>Actions</TableCell>
@@ -603,6 +635,7 @@ const CompletionStatusPage = ({
 
                               {/* View Evidence Button for IT Team, Auditor, or External Auditor */}
                               {(role === 'IT Team' ||
+                                role === 'Compliance Team' ||
                                 role === 'Auditor' ||
                                 role === 'External Auditor') && (
                                 <TableCell>
@@ -619,6 +652,44 @@ const CompletionStatusPage = ({
                                       disabled={!status.isEvidenceUploaded}
                                     >
                                       View Evidence
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {(role === 'IT Team' ||
+                                role === 'Compliance Team') && (
+                                <TableCell>
+                                  <Tooltip title='Set As Not Applicable'>
+                                    <Button
+                                      variant='text'
+                                      color='secondary'
+                                      onClick={() =>
+                                        handleSetNotApplicable(status._id)
+                                      }
+                                    >
+                                      Mark as Not Applicable
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              )}
+
+                              {/*  */}
+                              {role === 'Auditor' && (
+                                <TableCell>
+                                  <Tooltip title='Confirm Not Applicable'>
+                                    <Button
+                                      variant='text'
+                                      color='secondary'
+                                      onClick={() =>
+                                        handleConfirmNotApplicable(status._id)
+                                      }
+                                      disabled={
+                                        status.status !==
+                                        'Not Applicable (Pending Auditor Confirmation)'
+                                      }
+                                    >
+                                      Confirm as Not Applicable
                                     </Button>
                                   </Tooltip>
                                 </TableCell>
@@ -829,7 +900,7 @@ const CompletionStatusPage = ({
                                               })}
                                             </TableCell>
                                             <TableCell>
-                                              {change.modifiedBy.username}
+                                              {change.modifiedBy?.username}
                                             </TableCell>
                                             <TableCell>
                                               <ul>

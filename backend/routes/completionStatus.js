@@ -13,6 +13,8 @@ import {
   raiseQuery,
   delegateToExternalAuditor,
   getCompletionStatusById,
+  setNotApplicable,
+  confirmNotApplicable,
 } from '../controllers/completionStatusController.js';
 
 const router = express.Router();
@@ -57,5 +59,8 @@ router.get('/risk/:assetId', getRiskByAsset);
 
 // Route for calculating overall risk
 router.get('/risk-overall', getOverallRisk);
+
+router.put('/:id/set-not-applicable', setNotApplicable);
+router.put('/:id/confirm-not-applicable', confirmNotApplicable);
 
 export default router;

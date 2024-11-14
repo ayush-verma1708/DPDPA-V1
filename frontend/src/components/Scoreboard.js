@@ -77,7 +77,8 @@ const Scoreboard = () => {
           (action) =>
             action.isTask === true &&
             action.familyId?.fixed_id !== 4 &&
-            action.familyId?.fixed_id !== 6
+            action.familyId?.fixed_id !== 6 &&
+            action.status === 'Not Applicable (Pending Auditor Confirmation)'
         );
 
         setStatuses(filteredData);
@@ -334,7 +335,7 @@ const Scoreboard = () => {
           </Select>
         </FormControl>
         {/* Status Filter */}
-        <FormControl fullWidth className='mb-4'>
+        {/* <FormControl fullWidth className='mb-4'>
           <InputLabel>Status</InputLabel>
           <Select
             value={filters.status}
@@ -347,6 +348,26 @@ const Scoreboard = () => {
                 {status}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl> */}
+        <FormControl fullWidth className='mb-4'>
+          <InputLabel>Status</InputLabel>
+          <Select
+            value={filters.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+            label='Status'
+          >
+            <MenuItem value=''>All Statuses</MenuItem>
+            {uniqueStatuses
+              .filter(
+                (status) =>
+                  status !== 'Not Applicable (Pending Auditor Confirmation)'
+              ) // Exclude the status
+              .map((status, index) => (
+                <MenuItem key={index} value={status}>
+                  {status}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </div>

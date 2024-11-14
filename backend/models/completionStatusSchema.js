@@ -73,6 +73,7 @@ const CompletionStatusSchema = new mongoose.Schema(
         'Evidence Uploaded',
         'Audit Delegated',
         'Not Applicable',
+        'Not Applicable (Pending Auditor Confirmation)',
         'Wrong Evidence',
         'Risk Accepted',
         'Completed',
@@ -93,6 +94,8 @@ const CompletionStatusSchema = new mongoose.Schema(
     },
     feedback: { type: String, default: null }, // Optional field to store auditor's feedback
     history: [ChangeHistorySchema], // Array of change history records
+    // New fields for auditor confirmation on "Not Applicable" status
+    isAuditorConfirmedForNotApplicable: { type: Boolean, default: false }, // Tracks auditor confirmation
   },
   {
     timestamps: true,

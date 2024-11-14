@@ -192,3 +192,42 @@ export const returnEvidence = async (
     throw error;
   }
 };
+
+// Set Status to "Not Applicable (Pending Auditor Confirmation)"
+export const setNotApplicableStatus = async (completionStatusId, userId) => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/set-not-applicable`,
+      { userId }
+    );
+    console.log(response.data.message); // Handle success message
+    return response.data.completionStatus; // Return the updated completion status
+  } catch (error) {
+    console.error(
+      'Error setting status to Not Applicable:',
+      error.response?.data?.message || error.message
+    );
+    throw new Error('Failed to update status');
+  }
+};
+
+// Confirm Status as "Not Applicable"
+export const confirmNotApplicableStatus = async (
+  completionStatusId,
+  userId
+) => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/completion-status/${completionStatusId}/confirm-not-applicable`,
+      { userId }
+    );
+    console.log(response.data.message); // Handle success message
+    return response.data.completionStatus; // Return the updated completion status
+  } catch (error) {
+    console.error(
+      'Error confirming Not Applicable status:',
+      error.response?.data?.message || error.message
+    );
+    throw new Error('Failed to confirm status');
+  }
+};
