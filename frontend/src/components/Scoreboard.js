@@ -77,8 +77,9 @@ const Scoreboard = () => {
           (action) =>
             action.isTask === true &&
             action.familyId?.fixed_id !== 4 &&
-            action.familyId?.fixed_id !== 6 &&
-            action.status === 'Not Applicable (Pending Auditor Confirmation)'
+            action.familyId?.fixed_id !== 6
+          // &&
+          // action.status === 'Not Applicable (Pending Auditor Confirmation)'
         );
 
         setStatuses(filteredData);

@@ -526,6 +526,10 @@ const CompletionStatusPage = ({
                   {(role === 'IT Team' || role === 'Compliance Team') && (
                     <TableCell>Mark as Not Applicable</TableCell>
                   )}
+                  {(role === 'IT Team' || role === 'Admin') && (
+                    <TableCell>Action</TableCell>
+                  )}
+
                   {role === 'Auditor' && (
                     <TableCell>Confirm as Not Applicable</TableCell>
                   )}
@@ -667,6 +671,13 @@ const CompletionStatusPage = ({
                                       onClick={() =>
                                         handleSetNotApplicable(status._id)
                                       }
+                                      disabled={
+                                        isCompleted ||
+                                        (status.status !== 'Open' &&
+                                          status.status !== 'Wrong Evidence' &&
+                                          status.status !==
+                                            'Delegated to IT Team')
+                                      }
                                     >
                                       Mark as Not Applicable
                                     </Button>
@@ -761,7 +772,9 @@ const CompletionStatusPage = ({
                                       disabled={
                                         status.status === 'Wrong Evidence' ||
                                         status.status ===
-                                          'External Audit Delegated'
+                                          'External Audit Delegated' ||
+                                        status.status ===
+                                          'Not Applicable (Pending Auditor Confirmation)'
                                       }
                                     >
                                       Raise Query
@@ -821,7 +834,9 @@ const CompletionStatusPage = ({
                                         isCompleted ||
                                         status.status === 'Wrong Evidence' ||
                                         status.status ===
-                                          'External Audit Delegated'
+                                          'External Audit Delegated' ||
+                                        status.status ===
+                                          'Not Applicable (Pending Auditor Confirmation)'
                                       }
                                     >
                                       Delegate to External Auditor

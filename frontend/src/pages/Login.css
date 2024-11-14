@@ -1,20 +1,55 @@
+/* General styles for the page */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.bg__login-page {
+  position: relative;
+  background-image: url('../../public/assets/DPDPAImage.png') !important;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+
+.bg__login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(76, 81, 114, 0.5); /* Dark overlay for contrast */
+  z-index: 1;
+}
+
+.bg__login-page > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Centering the login container */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  padding: 0 20px; /* Add padding to avoid content touching the edges */
+  padding: 0 20px; /* Padding for mobile */
 }
 
+/* Form design */
 .login-form {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 300px;
+  max-width: 400px;
   padding: 20px;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .input-group {
@@ -34,57 +69,27 @@ button {
   cursor: pointer;
 }
 
+/* Error styling */
 .error {
   color: red;
   margin-bottom: 10px;
 }
 
-/* Background image styling */
-.bg__login-page {
-  position: relative;
-  background-image: url('../../public/assets/DPDPAImage.png') !important;
-  background-position: center !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-}
-
-.bg__login-page::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(76, 81, 114, 0.5);
-  z-index: 1;
-}
-
-.bg__login-page > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* Media Query for mobile view */
+/* Media query for mobile */
 @media (max-width: 768px) {
-  /* Remove the logo or any other unnecessary elements */
-  .logo {
-    display: none; /* Assuming there's a .logo class for the logo */
-  }
-
   .login-container {
-    height: auto; /* Make the height auto to fit mobile screen */
     padding: 20px;
   }
 
   .login-form {
-    width: 100%; /* Ensure the form takes the full width */
-    max-width: 100%; /* Remove max-width for mobile screens */
-    padding: 15px; /* Slightly reduce padding for smaller screens */
+    width: 100%;
+    max-width: 100%;
+    padding: 15px;
   }
 
   input,
   button {
-    font-size: 14px; /* Adjust font-size for mobile view */
-    padding: 8px; /* Adjust padding for mobile view */
+    font-size: 14px;
+    padding: 8px;
   }
 }

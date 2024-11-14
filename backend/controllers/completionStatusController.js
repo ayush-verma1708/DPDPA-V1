@@ -628,6 +628,48 @@ export const getOverallRisk = async (req, res) => {
 };
 
 // Setting status to "Not Applicable (Pending Auditor Confirmation)"
+// export const setNotApplicable = async (req, res) => {
+//   const { id } = req.params; // ID of the completion status
+//   const { userId } = req.body;
+
+//   try {
+//     const completionStatus = await CompletionStatus.findById(id);
+//     if (!completionStatus) {
+//       return res.status(404).json({ message: 'Completion Status not found' });
+//     }
+
+//     // Log changes before updating
+//     const changes = {};
+//     if (
+//       completionStatus.status !==
+//       'Not Applicable (Pending Auditor Confirmation)'
+//     )
+//     {
+//       changes.status = 'Not Applicable (Pending Auditor Confirmation)',
+//       AssignedTo: defaultAuditor
+//     }
+//     if (completionStatus.isAuditorConfirmedForNotApplicable !== false) {
+//       changes.isAuditorConfirmedForNotApplicable = false;
+//     }
+
+//     // Update status and confirmation fields
+//     completionStatus.status = 'Not Applicable (Pending Auditor Confirmation)';
+//     completionStatus.isAuditorConfirmedForNotApplicable = false;
+
+//     // Log history
+//     logHistory(completionStatus, changes, userId);
+
+//     await completionStatus.save();
+//     res.status(200).json({
+//       message:
+//         'Status updated to Not Applicable (Pending Auditor Confirmation)',
+//       completionStatus,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error updating status', error });
+//   }
+// };
+
 export const setNotApplicable = async (req, res) => {
   const { id } = req.params; // ID of the completion status
   const { userId } = req.body;
@@ -638,32 +680,34 @@ export const setNotApplicable = async (req, res) => {
       return res.status(404).json({ message: 'Completion Status not found' });
     }
 
-    // Log changes before updating
+    // Track changes for history logging
     const changes = {};
     if (
       completionStatus.status !==
       'Not Applicable (Pending Auditor Confirmation)'
     ) {
       changes.status = 'Not Applicable (Pending Auditor Confirmation)';
+      changes.AssignedTo = default_Auditor_Id;
     }
     if (completionStatus.isAuditorConfirmedForNotApplicable !== false) {
       changes.isAuditorConfirmedForNotApplicable = false;
     }
 
-    // Update status and confirmation fields
-    completionStatus.status = 'Not Applicable (Pending Auditor Confirmation)';
-    completionStatus.isAuditorConfirmedForNotApplicable = false;
+    // Apply changes to the completion status object
+    Object.assign(completionStatus, changes);
 
-    // Log history
+    // Log history with tracked changes
     logHistory(completionStatus, changes, userId);
 
     await completionStatus.save();
+
     res.status(200).json({
       message:
         'Status updated to Not Applicable (Pending Auditor Confirmation)',
       completionStatus,
     });
   } catch (error) {
+    console.error('Error in setNotApplicable:', error);
     res.status(500).json({ message: 'Error updating status', error });
   }
 };
