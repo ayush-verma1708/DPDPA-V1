@@ -17,6 +17,7 @@ import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
 import DataProtectionAct from '../components/DataProtectionAct'; // Import your component
 import DataProtectionActChapter7 from '../components/DataProtectionActChapter7';
 import DataProtectionActChapter8 from '../components/DataProtectionActChapter8';
+import DataProtectionAppeals from '../components/DataProtectionAppeals.js';
 
 const ListOfActions = () => {
   const [controlFamilies, setControlFamilies] = useState([]);
@@ -50,6 +51,9 @@ const ListOfActions = () => {
   };
   const handleChapter8Click = () => {
     setSelectedChapter(8); // Set state to show Chapter 7 component
+  };
+  const handleChapter9Click = () => {
+    setSelectedChapter(9); // Set state to show Chapter 7 component
   };
 
   // Function to handle closing the chapter view
@@ -531,6 +535,20 @@ const ListOfActions = () => {
             </button>
           </div>
         </div>
+        <div>
+          <div
+            className='hover:bg-[white] bg-[#ffffff]'
+            style={{ marginBottom: '10px' }}
+          >
+            <button
+              onClick={handleChapter9Click} // Make it clickable
+              className='control-family-header font-[400] bg-gray-200 text-black px-6 py-3 border border-gray-300 rounded-lg w-full cursor-pointer hover:bg-gray-300 transition duration-200 ease-in-out'
+              data-disabled // Similar to how you had `data-disabled`
+            >
+              Penalties
+            </button>
+          </div>
+        </div>
       </div>
       {/* Conditional rendering based on selectedChapter */}
       {selectedChapter === 1 && (
@@ -548,6 +566,12 @@ const ListOfActions = () => {
       {selectedChapter === 8 && (
         <div>
           <DataProtectionActChapter8 />
+          <button onClick={handleChapterClose}>Close Chapter</button>
+        </div>
+      )}
+      {selectedChapter === 9 && (
+        <div>
+          <DataProtectionAppeals />
           <button onClick={handleChapterClose}>Close Chapter</button>
         </div>
       )}
