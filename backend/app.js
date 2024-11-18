@@ -3,7 +3,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 // Import routes
-
 import assetRouter from './routes/asset.routes.js';
 import scopedRouter from './routes/scoped.routes.js';
 import coverageRouter from './routes/coverage.routes.js';
@@ -17,30 +16,23 @@ import actionRoutes from './routes/actionRoutes.js'; // Import action routes
 import assetDetailRouter from './routes/assetDetail.routes.js';
 import completionStatusRoutes from './routes/completionStatus.js'; // Import completion status routes
 import evidenceRoutes from './routes/evidenceRoutes.js';
-
 import notificationRoutes from './routes/notificationsRoutes.js';
-
-// import completionRoutes from './routes/completionRoutes.js';
-
 import companyFormRoutes from './routes/companyFormRoutes.js';
-
-// import TaskManager from './models/taskManager.js';
-
 import stepTasks from './routes/stepTasks.js';
-
 import complianceSnapshotRoutes from './routes/complianceSnapshotRoutes.js'; // Adjust the path as necessary
-
 import messageRoutes from './routes/messageRoutes.js'; // Adjust the path as necessary
 import userResponseRoutes from './routes/userResponseRoutes.js'; // Import user response routes
-import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the import path as necessary
-
-// import './scripts/scheduler.js'; // Import the scheduler
-
 import newActionRoutes from './routes/newActionRoutes.js';
-
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
+import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the import path as necessary
+
+// New Imports
+// import { networkScan } from '../services/networkScanService.js';
+import networkRoutes from './routes/networkRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -70,34 +62,27 @@ app.use('/api/v1/coverage', coverageRouter);
 app.use('/api/v1/business', businessRouter);
 app.use('/api/v1/it', itRouter);
 app.use('/api/auth', authRoutes);
-
 app.use('/api/users', userRoutes);
-
 app.use('/api/v1/control-families', controlFamiliesRoutes); // Add this line to handle control families
 app.use('/api/v1/controls', controlRoutes); // Add control routes
 app.use('/api/v1/actions', actionRoutes); // Add action routes
 app.use('/api/v1/assetDetails', assetDetailRouter);
-
 app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
-
 app.use('/api/evidence', evidenceRoutes);
-// app.use('/api/task', TaskManager);
-
 app.use('/api/notifications', notificationRoutes);
-
 app.use('/api/v1', stepTasks);
-
 app.use('/api', newActionRoutes);
-
 // Use the company form routes
 app.use('/api/company-form', companyFormRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // Use compliance snapshot routes
 app.use('/api/v1/compliance-snapshot', complianceSnapshotRoutes);
-
 // Use the message routes
 app.use('/api/messages', messageRoutes);
+
+//Network Scanner
+// Use routes for network-related operations
+app.use('/api', networkRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;
@@ -106,6 +91,11 @@ app.get('/:filename', async (req, res) => {
   // return res.send(filepath)
 }),
   // app.use('/api/v1', completionRoutes);
+
+  //Scapy
+
+  // Route to trigger network scan using controller
+  // app.get('/api/network-scan', getNetworkScan);
 
   // Global error handling middleware
   app.use((err, req, res, next) => {

@@ -280,6 +280,8 @@ const ControlsPage = () => {
                         ? 'Technical'
                         : control.control_type.toLowerCase() === 'i'
                         ? 'Information'
+                        : control.control_type.toLowerCase() === 'technical'
+                        ? 'Technical'
                         : 'Other'
                       : 'N/A'}
                   </TableCell>

@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import CompletionStatus from '../models/completionStatusSchema.js'; // Adjust path
-import Notification from '../models/notificationSchema.js';
-import { Asset } from '../models/asset.model.js'; // Adjust the import path for the Asset model
+import CompletionStatus from '../../models/completionStatusSchema.js'; // Adjust path
+import Notification from '../../models/notificationSchema.js';
+import { Asset } from '../../models/asset.model.js'; // Adjust the import path for the Asset model
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -143,7 +143,7 @@ export async function generateGroupedNotificationsForAssets() {
 
 // import mongoose from 'mongoose';
 // import dotenv from 'dotenv';
-// import CompletionStatus from '../models/completionStatusSchema.js'; // Adjust path
+// import CompletionStatus from '../../models/completionStatusSchema.js'; // Adjust path
 // import Notification from '../models/notificationSchema.js';
 // import { Asset } from '../models/asset.model.js'; // Adjust the import path for the Asset model
 

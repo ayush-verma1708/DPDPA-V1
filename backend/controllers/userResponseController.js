@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { UserResponse } from '../models/UserResponse.js'; // Adjust the import path as necessary
 import { ProductFamily } from '../models/productFamily.js'; // To fetch product families
 import { CompanyForm } from '../models/CompanyForm.js'; // Assuming you have a company model
-import createCompletionData from '../scripts/createCompletionData.js';
-import { generateGroupedNotificationsForAssets } from '../scripts/notificationCreate.js';
+import createCompletionData from '../scripts/Node/createCompletionData.js';
+import { generateGroupedNotificationsForAssets } from '../scripts/Node/notificationCreate.js';
 
 import { default_TaskCreator } from '../constants.js';
 
@@ -328,7 +328,7 @@ export const getUserResponsesByCompanyId = async (req, res) => {
 //     return res.status(500).json({ message: 'Internal Server Error' });
 //   }
 // };
-// import { createCompletionData } from '../scripts/createCompletionData.js'; // Import task
+// import { createCompletionData } from '../scripts/Node/createCompletionData.js'; // Import task
 
 // export const addUserResponses = async (req, res) => {
 //   const { companyId, responses } = req.body; // Expects companyId and an array of responses

@@ -102,9 +102,11 @@ const UserResponsesManager = ({ companyId }) => {
                     sx={{ padding: '20px', borderRadius: '8px' }}
                   >
                     <Typography variant='h6' color='primary' gutterBottom>
-                      {productFamily
-                        ? productFamily.family_name
-                        : 'Unknown Product Family'}
+                      <p style={{ fontWeight: 'bold', color: '#0073e6' }}>
+                        {/* Display product family name */}
+                        {response.productFamily.family_name}
+                        {/* {productFamily ? productFamily.family_name : 'Unknown'} */}
+                      </p>
                     </Typography>
                     <Box>
                       <Typography variant='body1' color='textSecondary'>

@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import CompletionStatus from '../models/completionStatusSchema.js';
-import ControlFamily from '../models/controlFamily.js';
-import Control from '../models/control.js';
-import Action from '../models/action.js';
-import { Asset } from '../models/asset.model.js';
-import { AssetDetails } from '../models/assetDetails.model.js';
-import { UserResponse } from '../models/UserResponse.js';
-import { ProductFamily } from '../models/productFamily.js';
-import Software from '../models/software.js';
-import { Scoped } from '../models/scoped.model.js';
+import CompletionStatus from '../../models/completionStatusSchema.js';
+import ControlFamily from '../../models/controlFamily.js';
+import Control from '../../models/control.js';
+import Action from '../../models/action.js';
+import { Asset } from '../../models/asset.model.js';
+import { AssetDetails } from '../../models/assetDetails.model.js';
+import { UserResponse } from '../../models/UserResponse.js';
+import { ProductFamily } from '../../models/productFamily.js';
+import Software from '../../models/software.js';
+import { Scoped } from '../../models/scoped.model.js';
 dotenv.config();
 
 const companyId = '66dc1719f8bc41880e8da7ae';
