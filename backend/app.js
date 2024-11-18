@@ -29,8 +29,6 @@ import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the import path as necessary
 
-// New Imports
-// import { networkScan } from '../services/networkScanService.js';
 import networkRoutes from './routes/networkRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -91,11 +89,6 @@ app.get('/:filename', async (req, res) => {
   // return res.send(filepath)
 }),
   // app.use('/api/v1', completionRoutes);
-
-  //Scapy
-
-  // Route to trigger network scan using controller
-  // app.get('/api/network-scan', getNetworkScan);
 
   // Global error handling middleware
   app.use((err, req, res, next) => {

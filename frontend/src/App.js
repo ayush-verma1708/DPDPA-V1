@@ -22,10 +22,11 @@ import UploadPage from './pages/UploadPage';
 import PostLoginOnboarding from './pages/PostLoginOnboarding';
 import ScoreboardPage from './pages/ScoreboardPage';
 import RiskAnalysis from './pages/RiskAnalysis';
+import ProductFamilyPage from './pages/ProductFamilyPage';
+import ScannerPage from './pages/ScannerPage'; // Updated import for the renamed component
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import ProductFamilyPage from './pages/ProductFamilyPage';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -296,6 +297,23 @@ const App = () => {
             >
               <PrivateRoute>
                 <UploadPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path='/scanner'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <ScannerPage />
               </PrivateRoute>
             </MiscLayout>
           }
