@@ -1,35 +1,166 @@
+/* General container for the scanner page */
 .scanner-page-container {
-  width: 350px;
+  width: 100%;
+  max-width: 900px;
   margin: 50px auto;
   padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+  font-family: 'Arial', sans-serif;
 }
 
+/* Title styling */
 .scanner-page-container h2 {
-  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 600;
   color: #333;
+  margin-bottom: 30px;
 }
 
-.scanner-page-container p {
-  font-size: 16px;
-  color: #333;
+/* Error and loading states */
+.loading-message {
+  color: #3498db;
+  font-size: 18px;
+  margin-top: 15px;
 }
 
-.scanner-page-container button {
-  padding: 10px 20px;
+.error-message {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 15px;
+}
+
+/* Button styles */
+button {
+  padding: 12px 25px;
+  font-size: 18px;
   background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  width: 100%;
 }
 
-.scanner-page-container button:disabled {
+button:hover {
+  background-color: #45a049;
+}
+
+button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* Device list container - use grid for 3-column layout */
+.device-list-container {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+  gap: 20px;
+  justify-items: center; /* Center items in each column */
+}
+
+/* General device item styling */
+.device-item {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%; /* Ensure device item fills the column */
+  max-width: 280px; /* Limit max width to ensure items don't get too wide */
+}
+
+.device-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.device-item h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* TV-specific styling */
+.tv-device {
+  border-left: 8px solid #e74c3c;
+}
+
+.tv-device h3 {
+  color: #e74c3c;
+  font-size: 22px;
+}
+
+/* Router-specific styling */
+.router-device {
+  border-left: 8px solid #3498db;
+}
+
+.router-device h3 {
+  color: #3498db;
+  font-size: 22px;
+}
+
+/* Common styles for device info */
+.device-item p {
+  font-size: 16px;
+  color: #555;
+  margin: 8px 0;
+}
+
+.device-item strong {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Additional styling for hostnames */
+.device-item .hostnames {
+  font-size: 14px;
+  font-style: italic;
+  color: #777;
+}
+
+/* Styling for "No devices found" message */
+.device-list-container p {
+  font-size: 18px;
+  color: #888;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 900px) {
+  .scanner-page-container {
+    padding: 15px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+  .device-item {
+    padding: 15px;
+  }
+
+  .device-item h3 {
+    font-size: 18px;
+  }
+}
+
+/* Switch to 1-column layout for smaller screens */
+@media (max-width: 600px) {
+  .device-list-container {
+    grid-template-columns: 1fr; /* Single column layout */
+  }
+
+  .device-item {
+    max-width: 100%; /* Make each item fill the full width */
+  }
 }
