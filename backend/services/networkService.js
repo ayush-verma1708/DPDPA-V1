@@ -62,10 +62,27 @@ const runPythonScript = (scriptName) => {
 // Export functions for specific scripts
 const getIpAddress = () => runPythonScript('get_ip.py');
 
+// const scanNetwork = async () => {
+//   const output = await runPythonScript('scan_network.py');
+//   try {
+//     const devices = JSON.parse(output); // Parse the output as JSON
+//     return devices;
+//   } catch (err) {
+//     console.error('Failed to parse JSON output:', output);
+//     throw new Error(
+//       `Failed to parse JSON from scan_network.py: ${err.message}`
+//     );
+//   }
+// };
 const scanNetwork = async () => {
   const output = await runPythonScript('scan_network.py');
   try {
-    const devices = JSON.parse(output); // Parse the output as JSON
+    // Remove non-JSON output, assuming JSON starts after a certain point (e.g., after "Found devices:")
+    const jsonStartIndex = output.indexOf('['); // Assuming JSON starts with '['
+    const jsonString = output.slice(jsonStartIndex);
+
+    // Parse the filtered JSON output
+    const devices = JSON.parse(jsonString);
     return devices;
   } catch (err) {
     console.error('Failed to parse JSON output:', output);
