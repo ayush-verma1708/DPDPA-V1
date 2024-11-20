@@ -24,3 +24,20 @@ export const fetchNetworkScan = async () => {
     throw error; // Propagate the error
   }
 };
+
+// Function to analyze packets for selected devices
+export const analyzePackets = async (selectedDevices) => {
+  console.log(selectedDevices);
+  try {
+    const response = await axios.post(
+      'http://localhost:8021/api/analyze-packets',
+      {
+        devices: selectedDevices, // Send the list of selected devices
+      }
+    );
+    return response.data.results; // Return the analysis results from the response
+  } catch (error) {
+    console.error('Error analyzing packets:', error);
+    throw new Error('Error analyzing packets: ' + error.message); // Propagate the error
+  }
+};

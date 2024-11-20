@@ -28,8 +28,8 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the import path as necessary
-
 import networkRoutes from './routes/networkRoutes.js';
+import packetRoutes from './routes/packetRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,6 +81,9 @@ app.use('/api/messages', messageRoutes);
 //Network Scanner
 // Use routes for network-related operations
 app.use('/api', networkRoutes);
+
+// Mount the packet analysis routes
+app.use('/api', packetRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;

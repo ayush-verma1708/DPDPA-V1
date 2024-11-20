@@ -164,3 +164,8 @@ button:disabled {
     max-width: 100%; /* Make each item fill the full width */
   }
 }
+
+.device-item-label {
+  cursor: pointer; /* Makes the entire item clickable */
+  display: block; /* Ensures the entire div is clickable */
+}

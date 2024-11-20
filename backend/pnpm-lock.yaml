@@ -14,6 +14,9 @@ importers:
       bootstrap:
         specifier: ^5.3.3
         version: 5.3.3(@popperjs/core@2.11.8)
+      chart.js:
+        specifier: ^4.4.4
+        version: 4.4.6
       cookie-parser:
         specifier: ^1.4.6
         version: 1.4.6
@@ -33,14 +36,23 @@ importers:
         specifier: ^9.0.2
         version: 9.0.2
       mongoose:
-        specifier: ^8.5.1
-        version: 8.6.1
+        specifier: ^8.8.0
+        version: 8.8.2
       multer:
         specifier: ^1.4.5-lts.1
         version: 1.4.5-lts.1
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
       path:
         specifier: ^0.12.7
         version: 0.12.7
+      python-shell:
+        specifier: ^5.0.0
+        version: 5.0.0
+      react-chartjs-2:
+        specifier: ^5.2.0
+        version: 5.2.0(chart.js@4.4.6)(react@18.3.1)
       reactstrap:
         specifier: ^9.2.2
         version: 9.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -57,6 +69,9 @@ packages:
   '@babel/runtime@7.25.6':
     resolution: {integrity: sha512-VBj9MYyDb9tuLq7yzqjgzt6Q+IBQLrGZfdjOekyEirZPHxXWoTSGUTMrpsfi58Up73d13NfYLv8HT9vmznjzhQ==}
     engines: {node: '>=6.9.0'}
+
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@mongodb-js/saslprep@1.1.9':
     resolution: {integrity: sha512-tVkljjeEaAhCqTzajSdgbQ6gE6f3oneVwa3iXR6csiEwXXOFsiC6Uh9iAjAhXPtqa/XMDHWjjeNH/77m/Yq2dw==}
@@ -131,6 +146,10 @@ packages:
   call-bind@1.0.7:
     resolution: {integrity: sha512-GHTSNSYICQ7scH7sZ+M2rFopRoLh8t2bLSW6BbgrtLsahOIB5iyAVJf9GjWK3cYTDaMj4XdBpM1cA6pIS0Kv2w==}
     engines: {node: '>= 0.4'}
+
+  chart.js@4.4.6:
+    resolution: {integrity: sha512-8Y406zevUPbbIBA/HRk33khEmQPk5+cxeflWE/2rx1NJsjVWMPw/9mSP9rxHP5eqi6LNoPBVMfZHxbwLSgldYA==}
+    engines: {pnpm: '>=8'}
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -427,8 +446,8 @@ packages:
   mongodb-connection-string-url@3.0.1:
     resolution: {integrity: sha512-XqMGwRX0Lgn05TDB4PyG2h2kKO/FfWJyCzYQbIhXUxz7ETt0I/FqHjUeqj37irJ+Dl1ZtU82uYyj14u2XsZKfg==}
 
-  mongodb@6.8.0:
-    resolution: {integrity: sha512-HGQ9NWDle5WvwMnrvUxsFYPd3JEbqD3RgABHBQRuoCEND0qzhsd0iH5ypHsf1eJ+sXmvmyKpP+FLOKY8Il7jMw==}
+  mongodb@6.10.0:
+    resolution: {integrity: sha512-gP9vduuYWb9ZkDM546M+MP2qKVk5ZG2wPF63OvSRuUbqCR+11ZCAE1mOfllhlAG0wcoJY5yDL/rV3OmYEwXIzg==}
     engines: {node: '>=16.20.1'}
     peerDependencies:
       '@aws-sdk/credential-providers': ^3.188.0
@@ -454,8 +473,8 @@ packages:
       socks:
         optional: true
 
-  mongoose@8.6.1:
-    resolution: {integrity: sha512-dppGcYqvsdg+VcnqXR5b467V4a+iNhmvkfYNpEPi6AjaUxnz6ioEDmrMLOi+sOWjvoHapuwPOigV4f2l7HC6ag==}
+  mongoose@8.8.2:
+    resolution: {integrity: sha512-jCTSqDANfRzk909v4YoZQi7jlGRB2MTvgG+spVBc/BA4tOs1oWJr//V6yYujqNq9UybpOtsSfBqxI0dSOEFJHQ==}
     engines: {node: '>=16.20.1'}
 
   mpath@0.9.0:
@@ -482,6 +501,10 @@ packages:
   negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
+
+  node-cron@3.0.3:
+    resolution: {integrity: sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A==}
+    engines: {node: '>=6.0.0'}
 
   nodemon@3.1.4:
     resolution: {integrity: sha512-wjPBbFhtpJwmIeY2yP7QF+UKzPfltVGtfce1g/bB15/8vCGZj8uxD62b/b9M9/WVgme0NZudpownKN+c0plXlQ==}
@@ -539,6 +562,10 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  python-shell@5.0.0:
+    resolution: {integrity: sha512-RUOOOjHLhgR1MIQrCtnEqz/HJ1RMZBIN+REnpSUrfft2bXqXy69fwJASVziWExfFXsR1bCY0TznnHooNsCo0/w==}
+    engines: {node: '>=0.10'}
+
   qs@6.11.0:
     resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
     engines: {node: '>=0.6'}
@@ -550,6 +577,12 @@ packages:
   raw-body@2.5.2:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
     engines: {node: '>= 0.8'}
+
+  react-chartjs-2@5.2.0:
+    resolution: {integrity: sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   react-dom@18.3.1:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
@@ -696,6 +729,10 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  uuid@8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+
   validator@13.12.0:
     resolution: {integrity: sha512-c1Q0mCiPlgdTVVVIJIrBuxNicYE+t/7oKeI9MWLj3fh/uq2Pxh/3eeWbVZ4OcGW1TUf53At0njHw5SMdA3tmMg==}
     engines: {node: '>= 0.10'}
@@ -724,6 +761,8 @@ snapshots:
   '@babel/runtime@7.25.6':
     dependencies:
       regenerator-runtime: 0.14.1
+
+  '@kurkle/color@0.3.4': {}
 
   '@mongodb-js/saslprep@1.1.9':
     dependencies:
@@ -806,6 +845,10 @@ snapshots:
       function-bind: 1.1.2
       get-intrinsic: 1.2.4
       set-function-length: 1.2.2
+
+  chart.js@4.4.6:
+    dependencies:
+      '@kurkle/color': 0.3.4
 
   chokidar@3.6.0:
     dependencies:
@@ -1110,17 +1153,17 @@ snapshots:
       '@types/whatwg-url': 11.0.5
       whatwg-url: 13.0.0
 
-  mongodb@6.8.0:
+  mongodb@6.10.0:
     dependencies:
       '@mongodb-js/saslprep': 1.1.9
       bson: 6.8.0
       mongodb-connection-string-url: 3.0.1
 
-  mongoose@8.6.1:
+  mongoose@8.8.2:
     dependencies:
       bson: 6.8.0
       kareem: 2.6.3
-      mongodb: 6.8.0
+      mongodb: 6.10.0
       mpath: 0.9.0
       mquery: 5.0.0
       ms: 2.1.3
@@ -1160,6 +1203,10 @@ snapshots:
       xtend: 4.0.2
 
   negotiator@0.6.3: {}
+
+  node-cron@3.0.3:
+    dependencies:
+      uuid: 8.3.2
 
   nodemon@3.1.4:
     dependencies:
@@ -1214,6 +1261,8 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  python-shell@5.0.0: {}
+
   qs@6.11.0:
     dependencies:
       side-channel: 1.0.6
@@ -1226,6 +1275,11 @@ snapshots:
       http-errors: 2.0.0
       iconv-lite: 0.4.24
       unpipe: 1.0.0
+
+  react-chartjs-2@5.2.0(chart.js@4.4.6)(react@18.3.1):
+    dependencies:
+      chart.js: 4.4.6
+      react: 18.3.1
 
   react-dom@18.3.1(react@18.3.1):
     dependencies:
@@ -1394,6 +1448,8 @@ snapshots:
       inherits: 2.0.3
 
   utils-merge@1.0.1: {}
+
+  uuid@8.3.2: {}
 
   validator@13.12.0: {}
 
