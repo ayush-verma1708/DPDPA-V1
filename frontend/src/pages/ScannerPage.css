@@ -34,7 +34,7 @@
 }
 
 /* Button styles */
-button {
+/* button {
   padding: 12px 25px;
   font-size: 18px;
   background-color: #4caf50;
@@ -45,7 +45,7 @@ button {
   transition: background-color 0.3s ease;
   margin-top: 20px;
   width: 100%;
-}
+} */
 
 button:hover {
   background-color: #45a049;
