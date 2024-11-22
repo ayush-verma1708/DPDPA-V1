@@ -30,6 +30,7 @@ import { exec } from 'child_process';
 import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the import path as necessary
 import networkRoutes from './routes/networkRoutes.js';
 import packetRoutes from './routes/packetRoutes.js';
+import azureRoutes from './routes/azureDataRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,6 +85,8 @@ app.use('/api', networkRoutes);
 
 // Mount the packet analysis routes
 app.use('/api', packetRoutes);
+
+app.use('/api', azureRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;
