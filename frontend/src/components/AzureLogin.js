@@ -31,6 +31,7 @@ import {
   IconButton,
   Container,
   CssBaseline,
+  Checkbox,
 } from '@mui/material';
 import {
   Person,
@@ -45,7 +46,6 @@ import {
   Dashboard,
   Menu as MenuIcon,
 } from '@mui/icons-material';
-import CreateScopeForm from './createAsset';
 
 // Update the formatValue function to better handle complex objects
 const formatValue = (value) => {
@@ -204,6 +204,7 @@ const AzureLogin = () => {
   const [dataGovernance, setDataGovernance] = useState(null);
   const [auditLogs, setAuditLogs] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0); // Define missing state
+  const [selectedServices, setSelectedServices] = useState([]); // Add state for selected services
 
   // Decode JWT to extract user details
   function decodeJwt(token) {
@@ -274,37 +275,44 @@ const AzureLogin = () => {
 
         {selectedTab === 2 && (
           <Stack spacing={2}>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography>
-                  Assigned Plans ({organized.plans.assigned.length})
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Grid container spacing={2}>
-                  {Object.entries(groupedPlans).map(([service, plans], idx) => (
-                    <Grid item xs={12} key={idx}>
-                      <Paper variant='outlined' sx={{ p: 1 }}>
-                        <Stack
-                          direction='row'
-                          justifyContent='space-between'
-                          alignItems='center'
-                        >
-                          <Typography variant='subtitle2'>{service}</Typography>
-                          <Stack direction='row' spacing={1}>
-                            {plans.length > 0 && (
-                              <Box>
-                                {renderStatusChip(plans[0].capabilityStatus)}
-                              </Box>
-                            )}
-                          </Stack>
-                        </Stack>
-                      </Paper>
-                    </Grid>
-                  ))}
+            <Typography variant='h6'>
+              Assigned Plans ({organized.plans.assigned.length})
+            </Typography>
+            <Grid container spacing={2}>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+              {Object.entries(groupedPlans).map(([service, plans], idx) => (
+                <Grid item xs={12} key={idx}>
+                  <Paper variant='outlined' sx={{ p: 1 }}>
+                    <Stack
+                      direction='row'
+                      justifyContent='space-between'
+                      alignItems='center'
+                    >
+                      <Typography variant='subtitle2'>{service}</Typography>
+                      <Stack direction='row' spacing={1}>
+                        <Checkbox
+                          checked={selectedServices.includes(service)}
+                          onChange={(event) =>
+                            handleServiceChange(service, event)
+                          }
+                        />
+                        {plans.length > 0 && (
+                          <Box>
+                            {renderStatusChip(plans[0].capabilityStatus)}
+                          </Box>
+                        )}
+                      </Stack>
+                    </Stack>
+                  </Paper>
                 </Grid>
-              </AccordionDetails>
-            </Accordion>
+              ))}
+            </Grid>
           </Stack>
         )}
 
@@ -344,6 +352,19 @@ const AzureLogin = () => {
         )}
       </DataCard>
     );
+  };
+
+  const handleServiceChange = (service, event) => {
+    event.stopPropagation(); // Prevent tab from closing
+    setSelectedServices((prev) =>
+      prev.includes(service)
+        ? prev.filter((s) => s !== service)
+        : [...prev, service]
+    );
+  };
+
+  const handleSubmit = () => {
+    console.log('Selected Services:', selectedServices);
   };
 
   // Login function with corrected scopes
@@ -505,7 +526,6 @@ const AzureLogin = () => {
         response.accessToken,
         '/organization'
       );
-      console.log('Fetched Company Details:', companyDetails); // Add logging
       return companyDetails;
     } catch (error) {
       if (error instanceof InteractionRequiredAuthError) {
@@ -516,7 +536,6 @@ const AzureLogin = () => {
           response.accessToken,
           '/organization'
         );
-        console.log('Fetched Company Details:', companyDetails); // Add logging
         return companyDetails;
       } else {
         console.error('Error fetching company details:', error);
@@ -561,7 +580,6 @@ const AzureLogin = () => {
                   justifyContent='space-between'
                   alignItems='center'
                 >
-                  <CreateScopeForm />
                   <Typography variant='h6'>Azure Services Info</Typography>
                   <Stack direction='row' spacing={2}>
                     <Tooltip
