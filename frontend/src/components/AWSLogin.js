@@ -35,12 +35,12 @@ const AWSLogin = () => {
   // Login function with AWS Cognito
   const login = async () => {
     const authenticationData = {
-      Username: 'username', // Replace with actual username
-      Password: 'password', // Replace with actual password
+      Username: 'planet-user', // Replace with actual username
+      Password: '0uz5lR8!', // Replace with actual password
     };
     const authenticationDetails = new AuthenticationDetails(authenticationData);
     const userData = {
-      Username: 'username', // Replace with actual username
+      Username: 'planet-user', // Replace with actual username
       Pool: userPool,
     };
     const cognitoUser = new CognitoUser(userData);

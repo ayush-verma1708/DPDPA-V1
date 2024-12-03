@@ -45,6 +45,7 @@ import {
   Dashboard,
   Menu as MenuIcon,
 } from '@mui/icons-material';
+import CreateScopeForm from './createAsset';
 
 // Update the formatValue function to better handle complex objects
 const formatValue = (value) => {
@@ -536,6 +537,7 @@ const AzureLogin = () => {
         aria-label='mailbox folders'
       >
         {/* Add Drawer here if needed */}
+        {/* <CreateAssetForm />  */}
       </Box>
       <Box
         component='main'
@@ -559,6 +561,7 @@ const AzureLogin = () => {
                   justifyContent='space-between'
                   alignItems='center'
                 >
+                  <CreateScopeForm />
                   <Typography variant='h6'>Azure Services Info</Typography>
                   <Stack direction='row' spacing={2}>
                     <Tooltip

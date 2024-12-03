@@ -31,6 +31,7 @@ import productFamilyRoutes from './routes/productFamilyRoutes.js'; // Adjust the
 import networkRoutes from './routes/networkRoutes.js';
 import packetRoutes from './routes/packetRoutes.js';
 import azureRoutes from './routes/azureDataRoutes.js';
+import discoveredAssetRoutes from './routes/discoveredAssetRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -87,6 +88,8 @@ app.use('/api', networkRoutes);
 app.use('/api', packetRoutes);
 
 app.use('/api', azureRoutes);
+
+app.use('/api/v1', discoveredAssetRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;
