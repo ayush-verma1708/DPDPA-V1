@@ -167,6 +167,13 @@ const organizeCompanyData = (companyDetails) => {
             ? Object.keys(domain.capabilities)
             : [],
       })) || [],
+    // plans: {
+    //   assigned:
+    //     data.assignedPlans?.filter(
+    //       (plan) => plan.capabilityStatus === 'Enabled'
+    //     ) || [],
+    //   provisioned: data.provisionedPlans || [],
+    // },
     plans: {
       assigned:
         data.assignedPlans?.filter(
@@ -213,6 +220,15 @@ const AzureLogin = () => {
   const CompanyDetailsCard = ({ data }) => {
     const organized = organizeCompanyData(data);
     if (!organized) return null;
+
+    // Group plans by service
+    const groupedPlans = organized.plans.assigned.reduce((acc, plan) => {
+      if (!acc[plan.service]) {
+        acc[plan.service] = [];
+      }
+      acc[plan.service].push(plan);
+      return acc;
+    }, {});
 
     return (
       <DataCard title='Company Details' icon={<Business color='primary' />}>
@@ -265,7 +281,7 @@ const AzureLogin = () => {
               </AccordionSummary>
               <AccordionDetails>
                 <Grid container spacing={2}>
-                  {organized.plans.assigned.map((plan, idx) => (
+                  {Object.entries(groupedPlans).map(([service, plans], idx) => (
                     <Grid item xs={12} key={idx}>
                       <Paper variant='outlined' sx={{ p: 1 }}>
                         <Stack
@@ -273,10 +289,14 @@ const AzureLogin = () => {
                           justifyContent='space-between'
                           alignItems='center'
                         >
-                          <Typography variant='subtitle2'>
-                            {plan.service}
-                          </Typography>
-                          {renderStatusChip(plan.capabilityStatus)}
+                          <Typography variant='subtitle2'>{service}</Typography>
+                          <Stack direction='row' spacing={1}>
+                            {plans.length > 0 && (
+                              <Box>
+                                {renderStatusChip(plans[0].capabilityStatus)}
+                              </Box>
+                            )}
+                          </Stack>
                         </Stack>
                       </Paper>
                     </Grid>
