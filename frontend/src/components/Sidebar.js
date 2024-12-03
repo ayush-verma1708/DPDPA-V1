@@ -13,6 +13,7 @@ import FolderSharedOutlinedIcon from '@mui/icons-material/FolderSharedOutlined';
 import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplicationsOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 
 // import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 // import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
@@ -299,6 +300,25 @@ const Sidebar = ({ onSelect }) => {
               </ListItemIcon>
               {open && (
                 <ListItemText primary='Actions' sx={{ color: 'white' }} />
+              )}
+            </ListItem>
+          )}
+
+          {hasAccess(['Compliance Team', 'Admin']) && (
+            <ListItem
+              button
+              component={Link}
+              to='/scanner'
+              className={clsx({ active: activePath === '/scanner' })}
+              aria-label='Scanner'
+              onClick={() => onSelect('Scanner')}
+              sx={{ width: '100%' }}
+            >
+              <ListItemIcon>
+                <SearchIcon sx={{ color: 'white' }} /> {/* Changed icon */}
+              </ListItemIcon>
+              {open && (
+                <ListItemText primary='Scanner' sx={{ color: 'white' }} />
               )}
             </ListItem>
           )}

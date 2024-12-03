@@ -24,6 +24,7 @@ import ScoreboardPage from './pages/ScoreboardPage';
 import RiskAnalysis from './pages/RiskAnalysis';
 import ProductFamilyPage from './pages/ProductFamilyPage';
 import ScannerPage from './pages/ScannerPage'; // Updated import for the renamed component
+import { msalInstance } from './components/msalInstance'; // Assuming you have a separate file for msalInstance
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -38,16 +39,38 @@ const App = () => {
   const [selectedItem, setSelectedItem] = useState('Asset');
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const [account, setAccount] = useState(null); // To store user account info
 
   const handleSidebarClick = (title) => {
     setSelectedItem(title);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setAuthToken(null);
-    setUser(null);
+  // const handleLogout = () => {
+  //   localStorage.removeItem('token');
+  //   localStorage.removeItem('user');
+  //   setAuthToken(null);
+  //   setUser(null);
+  // };
+
+  const handleLogout = async () => {
+    try {
+      // Ensure MSAL instance is initialized and logout via MSAL
+      await msalInstance.initialize(); // Ensure MSAL instance is initialized
+      await msalInstance.logoutPopup();
+
+      // Clear session and authentication-related data from local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('sessionId');
+      localStorage.removeItem('authId');
+
+      // Reset state variables related to authentication
+      setAuthToken(null);
+      setUser(null);
+      setAccount(null); // Reset MSAL account state
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   useEffect(() => {

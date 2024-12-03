@@ -16,6 +16,7 @@ import {
   Typography,
   Grid,
   Button,
+  Container,
   Paper,
   Divider,
   Tabs,
@@ -25,16 +26,19 @@ import {
   AccordionDetails,
   Chip,
   Stack,
-  Tooltip,
-  AppBar,
-  Toolbar,
   IconButton,
-  Container,
-  CssBaseline,
+  Tooltip,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import {
   Person,
   Business,
+  Storage,
+  Timeline,
+  Security,
+  Assessment,
+  AccountBox,
   ExpandMore,
   CheckCircle,
   Cancel,
@@ -43,7 +47,6 @@ import {
   Router,
   Refresh,
   Dashboard,
-  Menu as MenuIcon,
 } from '@mui/icons-material';
 
 // Update the formatValue function to better handle complex objects
@@ -504,96 +507,90 @@ const AzureLogin = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar
-        position='fixed'
-        // sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      ></AppBar>
-      <Box
-        component='nav'
-        // sx={{ width: { sm: 240 }, flexShrink: { sm: 0 } }}
-        aria-label='mailbox folders'
-      >
-        {/* Add Drawer here if needed */}
-      </Box>
-      <Box
-        component='main'
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          // width: { sm: `calc(100% - 240px)` },
-          mt: 8,
-        }}
-      >
-        <Container>
-          {!account ? (
-            <Button variant='contained' color='primary' onClick={login}>
-              Login to Azure
-            </Button>
-          ) : (
-            <>
-              <Paper sx={{ p: 2, mb: 3 }}>
-                <Stack
-                  direction='row'
-                  justifyContent='space-between'
-                  alignItems='center'
+    <Box>
+      {!account ? (
+        <Button variant='contained' color='primary' onClick={login}>
+          Login to GCP
+        </Button>
+      ) : (
+        <>
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Stack
+              direction='row'
+              justifyContent='space-between'
+              alignItems='center'
+            >
+              <Typography variant='h6'>Cloud Provider</Typography>
+              <Stack direction='row' spacing={2}>
+                <Tooltip
+                  title={
+                    <Box>
+                      <Typography>Connected to Azure AD</Typography>
+                      <Button
+                        variant='contained'
+                        color='secondary'
+                        size='small'
+                        onClick={logout}
+                        sx={{ mt: 1 }}
+                      >
+                        Logout
+                      </Button>
+                    </Box>
+                  }
                 >
-                  <Typography variant='h6'>Azure Services Info</Typography>
-                  <Stack direction='row' spacing={2}>
-                    <Tooltip
-                      title={
-                        <Box>
-                          <Typography>Connected to Azure AD</Typography>
-                          <Button
-                            variant='contained'
-                            color='secondary'
-                            size='small'
-                            onClick={logout}
-                            sx={{ mt: 1 }}
-                          >
-                            Logout
-                          </Button>
-                        </Box>
-                      }
-                    >
-                      <Chip
-                        icon={<Cloud />}
-                        label='Azure AD'
-                        color='primary'
-                        variant='outlined'
-                      />
-                    </Tooltip>
-                  </Stack>
-                </Stack>
-              </Paper>
-              <Grid container spacing={3}>
-                {userDetails && (
-                  <Grid item xs={12} md={6}>
-                    <DataCard
-                      title='User Details'
-                      icon={<Person color='primary' />}
-                    >
-                      <Grid container spacing={2}>
-                        {Object.entries(userDetails)
-                          .filter(
-                            ([key]) => !['@odata.context', 'id'].includes(key)
-                          )
-                          .map(([key, value]) => renderDetailItem(key, value))}
-                      </Grid>
-                    </DataCard>
+                  <Chip
+                    icon={<Cloud />}
+                    label='Azure AD'
+                    color='primary'
+                    variant='outlined'
+                  />
+                </Tooltip>
+              </Stack>
+            </Stack>
+          </Paper>
+          <Grid container spacing={3}>
+            {userDetails && (
+              <Grid item xs={12} md={6}>
+                <DataCard
+                  title='User Details'
+                  icon={<Person color='primary' />}
+                >
+                  <Grid container spacing={2}>
+                    {Object.entries(userDetails)
+                      .filter(
+                        ([key]) => !['@odata.context', 'id'].includes(key)
+                      )
+                      .map(([key, value]) => renderDetailItem(key, value))}
                   </Grid>
-                )}
-                {companyDetails && (
-                  <Grid item xs={12} md={6}>
-                    <CompanyDetailsCard data={companyDetails} />
-                  </Grid>
-                )}
+                </DataCard>
               </Grid>
-            </>
-          )}
-        </Container>
-      </Box>
+            )}
+            {companyDetails && (
+              <Grid item xs={12} md={6}>
+                <CompanyDetailsCard data={companyDetails} />
+              </Grid>
+            )}
+            {dataGovernance && (
+              <Grid item xs={12} md={6}>
+                <DataCard
+                  title='Data Governance'
+                  icon={<Assessment color='primary' />}
+                  data={dataGovernance}
+                />
+              </Grid>
+            )}
+            {auditLogs && (
+              <Grid item xs={12} md={6}>
+                <DataCard
+                  title='Audit Logs'
+                  icon={<Timeline color='primary' />}
+                  data={auditLogs}
+                />
+              </Grid>
+            )}
+          </Grid>
+        </>
+      )}
     </Box>
   );
 };
