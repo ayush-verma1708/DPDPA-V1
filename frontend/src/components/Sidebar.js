@@ -14,21 +14,9 @@ import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplic
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-
-// import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-// import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined';
-// import VideogameAssetOutlinedIcon from '@mui/icons-material/VideogameAssetOutlined';
-// import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
-// import ControlPointDuplicateOutlinedIcon from '@mui/icons-material/ControlPointDuplicateOutlined';
-// import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
-// import AttractionsOutlinedIcon from '@mui/icons-material/AttractionsOutlined';
-
-// import HouseRoundedIcon from '@mui/icons-material/HouseRounded';
-// import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-
-// import ControlPointDuplicateOutlinedIcon from '@mui/icons-material/ControlPointDuplicateOutlined';
-// import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
-// import AttractionsOutlinedIcon from '@mui/icons-material/AttractionsOutlined';
+import SchoolIcon from '@mui/icons-material/School';
+import AddchartIcon from '@mui/icons-material/Addchart';
+import AddModeratorIcon from '@mui/icons-material/AddModerator';
 import {
   Box,
   Drawer,
@@ -37,9 +25,10 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemButton,
 } from '@mui/material';
 
-import useFetchUser from '../hooks/useCurrentUser'; // Adjust the path if necessary
+import useFetchUser from '../hooks/useCurrentUser';
 
 const Sidebar = ({ onSelect }) => {
   const location = useLocation();
@@ -56,7 +45,6 @@ const Sidebar = ({ onSelect }) => {
     setOpen(!open);
   };
 
-  // Function to check role-based access
   const hasAccess = (rolesAllowed) => {
     return rolesAllowed.includes(user?.role);
   };
@@ -81,8 +69,9 @@ const Sidebar = ({ onSelect }) => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
+          height: '100vh', // Ensures full height of the viewport
           backgroundColor: '#333',
+          overflowY: 'auto', // Makes the sidebar scrollable if the content exceeds the height
         }}
       >
         <IconButton
@@ -124,12 +113,11 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <HomeOutlinedIcon sx={{ color: 'white' }} /> {/* Updated */}
+                <HomeOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && <ListItemText primary='Home' sx={{ color: 'white' }} />}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team', 'Executive', 'IT Team']) && (
             <ListItem
               button
@@ -141,15 +129,13 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <ScoreboardOutlinedIcon sx={{ color: 'white' }} />{' '}
-                {/* Updated */}
+                <ScoreboardOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText primary='Scoreboard' sx={{ color: 'white' }} />
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team', 'Executive']) && (
             <ListItem
               button
@@ -161,14 +147,13 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <InsightsOutlinedIcon sx={{ color: 'white' }} /> {/* Updated */}
+                <InsightsOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText primary='Risk Analysis' sx={{ color: 'white' }} />
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team', 'IT Team']) && (
             <ListItem
               button
@@ -180,7 +165,7 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <DevicesOutlinedIcon sx={{ color: 'white' }} /> {/* Updated */}
+                <DevicesOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText
@@ -190,7 +175,6 @@ const Sidebar = ({ onSelect }) => {
               )}
             </ListItem>
           )}
-
           {hasAccess([
             'Compliance Team',
             'IT Team',
@@ -209,8 +193,7 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <ChecklistOutlinedIcon sx={{ color: 'white' }} />{' '}
-                {/* Updated */}
+                <ChecklistOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText
@@ -220,7 +203,6 @@ const Sidebar = ({ onSelect }) => {
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team', 'Admin']) && (
             <ListItem
               button
@@ -232,15 +214,13 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <PersonAddAltOutlinedIcon sx={{ color: 'white' }} />{' '}
-                {/* Updated */}
+                <PersonAddAltOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText primary='User Creation' sx={{ color: 'white' }} />
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team']) && (
             <ListItem
               button
@@ -252,8 +232,7 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <FolderSharedOutlinedIcon sx={{ color: 'white' }} />{' '}
-                {/* Updated */}
+                <FolderSharedOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText
@@ -263,7 +242,6 @@ const Sidebar = ({ onSelect }) => {
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team']) && (
             <ListItem
               button
@@ -275,15 +253,13 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <SettingsApplicationsOutlinedIcon sx={{ color: 'white' }} />{' '}
-                {/* Updated */}
+                <SettingsApplicationsOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText primary='Controls' sx={{ color: 'white' }} />
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team']) && (
             <ListItem
               button
@@ -295,15 +271,13 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <ManageAccountsOutlinedIcon sx={{ color: 'white' }} />{' '}
-                {/* Updated */}
+                <ManageAccountsOutlinedIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText primary='Actions' sx={{ color: 'white' }} />
               )}
             </ListItem>
           )}
-
           {hasAccess(['Compliance Team', 'Admin']) && (
             <ListItem
               button
@@ -315,7 +289,7 @@ const Sidebar = ({ onSelect }) => {
               sx={{ width: '100%' }}
             >
               <ListItemIcon>
-                <SearchIcon sx={{ color: 'white' }} /> {/* Changed icon */}
+                <SearchIcon sx={{ color: 'white' }} />
               </ListItemIcon>
               {open && (
                 <ListItemText primary='Scanner' sx={{ color: 'white' }} />
@@ -323,23 +297,59 @@ const Sidebar = ({ onSelect }) => {
             </ListItem>
           )}
 
-          {/* Settings Page - accessible to all roles */}
-          {/* <ListItem
+          <ListItem
             button
             component={Link}
-            to='/Product-Family'
-            className={clsx({ active: activePath === '/Product-Family' })}
-            aria-label='Product Family'
-            onClick={() => onSelect('Product-Family')}
+            to='/Training'
+            className={clsx({ active: activePath === '/Training' })}
+            aria-label='Training'
+            onClick={() => onSelect('Training')}
             sx={{ width: '100%' }}
           >
             <ListItemIcon>
-              <InventoryOutlinedIcon sx={{ color: 'white' }} />{' '}
+              <SchoolIcon sx={{ color: 'white' }} />
             </ListItemIcon>
             {open && (
-              <ListItemText primary='Product Family' sx={{ color: 'white' }} />
+              <ListItemText primary='Training' sx={{ color: 'white' }} />
             )}
-          </ListItem> */}
+          </ListItem>
+          <ListItem
+            button
+            component={Link}
+            to='/Simulation'
+            className={clsx({ active: activePath === '/Simulation' })}
+            aria-label='Simulation'
+            onClick={() => onSelect('Simulation')}
+            sx={{ width: '100%' }}
+          >
+            <ListItemIcon>
+              <AddModeratorIcon sx={{ color: 'white' }} />
+            </ListItemIcon>
+            {open && (
+              <ListItemText primary='Simulation' sx={{ color: 'white' }} />
+            )}
+          </ListItem>
+
+          {/* Nested List for Sub-Items (Course 1 & Course 2) */}
+          {open && (
+            <List sx={{ paddingLeft: 3 }}>
+              {/* Course 1 */}
+              <ListItemButton component={Link} to='/Ransomware'>
+                <ListItemIcon>
+                  <InventoryOutlinedIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText primary='Ransomware' sx={{ color: 'white' }} />
+              </ListItemButton>
+
+              {/* Course 2 */}
+              <ListItemButton component={Link} to='/Phishing'>
+                <ListItemIcon>
+                  <AddchartIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText primary='Phishing' sx={{ color: 'white' }} />
+              </ListItemButton>
+            </List>
+          )}
         </List>
       </Box>
     </Drawer>

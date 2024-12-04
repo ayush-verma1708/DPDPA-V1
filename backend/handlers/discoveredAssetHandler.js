@@ -61,9 +61,12 @@ const processDiscoveredAsset = AsyncHandler(async (req, res) => {
       newScope = existingScope;
     }
 
+    // Update the discovered asset and scope to mark them as processed
+    discoveredAsset.isProcessed = true;
+    discoveredAsset.processedAt = new Date();
+
     // Update the discovered scope to mark it as processed
     discoveredScope.isProcessed = true;
-    discoveredScope.processedAt = new Date();
 
     // Save the updated discovered asset and scope
     await discoveredAsset.save();

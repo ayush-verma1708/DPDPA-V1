@@ -23,6 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { getUsers } from '../../api/userApi';
+import DiscoveredAssetsTable from '../../components/DiscoveredAssetsTable';
 
 const AssetList = () => {
   const [assets, setAssets] = useState([]);
@@ -55,6 +56,7 @@ const AssetList = () => {
   //auditor
   const [auditorName, setAuditorName] = useState('');
   const [auditorEmail, setAuditorEmail] = useState('');
+  const [showDiscoveredAssets, setShowDiscoveredAssets] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -400,257 +402,289 @@ const AssetList = () => {
     <Container>
       <Button
         variant='contained'
-        onClick={() => {
-          setIsAssetAddVisible(true);
-          setMainModalOpen(true);
-        }}
-        sx={{
-          mb: 2,
-        }}
+        onClick={() => setShowDiscoveredAssets(!showDiscoveredAssets)}
+        sx={{ mb: 2, mr: 3 }}
       >
-        <AddIcon /> Add New Asset
+        {showDiscoveredAssets
+          ? 'Hide Discovered Assets'
+          : 'Show Discovered Assets'}
       </Button>
-      {isAssetAddVisible && (
+      {showDiscoveredAssets ? (
+        <DiscoveredAssetsTable />
+      ) : (
         <>
-          <Dialog
-            open={mainModalOpen}
-            onClose={() => {
-              setMainModalOpen(false);
+          <Button
+            variant='contained'
+            onClick={() => {
+              setIsAssetAddVisible(true);
+              setMainModalOpen(true);
+            }}
+            sx={{
+              mb: 2,
             }}
           >
-            <Box padding={5}>
-              <Box mb={2} display='flex' justifyContent='space-between'>
-                <Button variant='contained' onClick={handleOpenNewAssetDialog}>
-                  <AddIcon /> Add New Asset
-                </Button>
-                <Button variant='contained' onClick={handleOpenNewScopedDialog}>
-                  <AddIcon /> Add New Scoped
-                </Button>
-              </Box>
-              <Box mb={2}>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel>Select Asset</InputLabel>
-                  <Select value={selectedAsset} onChange={handleAssetChange}>
-                    {assets.map((asset) => (
-                      <MenuItem key={asset._id} value={asset._id}>
-                        {asset.name} - {asset.type} (
-                        {asset.isScoped ? 'Scoped' : 'Non-Scoped'})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel>Select Scoped (if applicable)</InputLabel>
-                  <Select value={selectedScoped} onChange={handleScopedChange}>
-                    <MenuItem value=''>
-                      <em>None</em>
-                    </MenuItem>
-                    {scoped.map((scopedItem) => (
-                      <MenuItem key={scopedItem._id} value={scopedItem._id}>
-                        {scopedItem.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id='criticality-label'>Criticality</InputLabel>
-                  <Select
-                    labelId='criticality-label'
-                    id='criticality'
-                    value={criticality}
-                    onChange={handleCriticalityChange}
-                    label='Criticality'
-                  >
-                    <MenuItem value='High'>High</MenuItem>
-                    <MenuItem value='Medium'>Medium</MenuItem>
-                    <MenuItem value='Low'>Low</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id='business-owner-select-label'>
-                    Select Business Owner
-                  </InputLabel>
-                  <Select
-                    labelId='business-owner-select-label'
-                    id='business-owner-select'
-                    value={businessOwnerName}
-                    onChange={handleBusinessOwnerChange}
-                    fullWidth
-                  >
-                    {users.map((user) => (
-                      <MenuItem key={user._id} value={user._id}>
-                        {user.username} ({user.role})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+            <AddIcon /> Add New Asset
+          </Button>
+          {isAssetAddVisible && (
+            <>
+              <Dialog
+                open={mainModalOpen}
+                onClose={() => {
+                  setMainModalOpen(false);
+                }}
+              >
+                <Box padding={5}>
+                  <Box mb={2} display='flex' justifyContent='space-between'>
+                    <Button
+                      variant='contained'
+                      onClick={handleOpenNewAssetDialog}
+                    >
+                      <AddIcon /> Add New Asset
+                    </Button>
+                    <Button
+                      variant='contained'
+                      onClick={handleOpenNewScopedDialog}
+                    >
+                      <AddIcon /> Add New Scoped
+                    </Button>
+                  </Box>
+                  <Box mb={2}>
+                    <FormControl fullWidth margin='normal'>
+                      <InputLabel>Select Asset</InputLabel>
+                      <Select
+                        value={selectedAsset}
+                        onChange={handleAssetChange}
+                      >
+                        {assets.map((asset) => (
+                          <MenuItem key={asset._id} value={asset._id}>
+                            {asset.name} - {asset.type} (
+                            {asset.isScoped ? 'Scoped' : 'Non-Scoped'})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth margin='normal'>
+                      <InputLabel>Select Scoped (if applicable)</InputLabel>
+                      <Select
+                        value={selectedScoped}
+                        onChange={handleScopedChange}
+                      >
+                        <MenuItem value=''>
+                          <em>None</em>
+                        </MenuItem>
+                        {scoped.map((scopedItem) => (
+                          <MenuItem key={scopedItem._id} value={scopedItem._id}>
+                            {scopedItem.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth margin='normal'>
+                      <InputLabel id='criticality-label'>
+                        Criticality
+                      </InputLabel>
+                      <Select
+                        labelId='criticality-label'
+                        id='criticality'
+                        value={criticality}
+                        onChange={handleCriticalityChange}
+                        label='Criticality'
+                      >
+                        <MenuItem value='High'>High</MenuItem>
+                        <MenuItem value='Medium'>Medium</MenuItem>
+                        <MenuItem value='Low'>Low</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth margin='normal'>
+                      <InputLabel id='business-owner-select-label'>
+                        Select Business Owner
+                      </InputLabel>
+                      <Select
+                        labelId='business-owner-select-label'
+                        id='business-owner-select'
+                        value={businessOwnerName}
+                        onChange={handleBusinessOwnerChange}
+                        fullWidth
+                      >
+                        {users.map((user) => (
+                          <MenuItem key={user._id} value={user._id}>
+                            {user.username} ({user.role})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
 
-                <TextField
-                  id='business-owner-email'
-                  label='Business Owner Email'
-                  value={businessOwnerEmail}
-                  onChange={(e) => setBusinessOwnerEmail(e.target.value)}
-                  fullWidth
-                  margin='normal'
-                  disabled
-                />
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id='it-owner-label'>IT Owner</InputLabel>
-                  <Select
-                    labelId='it-owner-label'
-                    id='it-owner'
-                    value={itOwnerName}
-                    onChange={handleItOwnerChange} // Updated this line
-                    // onChange={(e) => setItOwnerName(e.target.value)}
-                    renderValue={(selected) => {
-                      const selectedUser = users.find(
-                        (user) => user._id === selected
-                      );
-                      return selectedUser
-                        ? selectedUser.username
-                        : 'Select IT Owner';
-                    }}
-                  >
-                    {(users || []).map((user) => (
-                      <MenuItem key={user._id} value={user._id}>
-                        {user.username} ({user.role})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    <TextField
+                      id='business-owner-email'
+                      label='Business Owner Email'
+                      value={businessOwnerEmail}
+                      onChange={(e) => setBusinessOwnerEmail(e.target.value)}
+                      fullWidth
+                      margin='normal'
+                      disabled
+                    />
+                    <FormControl fullWidth margin='normal'>
+                      <InputLabel id='it-owner-label'>IT Owner</InputLabel>
+                      <Select
+                        labelId='it-owner-label'
+                        id='it-owner'
+                        value={itOwnerName}
+                        onChange={handleItOwnerChange} // Updated this line
+                        // onChange={(e) => setItOwnerName(e.target.value)}
+                        renderValue={(selected) => {
+                          const selectedUser = users.find(
+                            (user) => user._id === selected
+                          );
+                          return selectedUser
+                            ? selectedUser.username
+                            : 'Select IT Owner';
+                        }}
+                      >
+                        {(users || []).map((user) => (
+                          <MenuItem key={user._id} value={user._id}>
+                            {user.username} ({user.role})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
 
-                <TextField
-                  fullWidth
-                  margin='normal'
-                  label='IT Owner Email'
-                  value={itOwnerEmail}
-                  onChange={(e) => setItOwnerEmail(e.target.value)}
-                  disabled // Disable manual input
-                />
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id='auditor-select-label'>
-                    Select Auditor
-                  </InputLabel>
-                  <Select
-                    labelId='auditor-select-label'
-                    id='auditor-select'
-                    value={auditorName}
-                    onChange={handleAuditorChange}
-                    fullWidth
-                  >
-                    {users.map((user) => (
-                      <MenuItem key={user._id} value={user._id}>
-                        {user.username} ({user.role})
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    <TextField
+                      fullWidth
+                      margin='normal'
+                      label='IT Owner Email'
+                      value={itOwnerEmail}
+                      onChange={(e) => setItOwnerEmail(e.target.value)}
+                      disabled // Disable manual input
+                    />
+                    <FormControl fullWidth margin='normal'>
+                      <InputLabel id='auditor-select-label'>
+                        Select Auditor
+                      </InputLabel>
+                      <Select
+                        labelId='auditor-select-label'
+                        id='auditor-select'
+                        value={auditorName}
+                        onChange={handleAuditorChange}
+                        fullWidth
+                      >
+                        {users.map((user) => (
+                          <MenuItem key={user._id} value={user._id}>
+                            {user.username} ({user.role})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
 
-                <TextField
-                  id='auditor-email'
-                  label='Auditor Email'
-                  value={auditorEmail}
-                  fullWidth
-                  margin='normal'
-                  disabled
-                />
+                    <TextField
+                      id='auditor-email'
+                      label='Auditor Email'
+                      value={auditorEmail}
+                      fullWidth
+                      margin='normal'
+                      disabled
+                    />
 
-                <Box mt={2}>
-                  <Button
-                    variant='contained'
-                    color='primary'
-                    onClick={handleSubmit}
-                    disabled={!selectedAsset || loading}
-                  >
-                    {loading ? <CircularProgress size={24} /> : 'Submit'}
-                  </Button>
+                    <Box mt={2}>
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={handleSubmit}
+                        disabled={!selectedAsset || loading}
+                      >
+                        {loading ? <CircularProgress size={24} /> : 'Submit'}
+                      </Button>
+                    </Box>
+                  </Box>
                 </Box>
-              </Box>
-            </Box>
-          </Dialog>
+              </Dialog>
 
-          {/* New Asset Dialog */}
-          <Dialog open={newAssetDialogOpen} onClose={handleCloseNewAssetDialog}>
-            <DialogTitle>Add New Asset</DialogTitle>
-            <DialogContent>
-              <TextField
-                margin='normal'
-                label='Asset Name'
-                fullWidth
-                value={newAssetName}
-                onChange={(e) => setNewAssetName(e.target.value)}
-              />
-              <TextField
-                margin='normal'
-                label='Asset Type'
-                fullWidth
-                value={newAssetType}
-                onChange={(e) => setNewAssetType(e.target.value)}
-              />
-              <TextField
-                margin='normal'
-                label='Asset Description'
-                fullWidth
-                multiline
-                value={newAssetDesc}
-                onChange={(e) => setNewAssetDesc(e.target.value)}
-              />
-              <FormControl fullWidth margin='normal'>
-                <InputLabel>Is Scoped</InputLabel>
-                <Select
-                  value={newAssetIsScoped ? 'Yes' : 'No'}
-                  onChange={(e) =>
-                    setNewAssetIsScoped(e.target.value === 'Yes')
-                  }
-                >
-                  <MenuItem value='Yes'>Yes</MenuItem>
-                  <MenuItem value='No'>No</MenuItem>
-                </Select>
-              </FormControl>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseNewAssetDialog}>Cancel</Button>
-              <Button onClick={handleAddAsset} color='primary'>
-                Add Asset
-              </Button>
-            </DialogActions>
-          </Dialog>
+              {/* New Asset Dialog */}
+              <Dialog
+                open={newAssetDialogOpen}
+                onClose={handleCloseNewAssetDialog}
+              >
+                <DialogTitle>Add New Asset</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    margin='normal'
+                    label='Asset Name'
+                    fullWidth
+                    value={newAssetName}
+                    onChange={(e) => setNewAssetName(e.target.value)}
+                  />
+                  <TextField
+                    margin='normal'
+                    label='Asset Type'
+                    fullWidth
+                    value={newAssetType}
+                    onChange={(e) => setNewAssetType(e.target.value)}
+                  />
+                  <TextField
+                    margin='normal'
+                    label='Asset Description'
+                    fullWidth
+                    multiline
+                    value={newAssetDesc}
+                    onChange={(e) => setNewAssetDesc(e.target.value)}
+                  />
+                  <FormControl fullWidth margin='normal'>
+                    <InputLabel>Is Scoped</InputLabel>
+                    <Select
+                      value={newAssetIsScoped ? 'Yes' : 'No'}
+                      onChange={(e) =>
+                        setNewAssetIsScoped(e.target.value === 'Yes')
+                      }
+                    >
+                      <MenuItem value='Yes'>Yes</MenuItem>
+                      <MenuItem value='No'>No</MenuItem>
+                    </Select>
+                  </FormControl>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseNewAssetDialog}>Cancel</Button>
+                  <Button onClick={handleAddAsset} color='primary'>
+                    Add Asset
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
-          {/* New Scoped Dialog */}
-          <Dialog
-            open={newScopedDialogOpen}
-            onClose={handleCloseNewScopedDialog}
-          >
-            <DialogTitle>Add New Scoped</DialogTitle>
-            <DialogContent>
-              <TextField
-                margin='normal'
-                label='Scoped Name'
-                fullWidth
-                value={newScopedName}
-                onChange={(e) => setNewScopedName(e.target.value)}
-              />
-              <TextField
-                margin='normal'
-                label='Scoped Description'
-                fullWidth
-                multiline
-                value={newScopedDesc}
-                onChange={(e) => setNewScopedDesc(e.target.value)}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseNewScopedDialog}>Cancel</Button>
-              <Button onClick={handleAddScoped} color='primary'>
-                Add Scoped
-              </Button>
-            </DialogActions>
-          </Dialog>
+              {/* New Scoped Dialog */}
+              <Dialog
+                open={newScopedDialogOpen}
+                onClose={handleCloseNewScopedDialog}
+              >
+                <DialogTitle>Add New Scoped</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    margin='normal'
+                    label='Scoped Name'
+                    fullWidth
+                    value={newScopedName}
+                    onChange={(e) => setNewScopedName(e.target.value)}
+                  />
+                  <TextField
+                    margin='normal'
+                    label='Scoped Description'
+                    fullWidth
+                    multiline
+                    value={newScopedDesc}
+                    onChange={(e) => setNewScopedDesc(e.target.value)}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseNewScopedDialog}>Cancel</Button>
+                  <Button onClick={handleAddScoped} color='primary'>
+                    Add Scoped
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </>
+          )}
+          <Box height={400}>
+            <DataGrid rows={rows} columns={columns} pageSize={5} />
+          </Box>
         </>
       )}
-      <Box height={400}>
-        <DataGrid rows={rows} columns={columns} pageSize={5} />
-      </Box>
     </Container>
   );
 };
