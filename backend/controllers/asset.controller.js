@@ -1,4 +1,4 @@
-import { Asset } from '../models/asset.model.js';
+import Asset from '../models/asset.model.js';
 import { Scoped } from '../models/scoped.model.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { AsyncHandler } from '../utils/asyncHandler.js';

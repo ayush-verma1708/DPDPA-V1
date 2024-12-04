@@ -4,7 +4,7 @@ import CompletionStatus from '../../models/completionStatusSchema.js';
 import ControlFamily from '../../models/controlFamily.js';
 import Control from '../../models/control.js';
 import Action from '../../models/action.js';
-import { Asset } from '../../models/asset.model.js';
+import Asset from '../../models/asset.model.js';
 import { AssetDetails } from '../../models/assetDetails.model.js';
 import { UserResponse } from '../../models/UserResponse.js';
 import { ProductFamily } from '../../models/productFamily.js';

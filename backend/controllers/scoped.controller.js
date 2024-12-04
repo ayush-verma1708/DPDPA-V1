@@ -1,5 +1,5 @@
 import { Scoped } from '../models/scoped.model.js';
-import { Asset } from '../models/asset.model.js';
+import Asset from '../models/asset.model.js';
 import { AsyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 

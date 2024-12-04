@@ -1,4 +1,4 @@
-import { Asset } from '../models/asset.model.js';
+import Asset from '../models/asset.model.js';
 import { Business } from '../models/business.model.js';
 import { AsyncHandler } from '../utils/asyncHandler.js';
 

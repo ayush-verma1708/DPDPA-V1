@@ -1,4 +1,4 @@
-import { Asset } from '../models/asset.model.js'; // Adjust the path as necessary
+import Asset from '../models/asset.model.js'; // Adjust the path as necessary
 import CompletionStatus from '../models/completionStatusSchema.js'; // Adjust the path as necessary
 import { ComplianceSnapshot } from '../models/ComplianceSnapshotSchema.js'; // Adjust the path as necessary
 
