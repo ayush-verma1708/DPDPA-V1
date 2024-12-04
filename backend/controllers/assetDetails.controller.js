@@ -98,7 +98,7 @@ const getAssetDetails = AsyncHandler(async (req, res) => {
     }
 
     const modifiedAssetDetails = assetDetails.map((detail) => {
-      if (!detail.asset.isScoped) {
+      if (!detail.asset || !detail.asset.isScoped) {
         return {
           ...detail.toObject(),
           scoped: { name: 'non-scoped' },

@@ -14,13 +14,6 @@ const processDiscoveredAsset = AsyncHandler(async (req, res) => {
       return res.status(404).json({ message: 'Discovered asset not found' });
     }
 
-    // Check if the asset is already processed
-    if (discoveredAsset.isProcessed) {
-      return res
-        .status(400)
-        .json({ message: 'This asset has already been processed' });
-    }
-
     // Find the discovered scope
     const discoveredScope = discoveredAsset.scopes.id(scopeId);
     if (!discoveredScope) {
@@ -61,12 +54,9 @@ const processDiscoveredAsset = AsyncHandler(async (req, res) => {
       newScope = existingScope;
     }
 
-    // Update the discovered asset and scope to mark them as processed
-    discoveredAsset.isProcessed = true;
-    discoveredAsset.processedAt = new Date();
-
     // Update the discovered scope to mark it as processed
     discoveredScope.isProcessed = true;
+    discoveredScope.processedAt = new Date();
 
     // Save the updated discovered asset and scope
     await discoveredAsset.save();

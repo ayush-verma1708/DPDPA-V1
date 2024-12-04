@@ -13,26 +13,30 @@ export const getDiscoveredAssets = async () => {
   }
 };
 
-// Function to process an asset and scope, adding them to the main models
 export const processAssetScope = async (assetId, scopeId) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/process`, {
       assetId,
-      scopeId,
+      scopeId, // Ensure these match what the backend expects
     });
     return response.data;
   } catch (error) {
-    console.error('Error processing asset and scope:', error);
+    console.error(
+      'Error processing asset and scope:',
+      error.response?.data || error.message
+    );
     throw new Error('Failed to process asset and scope');
   }
 };
 
-export const createDiscoveredAsset = async (assetData) => {
+export const createDiscoveredAsset = async (scopeName) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}`, assetData);
+    const response = await axios.post(`${API_BASE_URL}`, scopeName);
     return response.data;
   } catch (error) {
     console.error('Error creating discovered asset:', error);
     throw error; // Optionally, throw the error for the component to handle
   }
 };
+
+export default createDiscoveredAsset;

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { callMsGraph } from '../components/graph'; // Assuming you have a separate file for graph API calls
 import { msalInstance } from '../components/msalInstance'; // Assuming you have a separate file for msalInstance
 import { InteractionRequiredAuthError } from '@azure/msal-browser'; // Add missing import
-
 import {
   fetchAccessLogs,
   fetchDataGovernance,
@@ -20,15 +19,10 @@ import {
   Divider,
   Tabs,
   Tab,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Chip,
   Stack,
   Tooltip,
   AppBar,
-  Toolbar,
-  IconButton,
   Container,
   CssBaseline,
   Checkbox,
@@ -36,16 +30,13 @@ import {
 import {
   Person,
   Business,
-  ExpandMore,
   CheckCircle,
   Cancel,
   Domain,
   Cloud,
-  Router,
-  Refresh,
-  Dashboard,
   Menu as MenuIcon,
 } from '@mui/icons-material';
+import createDiscoveredAsset from '../api/discoveredAssetEntryApi';
 
 // Update the formatValue function to better handle complex objects
 const formatValue = (value) => {
@@ -363,8 +354,37 @@ const AzureLogin = () => {
     );
   };
 
-  const handleSubmit = () => {
+  const processSelectedServices = async (selectedServices) => {
+    try {
+      // Iterate through the selected services array
+      for (const service of selectedServices) {
+        // Set default values for missing fields
+        const assetData = {
+          name: service.name || 'O365', // Default asset name
+          type: service.type || 'Cloud Service', // Default type
+          desc: service.desc || 'Default description', // Default description
+          scopeName: service || 'Default Scope', // Default scope name
+          scopeDesc: service.scopeDesc || 'Default scope description', // Default scope description
+        };
+
+        console.log('Processing asset data:', assetData);
+
+        // Call the API for each service
+        await createDiscoveredAsset(assetData);
+        console.log('Asset processed successfully:', assetData.name);
+      }
+
+      console.log('All services processed successfully.');
+    } catch (error) {
+      console.error('Error processing selected services:', error);
+    }
+  };
+
+  const handleSubmit = async () => {
     console.log('Selected Services:', selectedServices);
+
+    // Call the process function with the selected services
+    await processSelectedServices(selectedServices);
   };
 
   // Login function with corrected scopes
