@@ -21,13 +21,45 @@ import {
 const TrainingComponent = () => {
   const [trainings, setTrainings] = useState([]);
   const [newTraining, setNewTraining] = useState({
-    title: '',
-    program: '',
-    description: '',
-    lectures: [{ title: '', url: '', duration: 0 }],
+    title: 'Compliance Training',
+    program: 'Compliance',
+    description: 'A training program on company compliance policies',
+    lectures: [
+      {
+        title: 'Introduction to Compliance',
+        url: 'https://example.com/lecture1',
+        duration: 30,
+      },
+      {
+        title: 'Advanced Compliance Topics',
+        url: 'https://example.com/lecture2',
+        duration: 45,
+      },
+    ],
   });
   const [selectedTraining, setSelectedTraining] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const handleLectureChange = (index, field, value) => {
+    const updatedLectures = newTraining.lectures.map((lecture, i) =>
+      i === index ? { ...lecture, [field]: value } : lecture
+    );
+    setNewTraining({ ...newTraining, lectures: updatedLectures });
+  };
+
+  const addLecture = () => {
+    setNewTraining({
+      ...newTraining,
+      lectures: [...newTraining.lectures, { title: '', url: '', duration: 0 }],
+    });
+  };
+
+  const removeLecture = (index) => {
+    setNewTraining({
+      ...newTraining,
+      lectures: newTraining.lectures.filter((_, i) => i !== index),
+    });
+  };
 
   // Fetch all trainings on initial render
   useEffect(() => {
@@ -47,6 +79,7 @@ const TrainingComponent = () => {
   const handleCreateTraining = async () => {
     setLoading(true);
     try {
+      console.log(newTraining);
       const training = await createTraining(newTraining);
       setTrainings([...trainings, training]);
       setNewTraining({
@@ -59,6 +92,7 @@ const TrainingComponent = () => {
       console.error('Failed to create training:', error);
     }
     setLoading(false);
+    window.location.reload();
   };
 
   const handleDeleteTraining = async (id) => {
@@ -144,6 +178,50 @@ const TrainingComponent = () => {
               multiline
               rows={4}
             />
+
+            <Typography variant='h6'>Lectures</Typography>
+            {newTraining.lectures.map((lecture, index) => (
+              <Box key={index} mb={2}>
+                <TextField
+                  label='Lecture Title'
+                  value={lecture.title}
+                  onChange={(e) =>
+                    handleLectureChange(index, 'title', e.target.value)
+                  }
+                  fullWidth
+                  margin='normal'
+                />
+                <TextField
+                  label='Lecture URL'
+                  value={lecture.url}
+                  onChange={(e) =>
+                    handleLectureChange(index, 'url', e.target.value)
+                  }
+                  fullWidth
+                  margin='normal'
+                />
+                <TextField
+                  label='Lecture Duration'
+                  type='number'
+                  value={lecture.duration}
+                  onChange={(e) =>
+                    handleLectureChange(index, 'duration', e.target.value)
+                  }
+                  fullWidth
+                  margin='normal'
+                />
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  onClick={() => removeLecture(index)}
+                >
+                  Remove Lecture
+                </Button>
+              </Box>
+            ))}
+            <Button variant='contained' onClick={addLecture}>
+              Add Lecture
+            </Button>
             <Button
               variant='contained'
               color='primary'
@@ -185,6 +263,85 @@ const TrainingComponent = () => {
                 multiline
                 rows={4}
               />
+
+              <Typography variant='h6'>Lectures</Typography>
+              {selectedTraining.lectures.map((lecture, index) => (
+                <Box key={index} mb={2}>
+                  <TextField
+                    label='Lecture Title'
+                    value={lecture.title}
+                    onChange={(e) =>
+                      setSelectedTraining({
+                        ...selectedTraining,
+                        lectures: selectedTraining.lectures.map((lec, i) =>
+                          i === index ? { ...lec, title: e.target.value } : lec
+                        ),
+                      })
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  <TextField
+                    label='Lecture URL'
+                    value={lecture.url}
+                    onChange={(e) =>
+                      setSelectedTraining({
+                        ...selectedTraining,
+                        lectures: selectedTraining.lectures.map((lec, i) =>
+                          i === index ? { ...lec, url: e.target.value } : lec
+                        ),
+                      })
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  <TextField
+                    label='Lecture Duration'
+                    type='number'
+                    value={lecture.duration}
+                    onChange={(e) =>
+                      setSelectedTraining({
+                        ...selectedTraining,
+                        lectures: selectedTraining.lectures.map((lec, i) =>
+                          i === index
+                            ? { ...lec, duration: e.target.value }
+                            : lec
+                        ),
+                      })
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    onClick={() =>
+                      setSelectedTraining({
+                        ...selectedTraining,
+                        lectures: selectedTraining.lectures.filter(
+                          (_, i) => i !== index
+                        ),
+                      })
+                    }
+                  >
+                    Remove Lecture
+                  </Button>
+                </Box>
+              ))}
+              <Button
+                variant='contained'
+                onClick={() =>
+                  setSelectedTraining({
+                    ...selectedTraining,
+                    lectures: [
+                      ...selectedTraining.lectures,
+                      { title: '', url: '', duration: 0 },
+                    ],
+                  })
+                }
+              >
+                Add Lecture
+              </Button>
               <Button
                 variant='contained'
                 color='primary'

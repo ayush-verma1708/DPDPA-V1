@@ -18,33 +18,61 @@ import {
   IconButton,
   Paper,
   Box,
+  Grid,
+  Checkbox,
+  FormControlLabel,
+  Tabs,
+  Tab,
 } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Add, Visibility } from '@mui/icons-material';
+import ViewQuizComponent from './viewQuiz';
 
-const QuizComponent = () => {
+const QuizComponent = ({ training }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [newQuiz, setNewQuiz] = useState({
-    title: '',
-    training: '',
-    questions: [{ question: '', options: ['', '', '', ''], answer: '' }],
+    title: 'Compliance Quiz',
+    training: '675160003b2d8a97d67d0584',
+    questions: [
+      {
+        questionText: 'What does compliance mean?',
+        options: [
+          { optionText: 'Following laws and regulations', isCorrect: true },
+          { optionText: 'Ignoring policies', isCorrect: false },
+        ],
+      },
+      {
+        questionText: 'What is the purpose of a compliance officer?',
+        options: [
+          {
+            optionText: 'To ensure compliance with regulations',
+            isCorrect: true,
+          },
+          { optionText: 'To do HR work', isCorrect: false },
+        ],
+      },
+    ],
     passingScore: 80,
   });
   const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [viewQuiz, setViewQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       setLoading(true);
       try {
         const data = await getAllQuizzes();
-        setQuizzes(data.quizzes);
+        setQuizzes(
+          data.quizzes.filter((quiz) => quiz.training === training._id)
+        );
       } catch (error) {
         console.error('Failed to fetch quizzes:', error);
       }
       setLoading(false);
     };
     fetchQuizzes();
-  }, []);
+  }, [training]);
 
   const handleCreateQuiz = async () => {
     setLoading(true);
@@ -53,8 +81,10 @@ const QuizComponent = () => {
       setQuizzes([...quizzes, quiz]);
       setNewQuiz({
         title: '',
-        training: '',
-        questions: [{ question: '', options: ['', '', '', ''], answer: '' }],
+        training: training._id,
+        questions: [
+          { questionText: '', options: [{ optionText: '', isCorrect: false }] },
+        ],
         passingScore: 80,
       });
     } catch (error) {
@@ -86,152 +116,268 @@ const QuizComponent = () => {
     setLoading(false);
   };
 
+  const handleViewQuiz = (quiz) => {
+    setViewQuiz(quiz);
+    setTabIndex(1);
+  };
+
+  const handleTabChange = (event, newIndex) => {
+    setTabIndex(newIndex);
+  };
+
   return (
     <Container>
-      <Typography variant='h4' gutterBottom>
-        Quizzes
-      </Typography>
+      {/* <Typography variant='h4' gutterBottom>
+        Quizzes for {training.title}
+      </Typography> */}
+      <Tabs value={tabIndex} onChange={handleTabChange}>
+        <Tab label='Manage Quizzes' />
+        <Tab label='View Quiz' />
+      </Tabs>
       {loading ? (
         <CircularProgress />
       ) : (
         <Box>
-          <List>
-            {quizzes.map((quiz) => (
-              <ListItem key={quiz._id} component={Paper} sx={{ mb: 2 }}>
-                <ListItemText
-                  primary={quiz.title}
-                  secondary={`Training ID: ${quiz.training}`}
-                />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge='end'
-                    aria-label='edit'
-                    onClick={() => setSelectedQuiz(quiz)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    edge='end'
-                    aria-label='delete'
-                    onClick={() => handleDeleteQuiz(quiz._id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-
-          <Box component={Paper} p={2} mt={2}>
-            <Typography variant='h5'>Create New Quiz</Typography>
-            <TextField
-              label='Quiz Title'
-              value={newQuiz.title}
-              onChange={(e) =>
-                setNewQuiz({ ...newQuiz, title: e.target.value })
-              }
-              fullWidth
-              margin='normal'
-            />
-            <TextField
-              label='Training ID'
-              value={newQuiz.training}
-              onChange={(e) =>
-                setNewQuiz({ ...newQuiz, training: e.target.value })
-              }
-              fullWidth
-              margin='normal'
-            />
+          {tabIndex === 0 && (
             <Box>
-              {newQuiz.questions.map((question, index) => (
-                <Box key={index} mb={2}>
-                  <TextField
-                    label={`Question ${index + 1}`}
-                    value={question.question}
-                    onChange={(e) =>
-                      setNewQuiz({
-                        ...newQuiz,
-                        questions: newQuiz.questions.map((q, i) =>
-                          i === index ? { ...q, question: e.target.value } : q
-                        ),
-                      })
-                    }
-                    fullWidth
-                    margin='normal'
-                  />
-                  <TextField
-                    label='Option 1'
-                    value={question.options[0]}
-                    onChange={(e) =>
-                      setNewQuiz({
-                        ...newQuiz,
-                        questions: newQuiz.questions.map((q, i) =>
-                          i === index
-                            ? {
-                                ...q,
-                                options: [
-                                  e.target.value,
-                                  ...q.options.slice(1),
-                                ],
-                              }
-                            : q
-                        ),
-                      })
-                    }
-                    fullWidth
-                    margin='normal'
-                  />
-                  {/* Add more options similarly */}
-                </Box>
-              ))}
-              <Button
-                onClick={() =>
-                  setNewQuiz({
-                    ...newQuiz,
-                    questions: [
-                      ...newQuiz.questions,
-                      { question: '', options: ['', '', '', ''], answer: '' },
-                    ],
-                  })
-                }
-              >
-                Add Question
-              </Button>
-            </Box>
-            <Button
-              onClick={handleCreateQuiz}
-              disabled={loading}
-              variant='contained'
-              color='primary'
-            >
-              Create Quiz
-            </Button>
-          </Box>
+              <List>
+                {quizzes.map((quiz) => (
+                  <ListItem key={quiz._id} component={Paper} sx={{ mb: 2 }}>
+                    <ListItemText
+                      primary={quiz.title}
+                      secondary={`Training ID: ${quiz.training}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge='end'
+                        aria-label='edit'
+                        onClick={() => setSelectedQuiz(quiz)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        edge='end'
+                        aria-label='delete'
+                        onClick={() => handleDeleteQuiz(quiz._id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                      <IconButton
+                        edge='end'
+                        aria-label='view'
+                        onClick={() => handleViewQuiz(quiz)}
+                      >
+                        <Visibility />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
 
-          {selectedQuiz && (
+              <Box component={Paper} p={2} mt={2}>
+                <Typography variant='h5'>Create New Quiz</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      label='Quiz Title'
+                      value={newQuiz.title}
+                      onChange={(e) =>
+                        setNewQuiz({ ...newQuiz, title: e.target.value })
+                      }
+                      fullWidth
+                      margin='normal'
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      label='Training ID'
+                      value={newQuiz.training}
+                      onChange={(e) =>
+                        setNewQuiz({ ...newQuiz, training: e.target.value })
+                      }
+                      fullWidth
+                      margin='normal'
+                      disabled
+                    />
+                  </Grid>
+                  {newQuiz.questions.map((question, index) => (
+                    <Grid item xs={12} key={index}>
+                      <Paper variant='outlined' sx={{ p: 2, mb: 2 }}>
+                        <TextField
+                          label={`Question ${index + 1}`}
+                          value={question.questionText}
+                          onChange={(e) =>
+                            setNewQuiz({
+                              ...newQuiz,
+                              questions: newQuiz.questions.map((q, i) =>
+                                i === index
+                                  ? { ...q, questionText: e.target.value }
+                                  : q
+                              ),
+                            })
+                          }
+                          fullWidth
+                          margin='normal'
+                        />
+                        {question.options.map((option, optIndex) => (
+                          <Grid container spacing={2} key={optIndex}>
+                            <Grid item xs={8}>
+                              <TextField
+                                label={`Option ${optIndex + 1}`}
+                                value={option.optionText}
+                                onChange={(e) =>
+                                  setNewQuiz({
+                                    ...newQuiz,
+                                    questions: newQuiz.questions.map((q, i) =>
+                                      i === index
+                                        ? {
+                                            ...q,
+                                            options: q.options.map(
+                                              (opt, oIndex) =>
+                                                oIndex === optIndex
+                                                  ? {
+                                                      ...opt,
+                                                      optionText:
+                                                        e.target.value,
+                                                    }
+                                                  : opt
+                                            ),
+                                          }
+                                        : q
+                                    ),
+                                  })
+                                }
+                                fullWidth
+                                margin='normal'
+                              />
+                            </Grid>
+                            <Grid item xs={4}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={option.isCorrect}
+                                    onChange={(e) =>
+                                      setNewQuiz({
+                                        ...newQuiz,
+                                        questions: newQuiz.questions.map(
+                                          (q, i) =>
+                                            i === index
+                                              ? {
+                                                  ...q,
+                                                  options: q.options.map(
+                                                    (opt, oIndex) =>
+                                                      oIndex === optIndex
+                                                        ? {
+                                                            ...opt,
+                                                            isCorrect:
+                                                              e.target.checked,
+                                                          }
+                                                        : opt
+                                                  ),
+                                                }
+                                              : q
+                                        ),
+                                      })
+                                    }
+                                  />
+                                }
+                                label='Correct'
+                              />
+                            </Grid>
+                          </Grid>
+                        ))}
+                        <Button
+                          startIcon={<Add />}
+                          onClick={() =>
+                            setNewQuiz({
+                              ...newQuiz,
+                              questions: newQuiz.questions.map((q, i) =>
+                                i === index
+                                  ? {
+                                      ...q,
+                                      options: [
+                                        ...q.options,
+                                        { optionText: '', isCorrect: false },
+                                      ],
+                                    }
+                                  : q
+                              ),
+                            })
+                          }
+                        >
+                          Add Option
+                        </Button>
+                      </Paper>
+                    </Grid>
+                  ))}
+                  <Grid item xs={12}>
+                    <Button
+                      startIcon={<Add />}
+                      onClick={() =>
+                        setNewQuiz({
+                          ...newQuiz,
+                          questions: [
+                            ...newQuiz.questions,
+                            {
+                              questionText: '',
+                              options: [{ optionText: '', isCorrect: false }],
+                            },
+                          ],
+                        })
+                      }
+                    >
+                      Add Question
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={handleCreateQuiz}
+                      disabled={loading}
+                      variant='contained'
+                      color='primary'
+                    >
+                      Create Quiz
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Box>
+
+              {selectedQuiz && (
+                <Box component={Paper} p={2} mt={2}>
+                  <Typography variant='h5'>
+                    Edit Quiz: {selectedQuiz.title}
+                  </Typography>
+                  <TextField
+                    label='Quiz Title'
+                    value={selectedQuiz.title}
+                    onChange={(e) =>
+                      setSelectedQuiz({
+                        ...selectedQuiz,
+                        title: e.target.value,
+                      })
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  {/* Same UI for editing questions */}
+                  <Button
+                    onClick={() => handleUpdateQuiz(selectedQuiz._id)}
+                    disabled={loading}
+                    variant='contained'
+                    color='primary'
+                  >
+                    Update Quiz
+                  </Button>
+                  <Button onClick={() => setSelectedQuiz(null)}>Cancel</Button>
+                </Box>
+              )}
+            </Box>
+          )}
+
+          {tabIndex === 1 && viewQuiz && (
             <Box component={Paper} p={2} mt={2}>
-              <Typography variant='h5'>
-                Edit Quiz: {selectedQuiz.title}
-              </Typography>
-              <TextField
-                label='Quiz Title'
-                value={selectedQuiz.title}
-                onChange={(e) =>
-                  setSelectedQuiz({ ...selectedQuiz, title: e.target.value })
-                }
-                fullWidth
-                margin='normal'
-              />
-              {/* Same UI for editing questions */}
-              <Button
-                onClick={() => handleUpdateQuiz(selectedQuiz._id)}
-                disabled={loading}
-                variant='contained'
-                color='primary'
-              >
-                Update Quiz
-              </Button>
-              <Button onClick={() => setSelectedQuiz(null)}>Cancel</Button>
+              <ViewQuizComponent quiz={viewQuiz} />
+              <Button onClick={() => setViewQuiz(null)}>Close</Button>
             </Box>
           )}
         </Box>
