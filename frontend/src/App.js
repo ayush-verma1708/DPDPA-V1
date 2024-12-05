@@ -25,6 +25,8 @@ import RiskAnalysis from './pages/RiskAnalysis';
 import ProductFamilyPage from './pages/ProductFamilyPage';
 import ScannerPage from './pages/ScannerPage'; // Updated import for the renamed component
 import TrainingPage from './pages/TrainingManaementPage.js'; // Updated import for the renamed component
+import UserAssignmentPage from './pages/UserAssignmentPage.js'; // Updated import for the renamed component
+import TrainindAndQuizPage from './pages/TrainingAndQuizPage.js'; // Updated import for the renamed component
 import { msalInstance } from './components/msalInstance'; // Assuming you have a separate file for msalInstance
 
 import 'slick-carousel/slick/slick.css';
@@ -355,6 +357,40 @@ const App = () => {
             >
               <PrivateRoute>
                 <TrainingPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path='/User-Assignment'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <UserAssignmentPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />{' '}
+        <Route
+          path='/Training-and-Quiz'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <TrainindAndQuizPage />
               </PrivateRoute>
             </MiscLayout>
           }

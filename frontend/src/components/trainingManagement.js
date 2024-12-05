@@ -39,6 +39,7 @@ const TrainingComponent = () => {
   });
   const [selectedTraining, setSelectedTraining] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showCreateSection, setShowCreateSection] = useState(false);
 
   const handleLectureChange = (index, field, value) => {
     const updatedLectures = newTraining.lectures.map((lecture, i) =>
@@ -59,6 +60,11 @@ const TrainingComponent = () => {
       ...newTraining,
       lectures: newTraining.lectures.filter((_, i) => i !== index),
     });
+  };
+
+  const handleShowCreateSection = () => {
+    setShowCreateSection(true);
+    setSelectedTraining(null);
   };
 
   // Fetch all trainings on initial render
@@ -131,6 +137,14 @@ const TrainingComponent = () => {
         <CircularProgress />
       ) : (
         <Box>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={handleShowCreateSection}
+            disabled={showCreateSection}
+          >
+            Add New Training
+          </Button>
           <List>
             {trainings.map((training) => (
               <ListItem key={training._id} divider>
@@ -141,7 +155,10 @@ const TrainingComponent = () => {
                 <Button
                   variant='contained'
                   color='primary'
-                  onClick={() => setSelectedTraining(training)}
+                  onClick={() => {
+                    setSelectedTraining(training);
+                    setShowCreateSection(false);
+                  }}
                 >
                   Edit
                 </Button>
@@ -156,81 +173,86 @@ const TrainingComponent = () => {
             ))}
           </List>
 
-          <Box mt={4}>
-            <Typography variant='h5'>Create New Training</Typography>
-            <TextField
-              label='Title'
-              value={newTraining.title}
-              onChange={(e) =>
-                setNewTraining({ ...newTraining, title: e.target.value })
-              }
-              fullWidth
-              margin='normal'
-            />
-            <TextField
-              label='Description'
-              value={newTraining.description}
-              onChange={(e) =>
-                setNewTraining({ ...newTraining, description: e.target.value })
-              }
-              fullWidth
-              margin='normal'
-              multiline
-              rows={4}
-            />
+          {showCreateSection && (
+            <Box mt={4}>
+              <Typography variant='h5'>Create New Training</Typography>
+              <TextField
+                label='Title'
+                value={newTraining.title}
+                onChange={(e) =>
+                  setNewTraining({ ...newTraining, title: e.target.value })
+                }
+                fullWidth
+                margin='normal'
+              />
+              <TextField
+                label='Description'
+                value={newTraining.description}
+                onChange={(e) =>
+                  setNewTraining({
+                    ...newTraining,
+                    description: e.target.value,
+                  })
+                }
+                fullWidth
+                margin='normal'
+                multiline
+                rows={4}
+              />
 
-            <Typography variant='h6'>Lectures</Typography>
-            {newTraining.lectures.map((lecture, index) => (
-              <Box key={index} mb={2}>
-                <TextField
-                  label='Lecture Title'
-                  value={lecture.title}
-                  onChange={(e) =>
-                    handleLectureChange(index, 'title', e.target.value)
-                  }
-                  fullWidth
-                  margin='normal'
-                />
-                <TextField
-                  label='Lecture URL'
-                  value={lecture.url}
-                  onChange={(e) =>
-                    handleLectureChange(index, 'url', e.target.value)
-                  }
-                  fullWidth
-                  margin='normal'
-                />
-                <TextField
-                  label='Lecture Duration'
-                  type='number'
-                  value={lecture.duration}
-                  onChange={(e) =>
-                    handleLectureChange(index, 'duration', e.target.value)
-                  }
-                  fullWidth
-                  margin='normal'
-                />
-                <Button
-                  variant='contained'
-                  color='secondary'
-                  onClick={() => removeLecture(index)}
-                >
-                  Remove Lecture
-                </Button>
-              </Box>
-            ))}
-            <Button variant='contained' onClick={addLecture}>
-              Add Lecture
-            </Button>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={handleCreateTraining}
-              disabled={loading}
-            >
-              Create Training
-            </Button>
-          </Box>
+              <Typography variant='h6'>Lectures</Typography>
+              {newTraining.lectures.map((lecture, index) => (
+                <Box key={index} mb={2}>
+                  <TextField
+                    label='Lecture Title'
+                    value={lecture.title}
+                    onChange={(e) =>
+                      handleLectureChange(index, 'title', e.target.value)
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  <TextField
+                    label='Lecture URL'
+                    value={lecture.url}
+                    onChange={(e) =>
+                      handleLectureChange(index, 'url', e.target.value)
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  <TextField
+                    label='Lecture Duration'
+                    type='number'
+                    value={lecture.duration}
+                    onChange={(e) =>
+                      handleLectureChange(index, 'duration', e.target.value)
+                    }
+                    fullWidth
+                    margin='normal'
+                  />
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    onClick={() => removeLecture(index)}
+                  >
+                    Remove Lecture
+                  </Button>
+                </Box>
+              ))}
+              <Button variant='contained' onClick={addLecture}>
+                Add Lecture
+              </Button>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={handleCreateTraining}
+                disabled={loading}
+              >
+                Create Training
+              </Button>
+            </Box>
+          )}
 
           {selectedTraining && (
             <Box mt={4}>

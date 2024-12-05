@@ -326,7 +326,7 @@ const Sidebar = ({ onSelect }) => {
               </ListItemButton>
 
               {/* Course 2 */}
-              <ListItemButton component={Link} to='/User-Assignment-Page'>
+              <ListItemButton component={Link} to='/User-Assignment'>
                 <ListItemIcon>
                   <AddchartIcon sx={{ color: 'white' }} />
                 </ListItemIcon>
@@ -336,7 +336,7 @@ const Sidebar = ({ onSelect }) => {
                 />
               </ListItemButton>
               {/* Course 2 */}
-              <ListItemButton component={Link} to='/Training-and-Quiz-Page'>
+              <ListItemButton component={Link} to='/Training-and-Quiz'>
                 <ListItemIcon>
                   <AddchartIcon sx={{ color: 'white' }} />
                 </ListItemIcon>
