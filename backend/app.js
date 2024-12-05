@@ -33,6 +33,9 @@ import packetRoutes from './routes/packetRoutes.js';
 import azureRoutes from './routes/azureDataRoutes.js';
 import discoveredAssetRoutes from './routes/discoveredAssetRoutes.js';
 
+import trainingRoutes from './routes/trainingRoutes.js';
+import quizRoutes from './routes/quizRoutes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -54,8 +57,6 @@ app.use(cookieParser());
 // Use the routes
 app.use('/api/user-responses', userResponseRoutes);
 app.use('/api', productFamilyRoutes); // Mount the product family routes at /api
-
-// routes declaration
 app.use('/api/v1/assets', assetRouter);
 app.use('/api/v1/scoped', scopedRouter);
 app.use('/api/v1/coverage', coverageRouter);
@@ -72,24 +73,16 @@ app.use('/api/evidence', evidenceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/v1', stepTasks);
 app.use('/api', newActionRoutes);
-// Use the company form routes
 app.use('/api/company-form', companyFormRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// Use compliance snapshot routes
 app.use('/api/v1/compliance-snapshot', complianceSnapshotRoutes);
-// Use the message routes
 app.use('/api/messages', messageRoutes);
-
-//Network Scanner
-// Use routes for network-related operations
 app.use('/api', networkRoutes);
-
-// Mount the packet analysis routes
 app.use('/api', packetRoutes);
-
 app.use('/api', azureRoutes);
-
 app.use('/api/v1', discoveredAssetRoutes);
+app.use('/api', trainingRoutes);
+app.use('/api', quizRoutes);
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;

@@ -24,6 +24,8 @@ import ScoreboardPage from './pages/ScoreboardPage';
 import RiskAnalysis from './pages/RiskAnalysis';
 import ProductFamilyPage from './pages/ProductFamilyPage';
 import ScannerPage from './pages/ScannerPage'; // Updated import for the renamed component
+import TrainingPage from './pages/TrainingPage.js'; // Import the TrainingPage component
+
 import { msalInstance } from './components/msalInstance'; // Assuming you have a separate file for msalInstance
 
 import 'slick-carousel/slick/slick.css';
@@ -337,6 +339,23 @@ const App = () => {
             >
               <PrivateRoute>
                 <ScannerPage />
+              </PrivateRoute>
+            </MiscLayout>
+          }
+        />
+        <Route
+          path='/training'
+          element={
+            <MiscLayout
+              authToken={authToken}
+              error={error}
+              handleLogout={handleLogout}
+              handleSidebarClick={handleSidebarClick}
+              selectedItem={selectedItem}
+              user={user}
+            >
+              <PrivateRoute>
+                <TrainingPage />
               </PrivateRoute>
             </MiscLayout>
           }

@@ -1,0 +1,112 @@
+.training-quiz-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+h1 {
+  color: #333;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.training-form,
+.quiz-form {
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type='text'],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:disabled:hover {
+  background-color: #ddd;
+}
+
+.trainings-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.trainings-list li {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.trainings-list button {
+  background-color: #2196f3;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.trainings-list button:hover {
+  background-color: #0b7dda;
+}
+
+.quiz-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.quiz-form button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.quiz-form button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.quiz-form button:hover {
+  background-color: #45a049;
+}
