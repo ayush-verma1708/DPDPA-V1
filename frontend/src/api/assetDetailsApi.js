@@ -46,6 +46,18 @@ export const getAssetDetailsById = async (id) => {
   }
 };
 
+export const submitAssetDetails = async (details) => {
+  try {
+    const response = await axios.post(
+      'http://localhost:8021/api/v1/assetDetails/add',
+      details
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting asset details:', error);
+    throw error;
+  }
+};
 // import axios from 'axios';
 
 // export const getAssetDetails = async () => {
