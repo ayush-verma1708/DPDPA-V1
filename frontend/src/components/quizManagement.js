@@ -132,7 +132,6 @@ const QuizComponent = ({ training }) => {
       </Typography> */}
       <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label='Manage Quizzes' />
-        <Tab label='View Quiz' />
       </Tabs>
       {loading ? (
         <CircularProgress />
@@ -371,13 +370,6 @@ const QuizComponent = ({ training }) => {
                   <Button onClick={() => setSelectedQuiz(null)}>Cancel</Button>
                 </Box>
               )}
-            </Box>
-          )}
-
-          {tabIndex === 1 && viewQuiz && (
-            <Box component={Paper} p={2} mt={2}>
-              <ViewQuizComponent quiz={viewQuiz} />
-              <Button onClick={() => setViewQuiz(null)}>Close</Button>
             </Box>
           )}
         </Box>

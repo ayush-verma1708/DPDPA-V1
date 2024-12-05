@@ -10,16 +10,28 @@ import {
   Tabs,
   Tab,
   Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Paper,
+  RadioGroup,
+  Grid,
+  FormControlLabel,
+  Radio,
 } from '@mui/material';
 import TrainingComponent from '../components/trainingManagement';
 import QuizComponent from '../components/quizManagement';
 import { getAllTrainings } from '../api/trainingApi';
-import { getAllQuizzes } from '../api/quizApi';
+import { getAllQuizzes, getQuizById } from '../api/quizApi';
 
 const TrainingQuizPage = () => {
   const [trainings, setTrainings] = useState([]);
   const [selectedTraining, setSelectedTraining] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
+  const [selectedQuizId, setSelectedQuizId] = useState('');
+  const [quiz, setQuiz] = useState(null);
+  const [responses, setResponses] = useState({});
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -51,8 +63,34 @@ const TrainingQuizPage = () => {
     fetchQuizzes();
   }, []);
 
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      if (selectedQuizId) {
+        try {
+          const data = await getQuizById(selectedQuizId);
+          setQuiz(data);
+        } catch (error) {
+          console.error('Error fetching quiz:', error);
+        }
+      }
+    };
+    fetchQuiz();
+  }, [selectedQuizId]);
+
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
+  };
+
+  const handleOptionChange = (questionIndex, optionIndex) => {
+    setResponses({
+      ...responses,
+      [questionIndex]: optionIndex,
+    });
+  };
+
+  const handleSubmit = () => {
+    console.log('User responses:', responses);
+    // Handle form submission logic here
   };
 
   return (
@@ -64,6 +102,7 @@ const TrainingQuizPage = () => {
         <Tab label='Add New Training' />
         <Tab label='Existing Trainings' />
         <Tab label='Quiz Management' />
+        <Tab label='View Quizzes' />
       </Tabs>
       {tabIndex === 0 && (
         <Box className='training-section' mb={4}>
@@ -109,6 +148,25 @@ const TrainingQuizPage = () => {
             Quiz Management for: {selectedTraining.title}
           </Typography>
           <QuizComponent training={selectedTraining} />
+        </Box>
+      )}
+
+      {tabIndex === 3 && (
+        <Box className='view-quiz-section' mt={4}>
+          <FormControl fullWidth>
+            <InputLabel id='select-quiz-label'>Select Quiz</InputLabel>
+            <Select
+              labelId='select-quiz-label'
+              value={selectedQuizId}
+              onChange={(e) => setSelectedQuizId(e.target.value)}
+            >
+              {quizzes.map((quiz) => (
+                <MenuItem key={quiz.id} value={quiz.id}>
+                  {quiz.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       )}
     </Container>
