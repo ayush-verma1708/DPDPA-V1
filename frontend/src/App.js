@@ -24,8 +24,7 @@ import ScoreboardPage from './pages/ScoreboardPage';
 import RiskAnalysis from './pages/RiskAnalysis';
 import ProductFamilyPage from './pages/ProductFamilyPage';
 import ScannerPage from './pages/ScannerPage'; // Updated import for the renamed component
-import TrainingPage from './pages/TrainingPage.js'; // Import the TrainingPage component
-
+import TrainingPage from './pages/TrainingManaementPage.js'; // Updated import for the renamed component
 import { msalInstance } from './components/msalInstance'; // Assuming you have a separate file for msalInstance
 
 import 'slick-carousel/slick/slick.css';

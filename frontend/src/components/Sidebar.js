@@ -313,6 +313,41 @@ const Sidebar = ({ onSelect }) => {
               <ListItemText primary='Training' sx={{ color: 'white' }} />
             )}
           </ListItem>
+
+          {/* Nested List for Sub-Items (Course 1 & Course 2) */}
+          {open && (
+            <List sx={{ paddingLeft: 3 }}>
+              {/* Course 1 */}
+              <ListItemButton component={Link} to='/Training'>
+                <ListItemIcon>
+                  <InventoryOutlinedIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText primary='Management' sx={{ color: 'white' }} />
+              </ListItemButton>
+
+              {/* Course 2 */}
+              <ListItemButton component={Link} to='/User-Assignment-Page'>
+                <ListItemIcon>
+                  <AddchartIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary='User Assignment Page'
+                  sx={{ color: 'white' }}
+                />
+              </ListItemButton>
+              {/* Course 2 */}
+              <ListItemButton component={Link} to='/Training-and-Quiz-Page'>
+                <ListItemIcon>
+                  <AddchartIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary='Training and Quiz Page'
+                  sx={{ color: 'white' }}
+                />
+              </ListItemButton>
+            </List>
+          )}
+
           <ListItem
             button
             component={Link}

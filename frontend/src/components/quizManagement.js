@@ -23,6 +23,7 @@ import {
   FormControlLabel,
   Tabs,
   Tab,
+  Alert,
 } from '@mui/material';
 import { Edit, Delete, Add, Visibility } from '@mui/icons-material';
 import ViewQuizComponent from './viewQuiz';
@@ -57,6 +58,7 @@ const QuizComponent = ({ training }) => {
   const [viewQuiz, setViewQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -87,10 +89,12 @@ const QuizComponent = ({ training }) => {
         ],
         passingScore: 80,
       });
+      setSuccessMessage('Quiz created successfully!');
     } catch (error) {
       console.error('Failed to create quiz:', error);
     }
     setLoading(false);
+    window.location.reload();
   };
 
   const handleUpdateQuiz = async (id) => {
@@ -137,6 +141,11 @@ const QuizComponent = ({ training }) => {
         <CircularProgress />
       ) : (
         <Box>
+          {successMessage && (
+            <Alert severity='success' onClose={() => setSuccessMessage('')}>
+              {successMessage}
+            </Alert>
+          )}
           {tabIndex === 0 && (
             <Box>
               <List>
@@ -146,29 +155,6 @@ const QuizComponent = ({ training }) => {
                       primary={quiz.title}
                       secondary={`Training ID: ${quiz.training}`}
                     />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge='end'
-                        aria-label='edit'
-                        onClick={() => setSelectedQuiz(quiz)}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        edge='end'
-                        aria-label='delete'
-                        onClick={() => handleDeleteQuiz(quiz._id)}
-                      >
-                        <Delete />
-                      </IconButton>
-                      <IconButton
-                        edge='end'
-                        aria-label='view'
-                        onClick={() => handleViewQuiz(quiz)}
-                      >
-                        <Visibility />
-                      </IconButton>
-                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>

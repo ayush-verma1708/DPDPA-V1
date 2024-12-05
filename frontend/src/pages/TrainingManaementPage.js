@@ -10,28 +10,15 @@ import {
   Tabs,
   Tab,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Paper,
-  RadioGroup,
-  Grid,
-  FormControlLabel,
-  Radio,
 } from '@mui/material';
 import TrainingComponent from '../components/trainingManagement';
 import QuizComponent from '../components/quizManagement';
 import { getAllTrainings } from '../api/trainingApi';
-import { getAllQuizzes, getQuizById } from '../api/quizApi';
+import ViewQuiz from '../components/viewQuiz';
 
 const TrainingQuizPage = () => {
   const [trainings, setTrainings] = useState([]);
   const [selectedTraining, setSelectedTraining] = useState(null);
-  const [quizzes, setQuizzes] = useState([]);
-  const [selectedQuizId, setSelectedQuizId] = useState('');
-  const [quiz, setQuiz] = useState(null);
-  const [responses, setResponses] = useState({});
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -49,48 +36,8 @@ const TrainingQuizPage = () => {
     fetchTrainings();
   }, []);
 
-  useEffect(() => {
-    const fetchQuizzes = async () => {
-      setLoading(true);
-      try {
-        const data = await getAllQuizzes();
-        setQuizzes(data.quizzes);
-      } catch (error) {
-        console.error('Failed to fetch quizzes:', error);
-      }
-      setLoading(false);
-    };
-    fetchQuizzes();
-  }, []);
-
-  useEffect(() => {
-    const fetchQuiz = async () => {
-      if (selectedQuizId) {
-        try {
-          const data = await getQuizById(selectedQuizId);
-          setQuiz(data);
-        } catch (error) {
-          console.error('Error fetching quiz:', error);
-        }
-      }
-    };
-    fetchQuiz();
-  }, [selectedQuizId]);
-
   const handleTabChange = (event, newIndex) => {
     setTabIndex(newIndex);
-  };
-
-  const handleOptionChange = (questionIndex, optionIndex) => {
-    setResponses({
-      ...responses,
-      [questionIndex]: optionIndex,
-    });
-  };
-
-  const handleSubmit = () => {
-    console.log('User responses:', responses);
-    // Handle form submission logic here
   };
 
   return (
@@ -101,7 +48,7 @@ const TrainingQuizPage = () => {
       <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label='Add New Training' />
         <Tab label='Existing Trainings' />
-        <Tab label='Quiz Management' />
+        {selectedTraining && <Tab label='Quiz Management' />}
         <Tab label='View Quizzes' />
       </Tabs>
       {tabIndex === 0 && (
@@ -151,24 +98,7 @@ const TrainingQuizPage = () => {
         </Box>
       )}
 
-      {tabIndex === 3 && (
-        <Box className='view-quiz-section' mt={4}>
-          <FormControl fullWidth>
-            <InputLabel id='select-quiz-label'>Select Quiz</InputLabel>
-            <Select
-              labelId='select-quiz-label'
-              value={selectedQuizId}
-              onChange={(e) => setSelectedQuizId(e.target.value)}
-            >
-              {quizzes.map((quiz) => (
-                <MenuItem key={quiz.id} value={quiz.id}>
-                  {quiz.title}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      )}
+      {tabIndex === 3 && <ViewQuiz />}
     </Container>
   );
 };
