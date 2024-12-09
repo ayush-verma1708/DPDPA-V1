@@ -130,9 +130,9 @@ const TrainingComponent = () => {
 
   return (
     <Container>
-      <Typography variant='h4' gutterBottom>
+      {/* <Typography variant='h4' gutterBottom>
         Training Programs
-      </Typography>
+      </Typography> */}
       {loading ? (
         <CircularProgress />
       ) : (

@@ -35,6 +35,7 @@ import discoveredAssetRoutes from './routes/discoveredAssetRoutes.js';
 
 import trainingRoutes from './routes/trainingRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
+import assignmentRoutes from './routes/assignmentRoutes.js'; // Import assignment routes
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,8 +82,10 @@ app.use('/api', networkRoutes);
 app.use('/api', packetRoutes);
 app.use('/api', azureRoutes);
 app.use('/api/v1', discoveredAssetRoutes);
+
 app.use('/api', trainingRoutes);
 app.use('/api', quizRoutes);
+app.use('/api/assignments', assignmentRoutes); // Assignment routes
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;
@@ -90,8 +93,6 @@ app.get('/:filename', async (req, res) => {
   return res.download(filepath);
   // return res.send(filepath)
 }),
-  // app.use('/api/v1', completionRoutes);
-
   // Global error handling middleware
   app.use((err, req, res, next) => {
     console.error(err.stack);

@@ -9,7 +9,7 @@ const Footer = () => {
           <p className='text-sm text-gray-400'>
             Designed and developed by{' '}
             <span className='font-semibold text-white'>
-              PECS | Planet E-Com Solution Pvt. Ltd.
+              Pink Unicorn Algorithm
             </span>
           </p>
         </div>

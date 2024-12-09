@@ -72,6 +72,12 @@ const Sidebar = ({ onSelect }) => {
           height: '100vh', // Ensures full height of the viewport
           backgroundColor: '#333',
           overflowY: 'auto', // Makes the sidebar scrollable if the content exceeds the height
+          overflowX: 'hidden', // Hides the horizontal scrollbar
+          '&::-webkit-scrollbar': {
+            display: 'none', // Hides the scrollbar in WebKit browsers
+          },
+          '-ms-overflow-style': 'none', // Hides the scrollbar in IE and Edge
+          'scrollbar-width': 'none', // Hides the scrollbar in Firefox
         }}
       >
         <IconButton

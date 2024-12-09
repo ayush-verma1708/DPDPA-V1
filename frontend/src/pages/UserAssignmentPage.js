@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
   Typography,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Button,
-  List,
-  ListItem,
-  ListItemText,
   Alert,
   Container,
   Grid,
   Paper,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -23,13 +18,12 @@ import {
   TableRow,
   LinearProgress,
 } from '@mui/material';
+import { getUsers } from '../api/userApi'; // Assuming your API is in this file
+import { getAllTrainings } from '../api/trainingApi';
+import { createAssignment, getAssignmentsByUser } from '../api/assignmentApi';
 
 const UserAssignmentPage = () => {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Ayush Verma' },
-    { id: 2, name: 'Priyanshu' },
-    { id: 3, name: 'Ishaan' },
-  ]);
+  const [users, setUsers] = useState([]);
 
   const [trainings, setTrainings] = useState([
     { id: 1, name: 'DPDPA Overview' },
@@ -44,57 +38,74 @@ const UserAssignmentPage = () => {
   const [progress, setProgress] = useState('');
   const [quizScore, setQuizScore] = useState('');
 
+  // Fetch all users and populate the state
   useEffect(() => {
-    // Fetch progress and quiz score from backend (using demo values for now)
-    const demoAssignments = [
-      {
-        userId: 1,
-        userName: 'Ayush Verma',
-        trainingName: 'DPDPA Overview',
-        assignedDate: '01/01/2023',
-        completionDate: '01/10/2023',
-        progress: 100,
-        quizScore: '90%',
-      },
-      {
-        userId: 2,
-        userName: 'Ishaan',
-        trainingName: 'Data Protection Principles',
-        assignedDate: '01/05/2023',
-        completionDate: null,
-        progress: 50,
-        quizScore: 'N/A',
-      },
-    ];
-    setAssignments(demoAssignments);
+    const fetchUsers = async () => {
+      try {
+        console.log('fetching users');
+        const userData = await getUsers(); // Fetch users using the API
+        console.log(userData.users);
+        setUsers(userData.users);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setUsers([]); // Set users to an empty array in case of error
+      }
+    };
+
+    fetchUsers();
   }, []);
 
-  const handleAssign = () => {
+  // Fetch assignments for a specific user when selected
+  useEffect(() => {
+    if (selectedUser) {
+      getAssignmentsByUser(selectedUser)
+        .then((data) => setAssignments(data))
+        .catch((error) => console.error('Error fetching assignments:', error));
+    }
+  }, [selectedUser]);
+
+  const handleAssign = async () => {
     if (selectedUser && selectedTraining) {
       const user = users.find((user) => user.id === parseInt(selectedUser));
       const training = trainings.find(
         (training) => training.id === parseInt(selectedTraining)
       );
 
-      setAssignments([
-        ...assignments,
-        {
-          userId: user.id,
-          userName: user.name,
-          trainingName: training.name,
-          assignedDate: new Date().toLocaleDateString(),
-          completionDate: null,
-          progress: 0,
-          quizScore: 'N/A',
-        },
-      ]);
+      // Create the assignment through API
+      const assignmentData = {
+        user: user.id,
+        item: training.id,
+        itemType: 'Training',
+        dueDate: new Date().toLocaleDateString(), // Just an example for due date
+      };
 
-      setSelectedUser('');
-      setSelectedTraining('');
-      setProgress('');
-      setQuizScore('');
-      setAlertMessage(`Assigned "${training.name}" to "${user.name}".`);
-      setTimeout(() => setAlertMessage(''), 3000); // Clear alert after 3 seconds
+      try {
+        await createAssignment(assignmentData);
+        setAssignments([
+          ...assignments,
+          {
+            userId: user.id,
+            userName: user.name,
+            trainingName: training.name,
+            assignedDate: new Date().toLocaleDateString(),
+            completionDate: null,
+            progress: 0,
+            quizScore: 'N/A',
+          },
+        ]);
+
+        setAlertMessage(`Assigned "${training.name}" to "${user.name}".`);
+        setTimeout(() => setAlertMessage(''), 3000); // Clear alert after 3 seconds
+
+        // Reset selection fields
+        setSelectedUser('');
+        setSelectedTraining('');
+        setProgress('');
+        setQuizScore('');
+      } catch (error) {
+        setAlertMessage('Failed to assign training. Please try again.');
+        setTimeout(() => setAlertMessage(''), 3000);
+      }
     } else {
       setAlertMessage('Please select a user and a training.');
       setTimeout(() => setAlertMessage(''), 3000);
@@ -127,8 +138,8 @@ const UserAssignmentPage = () => {
                   <em>-- Select User --</em>
                 </MenuItem>
                 {users.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.name}
+                  <MenuItem key={user._id} value={user._id}>
+                    {user.username} - {user.role}
                   </MenuItem>
                 ))}
               </Select>
@@ -156,24 +167,6 @@ const UserAssignmentPage = () => {
               </Select>
             </FormControl>
           </Grid>
-
-          {/* <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label='Progress'
-              value={progress}
-              onChange={(e) => setProgress(e.target.value)}
-            />
-          </Grid> */}
-
-          {/* <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label='Quiz Score'
-              value={quizScore}
-              onChange={(e) => setQuizScore(e.target.value)}
-            />
-          </Grid>*/}
         </Grid>
 
         <Button
