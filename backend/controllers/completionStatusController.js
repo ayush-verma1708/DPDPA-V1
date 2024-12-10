@@ -387,7 +387,6 @@ export const delegateToIT = async (req, res) => {
     }
 
     const softwareName = completionStatus.selectedSoftware?.software_name;
-    console.log('Software Name:', softwareName);
 
     // Folder creation logic removed
 
