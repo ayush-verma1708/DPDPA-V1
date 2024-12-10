@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  createQuiz,
-  getAllQuizzes,
-  updateQuiz,
-  deleteQuiz,
-} from '../api/quizApi';
+import { createQuiz, updateQuiz, deleteQuiz } from '../api/quizApi';
 import {
   Container,
   Typography,
@@ -26,6 +21,7 @@ import {
   Alert,
 } from '@mui/material';
 import { Edit, Delete, Add, Visibility } from '@mui/icons-material';
+import { getQuizByTrainingid } from '../api/quizApi';
 
 const QuizComponent = ({ training }) => {
   const [quizzes, setQuizzes] = useState([]);
@@ -44,19 +40,25 @@ const QuizComponent = ({ training }) => {
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    const fetchQuizzes = async () => {
+    const fetchQuiz = async () => {
       setLoading(true);
       try {
-        const data = await getAllQuizzes();
-        setQuizzes(
-          data.quizzes.filter((quiz) => quiz.training === training._id)
-        );
+        console.log('Fetching quiz by training ID...');
+        const existingQuiz = await getQuizByTrainingid(training._id);
+        if (existingQuiz) {
+          console.log('Existing quiz found:', existingQuiz);
+          setQuizzes(existingQuiz[0]);
+          setViewQuiz(existingQuiz[0]);
+          setTabIndex(1);
+        } else {
+          console.warn('No existing quiz found for this training ID.');
+        }
       } catch (error) {
-        console.error('Failed to fetch quizzes:', error);
+        console.error('Failed to fetch quiz:', error);
       }
       setLoading(false);
     };
-    fetchQuizzes();
+    fetchQuiz();
   }, [training]);
 
   const handleCreateQuiz = async () => {
@@ -116,6 +118,7 @@ const QuizComponent = ({ training }) => {
     <Container>
       <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label='Manage Quizzes' />
+        <Tab label='View Quiz' />
       </Tabs>
       {loading ? (
         <CircularProgress />
@@ -126,7 +129,7 @@ const QuizComponent = ({ training }) => {
               {successMessage}
             </Alert>
           )}
-          {tabIndex === 0 && (
+          {tabIndex === 0 && !viewQuiz && (
             <Box>
               <List>
                 {quizzes.map((quiz) => (
@@ -135,6 +138,14 @@ const QuizComponent = ({ training }) => {
                       primary={quiz.title}
                       secondary={`Training ID: ${quiz.training}`}
                     />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge='end'
+                        onClick={() => handleViewQuiz(quiz)}
+                      >
+                        <Visibility />
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>
@@ -339,6 +350,36 @@ const QuizComponent = ({ training }) => {
                 </Box>
               )}
             </Box>
+          )}
+          {tabIndex === 1 && viewQuiz ? (
+            <Box component={Paper} p={2} mt={2}>
+              <Typography variant='h5'>View Quiz: {viewQuiz.title}</Typography>
+              <Typography variant='body1'>
+                Training ID: {viewQuiz.training}
+              </Typography>
+              <Typography variant='body1'>
+                Passing Score: {viewQuiz.passingScore}
+              </Typography>
+              {viewQuiz.questions &&
+                viewQuiz.questions.map((question, index) => (
+                  <Box key={index} mt={2}>
+                    <Typography variant='h6'>
+                      Question {index + 1}: {question.questionText}
+                    </Typography>
+                    {question.options.map((option, optIndex) => (
+                      <Typography key={optIndex} variant='body2'>
+                        Option {optIndex + 1}: {option.optionText}{' '}
+                        {option.isCorrect ? '(Correct)' : ''}
+                      </Typography>
+                    ))}
+                  </Box>
+                ))}
+              <Button onClick={() => setTabIndex(0)}>Back</Button>
+            </Box>
+          ) : (
+            <Typography variant='body1'>
+              No quiz available to display.
+            </Typography>
           )}
         </Box>
       )}
