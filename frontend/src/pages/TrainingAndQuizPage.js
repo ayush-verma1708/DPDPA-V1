@@ -12,197 +12,179 @@ import {
   Grid,
   Tabs,
   Tab,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactPlayer from 'react-player';
+import { getAssignmentsByUser } from '../api/assignmentApi'; // Adjust the path as necessary
+import useFetchUser from '../hooks/useCurrentUser'; // Adjust the path if necessary
+import ViewQuiz from '../components/viewQuiz';
+
+import { getQuizByTrainingid } from '../api/quizApi';
 
 const TrainingAndQuizPage = () => {
   const [trainings, setTrainings] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [quiz, setQuiz] = useState([]);
+  const [selectedTraining, setSelectedTraining] = useState(null);
+  const [selectedLecture, setSelectedLecture] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
+  const token = localStorage.getItem('token');
+  const { user, loading, error } = useFetchUser(token);
+  const userId = user ? user._id : null;
 
   useEffect(() => {
-    const dummyTrainings = [
-      {
-        id: 1,
-        title: 'Compliance Training',
-        program: 'Compliance',
-        description: 'A training program on company compliance policies.',
-        lectures: [
-          {
-            title: 'Introduction to Compliance',
-            url: 'https://youtu.be/HjhbJKK5OJU',
-            duration: 30,
-          },
-          {
-            title: 'Advanced Compliance Topics',
-            url: 'https://youtu.be/LdllXZqRZUA',
-            duration: 45,
-          },
-        ],
-      },
-      {
-        id: 2,
-        title: 'Cybersecurity Basics',
-        description: 'Learn the basics of cybersecurity.',
-        lectures: [
-          {
-            title: 'What is Cybersecurity?',
-            url: 'https://youtu.be/HjhbJKK5OJU',
-            duration: 20,
-          },
-          {
-            title: 'Best Practices',
-            url: 'https://youtu.be/LdllXZqRZUA',
-            duration: 35,
-          },
-        ],
-      },
-    ];
+    const fetchAssignments = async () => {
+      if (!userId) return;
+      try {
+        const assignments = await getAssignmentsByUser(userId);
+        setTrainings(
+          assignments.filter((a) => a.itemType === 'Training') || []
+        );
+        setQuizzes(assignments.filter((a) => a.itemType === 'Quiz') || []);
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
+      }
+    };
 
-    const dummyQuizzes = [
-      {
-        id: 1,
-        title: 'Cybersecurity Quiz',
-        description: 'Test your knowledge on cybersecurity.',
-      },
-      {
-        id: 2,
-        title: 'Data Privacy Quiz',
-        description: 'Evaluate your understanding of data privacy.',
-      },
-    ];
-
-    setTrainings(dummyTrainings);
-    setQuizzes(dummyQuizzes);
-  }, []);
+    fetchAssignments();
+  }, [userId]);
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
+  const handleTrainingCompletion = async (training) => {
+    setSelectedTraining(training);
+    setTabIndex(1); // Navigate to the quiz tab
+    try {
+      const quiz = await getQuizByTrainingid(training.item._id);
+      console.log(quiz[0]._id);
+      setQuizzes([quizzes]);
+      setQuiz(quiz[0]._id);
+    } catch (error) {
+      console.error('Error fetching quiz:', error);
+    }
+  };
+
+  const handleLectureSelect = (lecture) => {
+    setSelectedLecture(lecture);
+  };
+
+  if (loading) {
+    return (
+      <Typography variant='h6' align='center'>
+        Loading...
+      </Typography>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography variant='h6' align='center' color='error'>
+        Error loading data
+      </Typography>
+    );
+  }
+
   return (
     <div>
-      {/* Tabs for Navigation */}
       <Tabs value={tabIndex} onChange={handleTabChange} centered>
         <Tab label='Trainings' />
-        <Tab label='Quizzes' />
+        <Tab label='Quiz' />
       </Tabs>
-
-      {/* Content Section */}
-      <div
-        style={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          padding: '20px',
-          backgroundColor: '#fff',
-        }}
-      >
-        {tabIndex === 0 && (
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Typography variant='h4' align='center' color='primary'>
-                Assigned Trainings
-              </Typography>
-              <List>
-                {trainings.map((training) => (
-                  <React.Fragment key={training.id}>
-                    <Accordion>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls={`panel-${training.id}-content`}
-                        id={`panel-${training.id}-header`}
-                      >
-                        <Typography variant='h6'>{training.title}</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography variant='body2' color='textSecondary'>
-                          {training.description}
-                        </Typography>
-                        <List style={{ marginTop: '16px' }}>
-                          {training.lectures.map((lecture, index) => (
-                            <React.Fragment key={index}>
-                              <ListItem>
-                                <ListItemText
-                                  primary={lecture.title}
-                                  secondary={`Duration: ${lecture.duration} minutes`}
-                                />
-                                <Button
-                                  variant='contained'
-                                  color='primary'
-                                  onClick={() => setSelectedVideo(lecture.url)}
-                                  style={{ marginLeft: '16px' }}
-                                >
-                                  Watch
-                                </Button>
-                              </ListItem>
-                              <Divider />
-                            </React.Fragment>
-                          ))}
-                        </List>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Divider style={{ margin: '16px 0' }} />
-                  </React.Fragment>
-                ))}
-              </List>
-            </Grid>
-
-            {/* Video Player Section */}
-            {selectedVideo && (
-              <Grid item xs={12}>
-                <div
-                  style={{
-                    padding: '16px',
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <ReactPlayer url={selectedVideo} controls width='80%' />
-                </div>
-              </Grid>
-            )}
-          </Grid>
-        )}
-
-        {tabIndex === 1 && (
-          <div>
-            <Typography
-              variant='h4'
-              gutterBottom
-              style={{ textAlign: 'center' }}
-              color='primary'
-            >
-              Assigned Quizzes
+      {tabIndex === 0 && (
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Typography variant='h5' align='center' gutterBottom>
+              Trainings
             </Typography>
             <List>
-              {quizzes.map((quiz) => (
-                <React.Fragment key={quiz.id}>
+              {trainings.map((training) => (
+                <div key={training._id}>
                   <ListItem>
-                    <ListItemText
-                      primary={quiz.title}
-                      secondary={quiz.description}
-                    />
-                    <Button
-                      variant='contained'
-                      color='secondary'
-                      style={{ marginLeft: '16px' }}
-                      onClick={() => alert(`Starting ${quiz.title}`)}
-                    >
-                      Start Quiz
-                    </Button>
+                    <Accordion>
+                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant='h6'>
+                          {training.item?.title || 'No Title'}
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography variant='body1'>
+                          {training.item?.description || 'No Description'}
+                        </Typography>
+                        <Typography variant='caption'>
+                          Due Date:{' '}
+                          {training.dueDate
+                            ? new Date(training.dueDate).toLocaleDateString()
+                            : 'No Due Date'}
+                        </Typography>
+                        <List>
+                          {training.item?.lectures?.map((lecture) => (
+                            <ListItem
+                              button
+                              key={lecture._id}
+                              onClick={() => handleLectureSelect(lecture)}
+                            >
+                              <ListItemText primary={lecture.title} />
+                            </ListItem>
+                          )) || 'No Lectures'}
+                        </List>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              onChange={() =>
+                                handleTrainingCompletion(training)
+                              }
+                              color='primary'
+                            />
+                          }
+                          label='Mark as Completed'
+                        />
+                      </AccordionDetails>
+                    </Accordion>
                   </ListItem>
-                  <Divider style={{ marginTop: '8px' }} />
-                </React.Fragment>
+                  <Divider />
+                </div>
               ))}
             </List>
-          </div>
-        )}
-      </div>
+          </Grid>
+          <Grid item xs={8}>
+            {selectedLecture ? (
+              <div>
+                <Typography variant='h5' gutterBottom>
+                  {selectedLecture.title}
+                </Typography>
+                <ReactPlayer url={selectedLecture.url} controls width='100%' />
+                <Typography variant='body1' style={{ marginTop: '10px' }}>
+                  Duration: {selectedLecture.duration} minutes
+                </Typography>
+              </div>
+            ) : (
+              <Typography variant='h6' align='center'>
+                Select a lecture to view details
+              </Typography>
+            )}
+          </Grid>
+        </Grid>
+      )}
+      {tabIndex === 1 && (
+        <div>
+          {quizzes.length > 0 ? (
+            <ViewQuiz quizId={quiz} />
+          ) : (
+            <Typography
+              variant='h5'
+              align='center'
+              color='success.main'
+              gutterBottom
+            >
+              Congratulations! You have completed all available quizzes.
+            </Typography>
+          )}
+        </div>
+      )}
     </div>
   );
 };

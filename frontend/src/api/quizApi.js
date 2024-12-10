@@ -53,4 +53,23 @@ const deleteQuiz = async (id) => {
   }
 };
 
-export { createQuiz, getAllQuizzes, getQuizById, updateQuiz, deleteQuiz };
+const getQuizByTrainingid = async (trainingId) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/quizzes/trainings/${trainingId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching quiz by training ID:', error);
+    throw error;
+  }
+};
+
+export {
+  createQuiz,
+  getAllQuizzes,
+  getQuizById,
+  updateQuiz,
+  deleteQuiz,
+  getQuizByTrainingid,
+};

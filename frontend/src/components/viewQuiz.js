@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   CircularProgress,
   Typography,
   RadioGroup,
@@ -12,39 +8,22 @@ import {
   Radio,
   Button,
 } from '@mui/material';
-import { getAllQuizzes, getQuizById } from '../api/quizApi';
+import { getQuizById } from '../api/quizApi';
 
-const ViewQuiz = () => {
-  const [quizzes, setQuizzes] = useState([]);
-  const [selectedQuizId, setSelectedQuizId] = useState('');
+const ViewQuiz = ({ quizId }) => {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
   const [responses, setResponses] = useState([]);
 
-  // Fetch all quizzes on component load
+  // Fetch quiz details based on quizId prop
   useEffect(() => {
-    const fetchQuizzes = async () => {
-      setLoading(true);
-      try {
-        const data = await getAllQuizzes();
-        console.log(data);
-        setQuizzes(data.quizzes); // Assuming the API returns a quizzes field
-      } catch (error) {
-        console.error('Error fetching quizzes:', error);
-      }
-      setLoading(false);
-    };
-
-    fetchQuizzes();
-  }, []);
-
-  // Fetch quiz details based on selected quiz
-  useEffect(() => {
-    if (selectedQuizId) {
+    if (quizId) {
       const fetchQuiz = async () => {
         setLoading(true);
         try {
-          const data = await getQuizById(selectedQuizId);
+          console.log('searching', quizId);
+          const data = await getQuizById(quizId);
+          console.log('searched', data);
           setQuiz(data.quiz); // Ensure the correct field is accessed
           setResponses(new Array(data.quiz.questions.length).fill('')); // Reset responses on quiz change
         } catch (error) {
@@ -55,11 +34,7 @@ const ViewQuiz = () => {
 
       fetchQuiz();
     }
-  }, [selectedQuizId]);
-
-  const handleQuizSelection = (event) => {
-    setSelectedQuizId(event.target.value);
-  };
+  }, [quizId]);
 
   const handleOptionChange = (questionIndex, value) => {
     const newResponses = [...responses];
@@ -73,33 +48,10 @@ const ViewQuiz = () => {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography variant='h4' gutterBottom>
-        Select a Quiz
-      </Typography>
-
-      {/* Quiz selection dropdown */}
-      <FormControl fullWidth>
-        <InputLabel id='select-quiz-label'>Select Quiz</InputLabel>
-        <Select
-          labelId='select-quiz-label'
-          value={selectedQuizId}
-          onChange={handleQuizSelection}
-          label='Select Quiz'
-        >
-          {quizzes.map((quiz) => (
-            <MenuItem key={quiz._id} value={quiz._id}>
-              {quiz.title}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* Show quiz questions if a quiz is selected */}
       {loading ? (
         <CircularProgress sx={{ marginTop: 2 }} />
       ) : (
-        quiz &&
-        selectedQuizId && (
+        quiz && (
           <Box sx={{ marginTop: 4 }}>
             <Typography variant='h5' gutterBottom>
               {quiz.title}

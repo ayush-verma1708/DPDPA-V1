@@ -7,6 +7,17 @@ export const createAssignment = async (req, res) => {
   const { user, item, itemType, dueDate } = req.body;
 
   try {
+    const existingAssignment = await Assignment.findOne({
+      user,
+      item,
+      itemType,
+    });
+    if (existingAssignment) {
+      return res
+        .status(400)
+        .json({ message: 'Assignment already exists for this user and item' });
+    }
+
     const assignment = new Assignment({
       user,
       item,
@@ -93,38 +104,6 @@ export const deleteAssignment = async (req, res) => {
   }
 };
 
-// export const assignToRole = async (req, res) => {
-//   const { role, item, itemType, dueDate } = req.body;
-
-//   try {
-//     const users = await User.find({ role });
-
-//     if (!users.length)
-//       return res
-//         .status(404)
-//         .json({ message: 'No users found for the specified role' });
-
-//     const assignments = [];
-
-//     for (const user of users) {
-//       const assignment = new Assignment({
-//         user: user._id,
-//         item,
-//         itemType,
-//         dueDate,
-//       });
-//       await assignment.save();
-//       assignments.push(assignment);
-//     }
-
-//     res.status(201).json({
-//       message: `Assigned ${itemType} to ${users.length} users with role ${role}`,
-//       assignments,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error assigning items to role', error });
-//   }
-// };
 export const assignToRole = async (req, res) => {
   const { role, item, itemType, dueDate } = req.body;
 
@@ -137,19 +116,31 @@ export const assignToRole = async (req, res) => {
         .json({ message: 'No users found for the specified role' });
 
     const assignments = await Promise.all(
-      users.map((user) =>
-        new Assignment({
+      users.map(async (user) => {
+        const existingAssignment = await Assignment.findOne({
+          user: user._id,
+          item,
+          itemType,
+        });
+        if (existingAssignment) {
+          return null;
+        }
+        return new Assignment({
           user: user._id,
           item,
           itemType,
           dueDate,
-        }).save()
-      )
+        }).save();
+      })
+    );
+
+    const filteredAssignments = assignments.filter(
+      (assignment) => assignment !== null
     );
 
     res.status(201).json({
-      message: `Assigned ${itemType} to ${users.length} users with role ${role}`,
-      assignments,
+      message: `Assigned ${itemType} to ${filteredAssignments.length} users with role ${role}`,
+      assignments: filteredAssignments,
     });
   } catch (error) {
     res.status(500).json({ message: 'Error assigning items to role', error });

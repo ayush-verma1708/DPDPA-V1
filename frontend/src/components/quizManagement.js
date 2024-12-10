@@ -131,9 +131,6 @@ const QuizComponent = ({ training }) => {
 
   return (
     <Container>
-      {/* <Typography variant='h4' gutterBottom>
-        Quizzes for {training.title}
-      </Typography> */}
       <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label='Manage Quizzes' />
       </Tabs>

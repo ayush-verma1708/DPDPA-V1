@@ -20,31 +20,31 @@ import {
 } from '@mui/material';
 import { getUsers } from '../api/userApi'; // Assuming your API is in this file
 import { getAllTrainings } from '../api/trainingApi';
-import { createAssignment, getAssignmentsByUser } from '../api/assignmentApi';
+import {
+  createAssignment,
+  getAssignmentsByUser,
+  getAllAssignments,
+  assignToRole,
+} from '../api/assignmentApi';
 
 const UserAssignmentPage = () => {
   const [users, setUsers] = useState([]);
 
-  const [trainings, setTrainings] = useState([
-    { id: 1, name: 'DPDPA Overview' },
-    { id: 2, name: 'Data Protection Principles' },
-    { id: 3, name: 'Compliance and Enforcement' },
-  ]);
-
+  const [trainings, setTrainings] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedTraining, setSelectedTraining] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
+
   const [progress, setProgress] = useState('');
   const [quizScore, setQuizScore] = useState('');
+  const [selectedRole, setSelectedRole] = useState('');
 
   // Fetch all users and populate the state
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        console.log('fetching users');
         const userData = await getUsers(); // Fetch users using the API
-        console.log(userData.users);
         setUsers(userData.users);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -55,26 +55,75 @@ const UserAssignmentPage = () => {
     fetchUsers();
   }, []);
 
-  // Fetch assignments for a specific user when selected
+  // Fetch all users and populate the state
   useEffect(() => {
-    if (selectedUser) {
-      getAssignmentsByUser(selectedUser)
-        .then((data) => setAssignments(data))
-        .catch((error) => console.error('Error fetching assignments:', error));
+    const fetchTrainings = async () => {
+      try {
+        const trainingData = await getAllTrainings(); // Fetch users using the API
+        setTrainings(trainingData.trainings);
+      } catch (error) {
+        console.error('Error fetching Trainings:', error);
+        setTrainings([]); // Set users to an empty array in case of error
+      }
+    };
+
+    fetchTrainings();
+  }, []);
+
+  useEffect(() => {
+    fetchAllAssignments();
+  }, []);
+
+  // Fetch all assignments and populate the state
+  const fetchAllAssignments = async () => {
+    try {
+      const assignmentData = await getAllAssignments();
+      console.log(assignmentData);
+      const formattedAssignments = assignmentData.map((assignment) => ({
+        userId: assignment.user._id,
+        userName: assignment.user.username,
+        trainingName: assignment.item.title,
+        assignedDate: new Date(assignment.assignedAt).toLocaleDateString(),
+        completionDate: assignment.completedAt
+          ? new Date(assignment.completedAt).toLocaleDateString()
+          : 'N/A',
+        progress: assignment.status === 'Completed' ? 100 : 0,
+        quizScore: assignment.score !== null ? assignment.score : 'N/A',
+      }));
+      setAssignments(formattedAssignments);
+    } catch (error) {
+      console.error('Error fetching all assignments:', error);
+      setAssignments([]); // Set assignments to an empty array in case of error
     }
-  }, [selectedUser]);
+  };
 
   const handleAssign = async () => {
     if (selectedUser && selectedTraining) {
-      const user = users.find((user) => user.id === parseInt(selectedUser));
+      const existingAssignment = assignments.find(
+        (assignment) =>
+          assignment.userId === selectedUser &&
+          assignment.trainingName ===
+            trainings.find((t) => t._id === selectedTraining).title
+      );
+
+      if (existingAssignment) {
+        setAlertMessage(
+          'This training is already assigned to the selected user.'
+        );
+        setTimeout(() => setAlertMessage(''), 3000);
+        return;
+      }
+
+      console.log(selectedUser, selectedTraining);
+      const user = users.find((user) => user._id === selectedUser);
       const training = trainings.find(
-        (training) => training.id === parseInt(selectedTraining)
+        (training) => training._id === selectedTraining
       );
 
       // Create the assignment through API
       const assignmentData = {
-        user: user.id,
-        item: training.id,
+        user: user._id,
+        item: training._id,
         itemType: 'Training',
         dueDate: new Date().toLocaleDateString(), // Just an example for due date
       };
@@ -84,9 +133,9 @@ const UserAssignmentPage = () => {
         setAssignments([
           ...assignments,
           {
-            userId: user.id,
-            userName: user.name,
-            trainingName: training.name,
+            userId: user._id,
+            userName: user.username,
+            trainingName: training.title,
             assignedDate: new Date().toLocaleDateString(),
             completionDate: null,
             progress: 0,
@@ -94,7 +143,7 @@ const UserAssignmentPage = () => {
           },
         ]);
 
-        setAlertMessage(`Assigned "${training.name}" to "${user.name}".`);
+        setAlertMessage(`Assigned "${training.title}" to "${user.username}".`);
         setTimeout(() => setAlertMessage(''), 3000); // Clear alert after 3 seconds
 
         // Reset selection fields
@@ -108,6 +157,52 @@ const UserAssignmentPage = () => {
       }
     } else {
       setAlertMessage('Please select a user and a training.');
+      setTimeout(() => setAlertMessage(''), 3000);
+    }
+    fetchAllAssignments();
+  };
+
+  const handleAssignToRole = async () => {
+    if (selectedRole && selectedTraining) {
+      const existingAssignment = assignments.find(
+        (assignment) =>
+          assignment.userName === selectedRole &&
+          assignment.trainingName ===
+            trainings.find((t) => t._id === selectedTraining).title
+      );
+
+      if (existingAssignment) {
+        setAlertMessage(
+          'This training is already assigned to the selected role.'
+        );
+        setTimeout(() => setAlertMessage(''), 3000);
+        return;
+      }
+
+      const assignmentData = {
+        role: selectedRole,
+        item: selectedTraining,
+        itemType: 'Training',
+        dueDate: new Date().toLocaleDateString(), // Just an example for due date
+      };
+
+      try {
+        await assignToRole(assignmentData);
+        setAlertMessage(
+          `Assigned "${selectedTraining}" to role "${selectedRole}".`
+        );
+        setTimeout(() => setAlertMessage(''), 3000); // Clear alert after 3 seconds
+
+        // Reset selection fields
+        setSelectedRole('');
+        setSelectedTraining('');
+        fetchAllAssignments();
+      } catch (error) {
+        setAlertMessage('Failed to assign training to role. Please try again.');
+        setTimeout(() => setAlertMessage(''), 3000);
+      }
+    } else {
+      setAlertMessage('Please select a role and a training.');
       setTimeout(() => setAlertMessage(''), 3000);
     }
   };
@@ -131,7 +226,7 @@ const UserAssignmentPage = () => {
               <InputLabel id='user-select-label'>Select User</InputLabel>
               <Select
                 labelId='user-select-label'
-                value={selectedUser}
+                value={selectedUser || ''}
                 onChange={(e) => setSelectedUser(e.target.value)}
               >
                 <MenuItem value=''>
@@ -153,15 +248,15 @@ const UserAssignmentPage = () => {
               </InputLabel>
               <Select
                 labelId='training-select-label'
-                value={selectedTraining}
+                value={selectedTraining || ''}
                 onChange={(e) => setSelectedTraining(e.target.value)}
               >
                 <MenuItem value=''>
                   <em>-- Select Training --</em>
                 </MenuItem>
                 {trainings.map((training) => (
-                  <MenuItem key={training.id} value={training.id}>
-                    {training.name}
+                  <MenuItem key={training._id} value={training._id}>
+                    {training.title}
                   </MenuItem>
                 ))}
               </Select>
@@ -178,16 +273,73 @@ const UserAssignmentPage = () => {
           Assign Training
         </Button>
 
+        <Grid container spacing={4} sx={{ mb: 4 }}>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel id='role-select-label'>Select Role</InputLabel>
+              <Select
+                labelId='role-select-label'
+                value={selectedRole || ''}
+                onChange={(e) => setSelectedRole(e.target.value)}
+              >
+                <MenuItem value=''>
+                  <em>-- Select Role --</em>
+                </MenuItem>
+                {users
+                  .map((user) => user.role)
+                  .filter((value, index, self) => self.indexOf(value) === index)
+                  .map((role) => (
+                    <MenuItem key={role} value={role}>
+                      {role}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel id='training-select-label'>
+                Select Training
+              </InputLabel>
+              <Select
+                labelId='training-select-label'
+                value={selectedTraining || ''}
+                onChange={(e) => setSelectedTraining(e.target.value)}
+              >
+                <MenuItem value=''>
+                  <em>-- Select Training --</em>
+                </MenuItem>
+                {trainings.map((training) => (
+                  <MenuItem key={training._id} value={training._id}>
+                    {training.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={handleAssignToRole}
+          sx={{ mb: 4 }}
+        >
+          Assign Training to Role
+        </Button>
+
         <Typography variant='h5' gutterBottom>
           Assigned Trainings
         </Typography>
+
         {assignments.length > 0 ? (
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>User Name</TableCell>
-                  <TableCell>Training Name</TableCell>
+                  <TableCell>User</TableCell>
+                  <TableCell>Training</TableCell>
                   <TableCell>Assigned Date</TableCell>
                   <TableCell>Completion Date</TableCell>
                   <TableCell>Progress</TableCell>
@@ -195,12 +347,12 @@ const UserAssignmentPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {assignments.map((assignment, index) => (
-                  <TableRow key={index}>
+                {assignments.map((assignment) => (
+                  <TableRow key={assignment.userId + assignment.trainingName}>
                     <TableCell>{assignment.userName}</TableCell>
                     <TableCell>{assignment.trainingName}</TableCell>
                     <TableCell>{assignment.assignedDate}</TableCell>
-                    <TableCell>{assignment.completionDate || 'N/A'}</TableCell>
+                    <TableCell>{assignment.completionDate}</TableCell>
                     <TableCell>
                       <LinearProgress
                         variant='determinate'

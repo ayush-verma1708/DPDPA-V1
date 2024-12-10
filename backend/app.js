@@ -84,7 +84,7 @@ app.use('/api', azureRoutes);
 app.use('/api/v1', discoveredAssetRoutes);
 
 app.use('/api', trainingRoutes);
-app.use('/api', quizRoutes);
+app.use('/api', quizRoutes); // quiz routes
 app.use('/api/assignments', assignmentRoutes); // Assignment routes
 
 app.get('/:filename', async (req, res) => {

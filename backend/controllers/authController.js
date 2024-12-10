@@ -68,12 +68,5 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, 'Current user retrieved successfully.'));
 });
-// const getCurrentUser = AsyncHandler(async (req, res) => {
-//   const user = await User.findById(req.user.id).select('-password');
-//   if (!user) {
-//     throw new ApiError(404, 'User not found');
-//   }
-//   res.status(200).json(new ApiResponse(200, user, 'Current user retrieved successfully.'));
-// });
 
 export { login, getCurrentUser };
