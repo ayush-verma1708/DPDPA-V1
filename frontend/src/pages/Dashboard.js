@@ -42,13 +42,6 @@ const Dashboard = () => {
 
   return (
     <div>
-      <button
-        className={buttonClass}
-        onClick={toggleSteps}
-        style={{ float: 'right', margin: '10px', zaxis: '10' }}
-      >
-        {showSteps ? '❌' : '✔️'}
-      </button>
       {showSteps ? <StepsComponent onClose={toggleSteps} /> : <Scoreboard />}
     </div>
   );

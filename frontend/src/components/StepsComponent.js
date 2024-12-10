@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useReducer, useMemo } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import '../styles/StepsComponent.css';
 import {
   Box,
@@ -86,8 +87,8 @@ const StepsComponent = ({ onClose }) => {
     () => [
       {
         title: 'Step 1',
-        heading: 'User Creation',
-        description: 'Create new users and assign them permissions.',
+        heading: 'Stake Holder Mapping',
+        description: 'Manage stakeholders and assign them roles.',
         imageUrl: 'assets/1.png',
         linkUrl: '/user-creation',
         icon: '👤',
@@ -102,27 +103,11 @@ const StepsComponent = ({ onClose }) => {
       },
       {
         title: 'Step 3',
-        heading: 'List of Actions',
-        description:
-          'Access control families and complete actions to upload evidence.',
+        heading: 'Product Declaration',
+        description: 'Open the product family page to declare products.',
         imageUrl: 'assets/3.png',
-        linkUrl: '/Compliance-Operation',
+        linkUrl: '/product-family',
         icon: '📝',
-      },
-      {
-        title: 'Step 4',
-        heading: 'Scoreboard',
-        description:
-          'Track progress to match industry standard score and get recommendations.',
-        imageUrl: 'assets/4.png',
-        linkUrl: '/scoreboard',
-        icon: '📊',
-      },
-      {
-        title: 'Step 5',
-        linkUrl: '/final-tasks',
-        icon: '✅',
-        tasks: ['Review Documentation', 'Submit Final Report', 'Get Approval'], // Checkbox tasks
       },
     ],
     []
@@ -175,20 +160,28 @@ const StepsComponent = ({ onClose }) => {
   };
 
   return (
-    <div className='steps-container' onKeyDown={handleKeyDown} tabIndex='0'>
-      <button className='close-button' onClick={onClose} aria-label='Close'>
-        ×
-      </button>
-      <h1 className='steps-heading'>Onboarding Panel</h1>
-      <div className='progress-bar'>
+    <div
+      className='container mt-4 p-3'
+      onKeyDown={handleKeyDown}
+      tabIndex='0'
+      style={{ maxWidth: '800px' }}
+    >
+      <button
+        className='btn-close'
+        onClick={onClose}
+        aria-label='Close'
+      ></button>
+      <h1 className='text-center mb-4'>Onboarding Panel</h1>
+      <div className='progress mb-4'>
         <div
-          className='progress'
+          className='progress-bar'
+          role='progressbar'
           style={{
             width: `${(state.completedSteps.length / steps.length) * 100}%`,
           }}
         ></div>
       </div>
-      <div className='steps-header'>
+      <div className='d-flex justify-content-between mb-4'>
         {steps.map((step, index) => (
           <div
             key={index}
@@ -198,7 +191,9 @@ const StepsComponent = ({ onClose }) => {
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
           >
+            <div className='step-heading'>{step.heading}</div>
             <button
+              className='btn btn-outline-primary'
               onClick={() => dispatch({ type: 'SET_STEP', index })}
               aria-label={`Go to ${step.title}`}
             >
@@ -210,17 +205,17 @@ const StepsComponent = ({ onClose }) => {
       </div>
 
       <div className='steps-content'>
-        {steps[state.currentStep].imageUrl ? ( // Check if imageUrl is provided
-          <div className='steps-image'>
+        {steps[state.currentStep].imageUrl ? (
+          <div className='steps-image mb-4'>
             <a href={steps[state.currentStep].linkUrl}>
               <img
                 src={steps[state.currentStep].imageUrl}
                 alt={`${steps[state.currentStep].title} visual`}
+                className='img-fluid'
               />
             </a>
           </div>
-        ) : null}{' '}
-        {/* Render null if no imageUrl is provided */}
+        ) : null}
         <div className='steps-text'>
           <h2>{steps[state.currentStep].title}</h2>
           <h3>{steps[state.currentStep].heading}</h3>
@@ -256,7 +251,7 @@ const StepsComponent = ({ onClose }) => {
                         {task}
                       </Typography>
                     }
-                    sx={{ m: 0 }} // To remove margin
+                    sx={{ m: 0 }}
                   />
                 ))}
               </Box>
@@ -264,13 +259,16 @@ const StepsComponent = ({ onClose }) => {
           ) : state.completedSteps.includes(state.currentStep) ? (
             <div className='step-completed'>
               <h2>Completed</h2>
-              <button onClick={() => handleStepCompletion(state.currentStep)}>
+              <button
+                className='btn btn-warning'
+                onClick={() => handleStepCompletion(state.currentStep)}
+              >
                 Undo
               </button>
             </div>
           ) : (
             <button
-              className='complete-button'
+              className='btn btn-success'
               onClick={() => handleStepCompletion(state.currentStep)}
             >
               Mark as Complete
@@ -279,14 +277,16 @@ const StepsComponent = ({ onClose }) => {
         </div>
       </div>
 
-      <div className='steps-navigation'>
+      <div className='d-flex justify-content-between mt-4'>
         <button
+          className='btn btn-secondary'
           onClick={() => dispatch({ type: 'PREV_STEP' })}
           disabled={state.currentStep === 0}
         >
           Previous
         </button>
         <button
+          className='btn btn-primary'
           onClick={() =>
             dispatch({ type: 'NEXT_STEP', stepsLength: steps.length })
           }
@@ -294,7 +294,9 @@ const StepsComponent = ({ onClose }) => {
         >
           Next
         </button>
-        <button onClick={handleReset}>Reset</button>
+        <button className='btn btn-danger' onClick={handleReset}>
+          Reset
+        </button>
       </div>
     </div>
   );
