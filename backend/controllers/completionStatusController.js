@@ -419,18 +419,7 @@ export const delegateToIT = async (req, res) => {
 
 export const delegateToAuditor = async (req, res) => {
   const { completionStatusId } = req.params; // The current user ID is expected in the body, not params.
-  const { currentUserId } = req.body; // Move currentUserId to body instead of params
-
-  // Define default auditor
-  const defaultAuditor = default_Auditor_Id; // Ensure this is a valid ObjectId
-
-  // Validate ObjectId format
-  if (
-    !mongoose.Types.ObjectId.isValid(currentUserId) ||
-    !mongoose.Types.ObjectId.isValid(defaultAuditor)
-  ) {
-    return res.status(400).json({ error: 'Invalid User ID' });
-  }
+  const { auditorId, currentUserId } = req.body; // Move currentUserId to body instead of params
 
   try {
     // Find the completion status by ID
@@ -445,8 +434,7 @@ export const delegateToAuditor = async (req, res) => {
     const changes = {
       status: 'Audit Delegated',
       action: 'Delegate to Auditor',
-      AssignedBy: currentUserId,
-      AssignedTo: defaultAuditor,
+      AssignedTo: auditorId,
     };
 
     // Merge changes into the completion status object
@@ -460,8 +448,8 @@ export const delegateToAuditor = async (req, res) => {
 
     // Create a message indicating delegation to Auditor
     await createMessage(
-      defaultAuditor,
-      `Delegated to Auditor: ${defaultAuditor}`,
+      auditorId,
+      `Delegated to Auditor: ${auditorId}`,
       completionStatusId
     );
 

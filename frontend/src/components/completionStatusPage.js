@@ -188,11 +188,6 @@ const CompletionStatusPage = ({
     fetchData();
   }, []);
 
-  const onDelegateButtonClick = (statusId, assetId) => {
-    if (!checkAssetSelection()) return;
-    handleDelegateToIT(statusId, assetId);
-  };
-
   const handleDelegateToIT = async (statusId, assetId) => {
     if (!checkAssetSelection()) return;
     try {
@@ -231,27 +226,61 @@ const CompletionStatusPage = ({
     }
   };
 
-  const handleDelegateToAuditor = async (statusId, currentUserId) => {
-    // Log parameters to ensure they are being passed correctly
+  const handleDelegateToAuditor = async (statusId, assetId) => {
     if (!checkAssetSelection()) return;
     try {
-      // Call the API to delegate the status to the auditor
-      const response = await delegateToAuditor(statusId, currentUserId);
+      // Fetch asset details
+      const assetDetails = await getAssetDetails();
 
-      await handleFetchStatus();
-    } catch (error) {
-      // Enhanced error logging
-      console.error('Error delegating to Auditor:', error.message);
-      if (error.response) {
-        console.error('Error response:', error.response.data);
+      // Find the asset detail by assetId
+      const assetDetail = assetDetails.find(
+        (detail) => detail.asset._id === assetId
+      );
+
+      if (!assetDetail) {
+        return;
       }
+
+      // Get the IT owner username from the asset details
+      const auditorName = assetDetail.auditorName; // Adjust field name if needed
+
+      // Update the status with the IT owner username
+      await delegateToAuditor(statusId, currentUserId, auditorName);
+
+      // Update status in the list
+      updateStatusInList(
+        statusId,
+        'Audit Delegated',
+        'Delegate to Auditor',
+        auditorName
+      ); // Pass Auditor username
+      await handleFetchStatus(); // Refetch data after action
+    } catch (error) {
+      console.error('Error delegating to IT Team:', error);
     }
   };
+
+  // const handleDelegateToAuditor = async (statusId, currentUserId) => {
+  //   // Log parameters to ensure they are being passed correctly
+  //   if (!checkAssetSelection()) return;
+  //   try {
+  //     // Call the API to delegate the status to the auditor
+  //     const response = await delegateToAuditor(statusId, currentUserId);
+
+  //     await handleFetchStatus();
+  //   } catch (error) {
+  //     // Enhanced error logging
+  //     console.error('Error delegating to Auditor:', error.message);
+  //     if (error.response) {
+  //       console.error('Error response:', error.response.data);
+  //     }
+  //   }
+  // };
 
   const handleDelegateToExternalAuditor = async (statusId, currentUserId) => {
     if (!checkAssetSelection()) return;
     try {
-      const response = await delegateToExternalAuditor(statusId, currentUserId);
+      await delegateToExternalAuditor(statusId, currentUserId);
 
       await handleFetchStatus(); // Refetch data after action
     } catch (error) {
@@ -715,7 +744,7 @@ const CompletionStatusPage = ({
                                       variant='text'
                                       color='secondary'
                                       onClick={() =>
-                                        onDelegateButtonClick(
+                                        handleDelegateToIT(
                                           status._id,
                                           status.assetId._id
                                         )
@@ -742,7 +771,7 @@ const CompletionStatusPage = ({
                                       onClick={() =>
                                         handleDelegateToAuditor(
                                           status._id,
-                                          currentUserId
+                                          status.assetId._id
                                         )
                                       }
                                       disabled={
