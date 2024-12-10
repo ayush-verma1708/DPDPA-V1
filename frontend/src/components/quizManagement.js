@@ -26,31 +26,14 @@ import {
   Alert,
 } from '@mui/material';
 import { Edit, Delete, Add, Visibility } from '@mui/icons-material';
-import ViewQuizComponent from './viewQuiz';
 
 const QuizComponent = ({ training }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [newQuiz, setNewQuiz] = useState({
-    title: 'Compliance Quiz',
-    training: '675160003b2d8a97d67d0584',
+    title: '',
+    training: training._id,
     questions: [
-      {
-        questionText: 'What does compliance mean?',
-        options: [
-          { optionText: 'Following laws and regulations', isCorrect: true },
-          { optionText: 'Ignoring policies', isCorrect: false },
-        ],
-      },
-      {
-        questionText: 'What is the purpose of a compliance officer?',
-        options: [
-          {
-            optionText: 'To ensure compliance with regulations',
-            isCorrect: true,
-          },
-          { optionText: 'To do HR work', isCorrect: false },
-        ],
-      },
+      { questionText: '', options: [{ optionText: '', isCorrect: false }] },
     ],
     passingScore: 80,
   });
@@ -182,116 +165,118 @@ const QuizComponent = ({ training }) => {
                       disabled
                     />
                   </Grid>
-                  {newQuiz.questions.map((question, index) => (
-                    <Grid item xs={12} key={index}>
-                      <Paper variant='outlined' sx={{ p: 2, mb: 2 }}>
-                        <TextField
-                          label={`Question ${index + 1}`}
-                          value={question.questionText}
-                          onChange={(e) =>
-                            setNewQuiz({
-                              ...newQuiz,
-                              questions: newQuiz.questions.map((q, i) =>
-                                i === index
-                                  ? { ...q, questionText: e.target.value }
-                                  : q
-                              ),
-                            })
-                          }
-                          fullWidth
-                          margin='normal'
-                        />
-                        {question.options.map((option, optIndex) => (
-                          <Grid container spacing={2} key={optIndex}>
-                            <Grid item xs={8}>
-                              <TextField
-                                label={`Option ${optIndex + 1}`}
-                                value={option.optionText}
-                                onChange={(e) =>
-                                  setNewQuiz({
-                                    ...newQuiz,
-                                    questions: newQuiz.questions.map((q, i) =>
-                                      i === index
-                                        ? {
-                                            ...q,
-                                            options: q.options.map(
-                                              (opt, oIndex) =>
-                                                oIndex === optIndex
-                                                  ? {
-                                                      ...opt,
-                                                      optionText:
-                                                        e.target.value,
-                                                    }
-                                                  : opt
-                                            ),
-                                          }
-                                        : q
-                                    ),
-                                  })
-                                }
-                                fullWidth
-                                margin='normal'
-                              />
+                  {newQuiz.questions &&
+                    newQuiz.questions.map((question, index) => (
+                      <Grid item xs={12} key={index}>
+                        <Paper variant='outlined' sx={{ p: 2, mb: 2 }}>
+                          <TextField
+                            label={`Question ${index + 1}`}
+                            value={question.questionText}
+                            onChange={(e) =>
+                              setNewQuiz({
+                                ...newQuiz,
+                                questions: newQuiz.questions.map((q, i) =>
+                                  i === index
+                                    ? { ...q, questionText: e.target.value }
+                                    : q
+                                ),
+                              })
+                            }
+                            fullWidth
+                            margin='normal'
+                          />
+                          {question.options.map((option, optIndex) => (
+                            <Grid container spacing={2} key={optIndex}>
+                              <Grid item xs={8}>
+                                <TextField
+                                  label={`Option ${optIndex + 1}`}
+                                  value={option.optionText}
+                                  onChange={(e) =>
+                                    setNewQuiz({
+                                      ...newQuiz,
+                                      questions: newQuiz.questions.map((q, i) =>
+                                        i === index
+                                          ? {
+                                              ...q,
+                                              options: q.options.map(
+                                                (opt, oIndex) =>
+                                                  oIndex === optIndex
+                                                    ? {
+                                                        ...opt,
+                                                        optionText:
+                                                          e.target.value,
+                                                      }
+                                                    : opt
+                                              ),
+                                            }
+                                          : q
+                                      ),
+                                    })
+                                  }
+                                  fullWidth
+                                  margin='normal'
+                                />
+                              </Grid>
+                              <Grid item xs={4}>
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={option.isCorrect}
+                                      onChange={(e) =>
+                                        setNewQuiz({
+                                          ...newQuiz,
+                                          questions: newQuiz.questions.map(
+                                            (q, i) =>
+                                              i === index
+                                                ? {
+                                                    ...q,
+                                                    options: q.options.map(
+                                                      (opt, oIndex) =>
+                                                        oIndex === optIndex
+                                                          ? {
+                                                              ...opt,
+                                                              isCorrect:
+                                                                e.target
+                                                                  .checked,
+                                                            }
+                                                          : opt
+                                                    ),
+                                                  }
+                                                : q
+                                          ),
+                                        })
+                                      }
+                                    />
+                                  }
+                                  label='Correct'
+                                />
+                              </Grid>
                             </Grid>
-                            <Grid item xs={4}>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={option.isCorrect}
-                                    onChange={(e) =>
-                                      setNewQuiz({
-                                        ...newQuiz,
-                                        questions: newQuiz.questions.map(
-                                          (q, i) =>
-                                            i === index
-                                              ? {
-                                                  ...q,
-                                                  options: q.options.map(
-                                                    (opt, oIndex) =>
-                                                      oIndex === optIndex
-                                                        ? {
-                                                            ...opt,
-                                                            isCorrect:
-                                                              e.target.checked,
-                                                          }
-                                                        : opt
-                                                  ),
-                                                }
-                                              : q
-                                        ),
-                                      })
-                                    }
-                                  />
-                                }
-                                label='Correct'
-                              />
-                            </Grid>
-                          </Grid>
-                        ))}
-                        <Button
-                          startIcon={<Add />}
-                          onClick={() =>
-                            setNewQuiz({
-                              ...newQuiz,
-                              questions: newQuiz.questions.map((q, i) =>
-                                i === index
-                                  ? {
-                                      ...q,
-                                      options: [
-                                        ...q.options,
-                                        { optionText: '', isCorrect: false },
-                                      ],
-                                    }
-                                  : q
-                              ),
-                            })
-                          }
-                        >
-                          Add Option
-                        </Button>
-                      </Paper>
-                    </Grid>
-                  ))}
+                          ))}
+                          <Button
+                            startIcon={<Add />}
+                            onClick={() =>
+                              setNewQuiz({
+                                ...newQuiz,
+                                questions: newQuiz.questions.map((q, i) =>
+                                  i === index
+                                    ? {
+                                        ...q,
+                                        options: [
+                                          ...q.options,
+                                          { optionText: '', isCorrect: false },
+                                        ],
+                                      }
+                                    : q
+                                ),
+                              })
+                            }
+                          >
+                            Add Option
+                          </Button>
+                        </Paper>
+                      </Grid>
+                    ))}
                   <Grid item xs={12}>
                     <Button
                       startIcon={<Add />}

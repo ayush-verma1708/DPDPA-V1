@@ -49,7 +49,6 @@ const TrainingQuizPage = () => {
         <Tab label='Add New Training' />
         <Tab label='Existing Trainings' />
         {selectedTraining && <Tab label='Quiz Management' />}
-        <Tab label='View Quizzes' />
       </Tabs>
       {tabIndex === 0 && (
         <Box className='training-section' mb={4}>
@@ -80,7 +79,7 @@ const TrainingQuizPage = () => {
                     color='primary'
                     onClick={() => setTabIndex(2)}
                   >
-                    Manage Quiz
+                    Create Quiz
                   </Button>
                 </ListItem>
               ))}
