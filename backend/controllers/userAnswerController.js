@@ -55,7 +55,7 @@ export const getQuizResults = async (req, res) => {
   const { userId, quizId } = req.params;
 
   try {
-    const userAnswers = await UserAnswer.findOne({ user: userId, quiz: quizId })
+    const userAnswers = await UserAnswer.find({ user: userId, quiz: quizId })
       .populate('quiz')
       .populate('user');
 

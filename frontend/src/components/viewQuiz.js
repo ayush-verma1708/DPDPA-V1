@@ -50,8 +50,7 @@ const ViewQuiz = ({ quizId, userId }) => {
         try {
           const records = await getAssignmentsByUser(quizId, userId);
           console.log('Found', records);
-          // setPreviousRecords(records);
-          setPreviousRecords(Array.isArray(records) ? records : [records]);
+          setPreviousRecords(records);
         } catch (error) {
           console.error('Error fetching previous records:', error);
         }
@@ -153,9 +152,19 @@ const ViewQuiz = ({ quizId, userId }) => {
                     <TableBody>
                       {previousRecords.map((record) => (
                         <TableRow key={record._id}>
+                          {/* <TableCell>{record.submittedAt}</TableCell>
+                           */}
                           <TableCell>
-                            {new Date(record.createdAt).toLocaleString()}
+                            {new Date(record.submittedAt).toLocaleDateString(
+                              'en-GB',
+                              {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                              }
+                            )}
                           </TableCell>
+
                           <TableCell>{record.score}</TableCell>
                           <TableCell>{record.passed ? 'Yes' : 'No'}</TableCell>
                         </TableRow>
