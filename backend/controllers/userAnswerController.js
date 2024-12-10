@@ -1,5 +1,6 @@
 import UserAnswer from '../models/userAnswer.js';
 import Quiz from '../models/quizModel.js';
+import updateAssignmentScore from '../services/updateScoreService.js';
 
 export const submitQuizAnswers = async (req, res) => {
   const { userId, quizId, answers } = req.body;
@@ -39,6 +40,10 @@ export const submitQuizAnswers = async (req, res) => {
     });
 
     await userAnswerRecord.save();
+
+    // Step 5: Update the corresponding assignment record
+    // After saving the user's answers, call the updateAssignmentScore function
+    await updateAssignmentScore(userId, quizId);
 
     res.status(201).json({
       message: 'Quiz submitted successfully',

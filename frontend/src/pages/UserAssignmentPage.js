@@ -22,7 +22,6 @@ import { getUsers } from '../api/userApi'; // Assuming your API is in this file
 import { getAllTrainings } from '../api/trainingApi';
 import {
   createAssignment,
-  getAssignmentsByUser,
   getAllAssignments,
   assignToRole,
 } from '../api/assignmentApi';

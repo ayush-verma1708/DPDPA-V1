@@ -45,4 +45,8 @@ const assignmentSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('Assignment', assignmentSchema);
+// Check if the model is already defined to avoid overwriting
+const Assignment =
+  mongoose.models.Assignment || mongoose.model('Assignment', assignmentSchema);
+
+export default Assignment;
