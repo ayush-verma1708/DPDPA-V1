@@ -1,0 +1,42 @@
+[
+    {
+        "IP": "192.168.29.3",
+        "Hostnames": [
+            ""
+        ],
+        "OS": "Unknown",
+        "Open Ports": [],
+        "MAC": "24:ee:9a:a5:6a:63",
+        "MAC Vendor": "Intel Corporate"
+    },
+    {
+        "IP": "192.168.29.1",
+        "Hostnames": [
+            "reliance.reliance"
+        ],
+        "OS": "Unknown",
+        "Open Ports": [],
+        "MAC": "a8:da:0c:2b:d7:3f",
+        "MAC Vendor": "SERVERCOM (INDIA) PRIVATE LIMITED"
+    },
+    {
+        "IP": "192.168.29.11",
+        "Hostnames": [
+            ""
+        ],
+        "OS": "Unknown",
+        "Open Ports": [],
+        "MAC": "ac:74:b1:e0:ea:bb",
+        "MAC Vendor": "Intel Corporate"
+    },
+    {
+        "IP": "192.168.29.147",
+        "Hostnames": [
+            ""
+        ],
+        "OS": "Unknown",
+        "Open Ports": [],
+        "MAC": "a0:d0:dc:0c:52:a6",
+        "MAC Vendor": "Amazon Technologies Inc."
+    }
+]
