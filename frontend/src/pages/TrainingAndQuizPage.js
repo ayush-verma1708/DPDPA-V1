@@ -172,7 +172,7 @@ const TrainingAndQuizPage = () => {
       {tabIndex === 1 && (
         <div>
           {quizzes.length > 0 ? (
-            <ViewQuiz quizId={quiz} />
+            <ViewQuiz userId={userId} quizId={quiz} />
           ) : (
             <Typography
               variant='h5'

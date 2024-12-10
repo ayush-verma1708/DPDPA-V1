@@ -36,6 +36,7 @@ import discoveredAssetRoutes from './routes/discoveredAssetRoutes.js';
 import trainingRoutes from './routes/trainingRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import assignmentRoutes from './routes/assignmentRoutes.js'; // Import assignment routes
+import userAnswerRoutes from './routes/userAnswerRoutes.js'; // Import user answer routes
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,6 +87,8 @@ app.use('/api/v1', discoveredAssetRoutes);
 app.use('/api', trainingRoutes);
 app.use('/api', quizRoutes); // quiz routes
 app.use('/api/assignments', assignmentRoutes); // Assignment routes
+
+app.use('/api/assignments', userAnswerRoutes); // Assignment routes
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;

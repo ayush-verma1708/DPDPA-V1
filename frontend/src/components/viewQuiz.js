@@ -7,25 +7,32 @@ import {
   FormControlLabel,
   Radio,
   Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@mui/material';
 import { getQuizById } from '../api/quizApi';
+import { getAssignmentsByUser, submitQuizAnswers } from '../api/userAnswerApi';
 
-const ViewQuiz = ({ quizId }) => {
+const ViewQuiz = ({ quizId, userId }) => {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(false);
   const [responses, setResponses] = useState([]);
+  const [submissionResult, setSubmissionResult] = useState(null);
+  const [previousRecords, setPreviousRecords] = useState([]);
 
-  // Fetch quiz details based on quizId prop
+  // Fetch quiz details based on quizId
   useEffect(() => {
     if (quizId) {
       const fetchQuiz = async () => {
         setLoading(true);
         try {
-          console.log('searching', quizId);
           const data = await getQuizById(quizId);
-          console.log('searched', data);
-          setQuiz(data.quiz); // Ensure the correct field is accessed
-          setResponses(new Array(data.quiz.questions.length).fill('')); // Reset responses on quiz change
+          setQuiz(data.quiz);
+          setResponses(new Array(data.quiz.questions.length).fill('')); // Reset responses
         } catch (error) {
           console.error('Error fetching quiz:', error);
         }
@@ -36,14 +43,46 @@ const ViewQuiz = ({ quizId }) => {
     }
   }, [quizId]);
 
+  // Fetch user's previous records
+  useEffect(() => {
+    if (quizId && userId) {
+      const fetchRecords = async () => {
+        try {
+          const records = await getAssignmentsByUser(quizId, userId);
+          console.log('Found', records);
+          // setPreviousRecords(records);
+          setPreviousRecords(Array.isArray(records) ? records : [records]);
+        } catch (error) {
+          console.error('Error fetching previous records:', error);
+        }
+      };
+
+      fetchRecords();
+    }
+  }, [quizId, userId]);
+
   const handleOptionChange = (questionIndex, value) => {
     const newResponses = [...responses];
     newResponses[questionIndex] = value;
     setResponses(newResponses);
   };
 
-  const handleSubmit = () => {
-    console.log('User responses:', responses); // Handle form submission
+  const handleSubmit = async () => {
+    try {
+      const answers = quiz.questions.map((question, index) => ({
+        questionId: question._id,
+        selectedOptionId: responses[index],
+      }));
+
+      const result = await submitQuizAnswers(quizId, userId, answers);
+      setSubmissionResult(result);
+
+      // Fetch updated records after submission
+      const updatedRecords = await getAssignmentsByUser(quizId, userId);
+      setPreviousRecords(updatedRecords);
+    } catch (error) {
+      console.error('Error submitting quiz answers:', error);
+    }
   };
 
   return (
@@ -88,6 +127,48 @@ const ViewQuiz = ({ quizId }) => {
             >
               Submit
             </Button>
+
+            {submissionResult && (
+              <Box sx={{ marginTop: 4 }}>
+                <Typography variant='h6'>Quiz Submission Result</Typography>
+                <Typography>Score: {submissionResult.score}</Typography>
+                <Typography>
+                  Passed: {submissionResult.passed ? 'Yes' : 'No'}
+                </Typography>
+              </Box>
+            )}
+
+            {previousRecords.length > 0 ? (
+              <Box sx={{ marginTop: 4 }}>
+                <Typography variant='h6'>Previous Records</Typography>
+                <Paper>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Score</TableCell>
+                        <TableCell>Passed</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {previousRecords.map((record) => (
+                        <TableRow key={record._id}>
+                          <TableCell>
+                            {new Date(record.createdAt).toLocaleString()}
+                          </TableCell>
+                          <TableCell>{record.score}</TableCell>
+                          <TableCell>{record.passed ? 'Yes' : 'No'}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Paper>
+              </Box>
+            ) : (
+              <Typography variant='h6' sx={{ marginTop: 4 }}>
+                No previous records found.
+              </Typography>
+            )}
           </Box>
         )
       )}
