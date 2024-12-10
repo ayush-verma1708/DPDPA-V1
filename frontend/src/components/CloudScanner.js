@@ -15,8 +15,8 @@ const CloudScanner = () => {
     <Box>
       <Tabs value={activeTab} onChange={handleTabChange} centered>
         <Tab label='Azure' value='azure' />
-        <Tab label='AWS' value='aws' />
-        <Tab label='GCP' value='gcp' />
+        <Tab label='AWS' value='aws' disabled />
+        <Tab label='GCP' value='gcp' disabled />
       </Tabs>
       <Box className='tab-content'>
         {activeTab === 'azure' && <AzureLogin />}

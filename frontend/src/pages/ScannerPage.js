@@ -31,22 +31,35 @@ const AzureLogin = () => {
                 icon={<Router />}
                 label='Network Scanner'
                 iconPosition='start'
+                sx={{
+                  color: mainTab === 0 ? 'primary.main' : 'text.secondary',
+                }}
               />
               <Tab
                 icon={<Cloud />}
                 label='Cloud Provider'
                 iconPosition='start'
+                sx={{
+                  color: mainTab === 1 ? 'primary.main' : 'text.secondary',
+                }}
               />
-              <Tab icon={<Storage />} label='DB Scanner' iconPosition='start' />
+              <Tab
+                icon={<Storage />}
+                label='DB Scanner'
+                iconPosition='start'
+                disabled
+              />
               <Tab
                 icon={<Business />}
                 label='SAAS Scanner'
                 iconPosition='start'
+                disabled
               />
               <Tab
                 icon={<Dashboard />}
                 label='LOB Application'
                 iconPosition='start'
+                disabled
               />
             </Tabs>
 

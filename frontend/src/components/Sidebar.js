@@ -303,55 +303,81 @@ const Sidebar = ({ onSelect }) => {
             </ListItem>
           )}
 
-          <ListItem
-            button
-            component={Link}
-            to='/Training'
-            className={clsx({ active: activePath === '/Training' })}
-            aria-label='Training'
-            onClick={() => onSelect('Training')}
-            sx={{ width: '100%' }}
-          >
-            <ListItemIcon>
-              <SchoolIcon sx={{ color: 'white' }} />
-            </ListItemIcon>
-            {open && (
-              <ListItemText primary='Training' sx={{ color: 'white' }} />
-            )}
-          </ListItem>
+          {hasAccess(['Admin', 'Compliance Team']) && (
+            <>
+              <ListItem
+                button
+                component={Link}
+                to='/Training-and-Quiz'
+                className={clsx({ active: activePath === '/Training' })}
+                aria-label='Training'
+                onClick={() => onSelect('Training')}
+                sx={{ width: '100%' }}
+              >
+                <ListItemIcon>
+                  <SchoolIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText primary='Training' sx={{ color: 'white' }} />
+                )}
+              </ListItem>
+              {open && (
+                <List sx={{ paddingLeft: 3 }}>
+                  {/* Course 1 */}
+                  <ListItemButton component={Link} to='/Training'>
+                    <ListItemIcon>
+                      <InventoryOutlinedIcon sx={{ color: 'white' }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary='Management'
+                      sx={{ color: 'white' }}
+                    />
+                  </ListItemButton>
 
-          {/* Nested List for Sub-Items (Course 1 & Course 2) */}
-          {open && (
-            <List sx={{ paddingLeft: 3 }}>
-              {/* Course 1 */}
-              <ListItemButton component={Link} to='/Training'>
-                <ListItemIcon>
-                  <InventoryOutlinedIcon sx={{ color: 'white' }} />
-                </ListItemIcon>
-                <ListItemText primary='Management' sx={{ color: 'white' }} />
-              </ListItemButton>
+                  {/* Course 2 */}
+                  <ListItemButton component={Link} to='/User-Assignment'>
+                    <ListItemIcon>
+                      <AddchartIcon sx={{ color: 'white' }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary='User Assignment Page'
+                      sx={{ color: 'white' }}
+                    />
+                  </ListItemButton>
+                  {/* Course 2 */}
+                  <ListItemButton component={Link} to='/Training-and-Quiz'>
+                    <ListItemIcon>
+                      <AddchartIcon sx={{ color: 'white' }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary='Training and Quiz Page'
+                      sx={{ color: 'white' }}
+                    />
+                  </ListItemButton>
+                </List>
+              )}
+            </>
+          )}
 
-              {/* Course 2 */}
-              <ListItemButton component={Link} to='/User-Assignment'>
+          {!hasAccess(['Admin', 'Compliance Team']) && (
+            <>
+              <ListItem
+                button
+                component={Link}
+                to='/Training-and-Quiz'
+                className={clsx({ active: activePath === '/Training' })}
+                aria-label='Training'
+                onClick={() => onSelect('Training')}
+                sx={{ width: '100%' }}
+              >
                 <ListItemIcon>
-                  <AddchartIcon sx={{ color: 'white' }} />
+                  <SchoolIcon sx={{ color: 'white' }} />
                 </ListItemIcon>
-                <ListItemText
-                  primary='User Assignment Page'
-                  sx={{ color: 'white' }}
-                />
-              </ListItemButton>
-              {/* Course 2 */}
-              <ListItemButton component={Link} to='/Training-and-Quiz'>
-                <ListItemIcon>
-                  <AddchartIcon sx={{ color: 'white' }} />
-                </ListItemIcon>
-                <ListItemText
-                  primary='Training and Quiz Page'
-                  sx={{ color: 'white' }}
-                />
-              </ListItemButton>
-            </List>
+                {open && (
+                  <ListItemText primary='Training' sx={{ color: 'white' }} />
+                )}
+              </ListItem>
+            </>
           )}
 
           <ListItem
