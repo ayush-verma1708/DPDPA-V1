@@ -84,6 +84,8 @@ const ViewQuiz = ({ quizId, userId }) => {
     }
   };
 
+  const hasPassedTraining = previousRecords.some((record) => record.passed);
+
   return (
     <Box sx={{ padding: 4 }}>
       {loading ? (
@@ -91,6 +93,11 @@ const ViewQuiz = ({ quizId, userId }) => {
       ) : (
         quiz && (
           <Box sx={{ marginTop: 4 }}>
+            {hasPassedTraining && (
+              <Typography variant='h6' color='success' sx={{ marginBottom: 4 }}>
+                Congratulations, you have finished this training!
+              </Typography>
+            )}
             <Typography variant='h5' gutterBottom>
               {quiz.title}
             </Typography>
