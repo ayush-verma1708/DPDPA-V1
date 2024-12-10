@@ -117,7 +117,7 @@ const QuizComponent = ({ training }) => {
   return (
     <Container>
       <Tabs value={tabIndex} onChange={handleTabChange}>
-        <Tab label='Manage Quizzes' />
+        <Tab label='Create Quizzes' />
         <Tab label='View Quiz' />
       </Tabs>
       {loading ? (
@@ -377,9 +377,7 @@ const QuizComponent = ({ training }) => {
               <Button onClick={() => setTabIndex(0)}>Back</Button>
             </Box>
           ) : (
-            <Typography variant='body1'>
-              No quiz available to display.
-            </Typography>
+            <Typography variant='body1'>Quiz Already Created</Typography>
           )}
         </Box>
       )}
