@@ -341,7 +341,6 @@ const UserAssignmentPage = () => {
                   <TableCell>Training</TableCell>
                   <TableCell>Assigned Date</TableCell>
                   <TableCell>Completion Date</TableCell>
-                  <TableCell>Progress</TableCell>
                   <TableCell>Quiz Score</TableCell>
                 </TableRow>
               </TableHead>
@@ -352,12 +351,7 @@ const UserAssignmentPage = () => {
                     <TableCell>{assignment.trainingName}</TableCell>
                     <TableCell>{assignment.assignedDate}</TableCell>
                     <TableCell>{assignment.completionDate}</TableCell>
-                    <TableCell>
-                      <LinearProgress
-                        variant='determinate'
-                        value={assignment.progress}
-                      />
-                    </TableCell>
+
                     <TableCell>{assignment.quizScore}</TableCell>
                   </TableRow>
                 ))}
