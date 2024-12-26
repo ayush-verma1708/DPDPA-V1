@@ -6,9 +6,9 @@ const UserPreferencesForm = ({ companyId }) => {
   const [responses, setResponses] = useState([]);
   const [productFamilies, setProductFamilies] = useState([]);
   const [error, setError] = useState(null);
-  const [isSubmitted, setIsSubmitted] = useState(false); // State to track submission status
-  const [loading, setLoading] = useState(false); // State to track loading status
-  const [progress, setProgress] = useState(0); // State to track progress
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   // Fetch product families when the component mounts
   useEffect(() => {
@@ -39,6 +39,11 @@ const UserPreferencesForm = ({ companyId }) => {
       i === index ? { ...response, [field]: value } : response
     );
     setResponses(updatedResponses);
+  };
+
+  // Handle change for other software input
+  const handleOtherSoftwareChange = (index, value) => {
+    handleResponseChange(index, 'otherSoftware', value);
   };
 
   // Handle form submission for adding responses
@@ -78,7 +83,6 @@ const UserPreferencesForm = ({ companyId }) => {
     } finally {
       // Set loading state to false once the request is complete
       setLoading(false);
-      window.location.reload();
     }
   };
 
@@ -204,8 +208,31 @@ const UserPreferencesForm = ({ companyId }) => {
                           </option>
                         ))}
                       <option value='None'>None of these</option>
+                      <option value='Others'>Others</option>
                     </select>
                   </div>
+                  {response.selectedSoftware === 'Others' && (
+                    <div style={{ marginTop: '10px' }}>
+                      <label style={{ fontWeight: 'bold', color: '#333' }}>
+                        Other Software:
+                      </label>
+                      <input
+                        type='text'
+                        value={response.otherSoftware}
+                        onChange={(e) =>
+                          handleOtherSoftwareChange(index, e.target.value)
+                        }
+                        required
+                        style={{
+                          width: '100%',
+                          padding: '8px',
+                          borderRadius: '4px',
+                          border: '1px solid #ddd',
+                          marginTop: '4px',
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })

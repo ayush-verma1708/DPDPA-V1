@@ -14,12 +14,12 @@ const userResponseSchema = new mongoose.Schema(
       ref: 'ProductFamily',
     },
     selectedSoftware: {
-      type: mongoose.Schema.Types.ObjectId, // Reference to the Software model
+      type: mongoose.Schema.Types.Mixed, // Reference to the Software model
       ref: 'Software',
       default: null, // Can be null if no software is selected
     },
     otherSoftware: {
-      type: String, // For additional software input if 'Others' is selected
+      type: String,
       default: '',
     },
     isValid: {
