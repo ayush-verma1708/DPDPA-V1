@@ -4,7 +4,6 @@ import { ProductFamily } from '../models/productFamily.js'; // To fetch product 
 import { CompanyForm } from '../models/CompanyForm.js'; // Assuming you have a company model
 import createCompletionData from '../scripts/Node/createCompletionData.js';
 import { generateGroupedNotificationsForAssets } from '../scripts/Node/notificationCreate.js';
-
 import { default_TaskCreator } from '../constants.js';
 
 export const addUserResponses = async (req, res) => {
@@ -101,16 +100,16 @@ export const addUserResponses = async (req, res) => {
       );
     }
     // Once all responses are saved, trigger the task
-    // try {
-    //   // Trigger the task to create completion data (replace with correct ID if needed)
-    //   await generateGroupedNotificationsForAssets();
-    //   console.log('Completion data created successfully!');
-    // } catch (taskError) {
-    //   console.error(
-    //     'Error running tasks after response submission:',
-    //     taskError
-    //   );
-    // }
+    try {
+      // Trigger the task to create completion data (replace with correct ID if needed)
+      await generateGroupedNotificationsForAssets();
+      console.log('Completion data created successfully!');
+    } catch (taskError) {
+      console.error(
+        'Error running tasks after response submission:',
+        taskError
+      );
+    }
 
     // Return all saved responses
     return res.status(201).json({
