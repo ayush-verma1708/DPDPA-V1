@@ -8,6 +8,7 @@ import {
   setNotApplicableStatus,
   confirmNotApplicableStatus,
 } from '../api/completionStatusApi';
+
 import {
   Table,
   TableBody,
@@ -23,6 +24,7 @@ import {
   Switch,
   FormControlLabel,
 } from '@mui/material';
+
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
 
 import {
@@ -32,12 +34,12 @@ import {
   KeyboardArrowUp,
 } from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
-import { fetchCurrentUser, getUsernameById } from '../api/userApi';
+import { fetchCurrentUser } from '../api/userApi';
 import { Button, Tooltip } from '@mui/material';
 import EvidenceUpload from './EvidenceUpload';
 // import EvidenceFeedbackModal from './EvidenceFeedbackModal'; // Adjust the import path as needed
 import QueryModal from './EvidenceFeedbackModal';
-import ActionCell from './ActionCell.js'; // Import the ActionCell component
+// import ActionCell from './ActionCell.js'; // Import the ActionCell component
 
 const CompletionStatusPage = ({
   expandedFamilyId,
@@ -58,6 +60,8 @@ const CompletionStatusPage = ({
   const [evidenceUrl, setEvidenceUrl] = useState('');
   const [selectedActionId, setSelectedActionId] = useState(null);
   const [selectedControlId, setSelectedControlId] = useState(null);
+  //  no tasks
+  const [noTasks, setNoTasks] = useState(false); // State to manage if there are no tasks
 
   // Pagination state
   const [page, setPage] = useState(0);
@@ -85,67 +89,129 @@ const CompletionStatusPage = ({
     [selectedScopeId, selectedAssetId, expandedFamilyId, currentUserId]
   );
 
-  const handleQuery = async (actionId, controlId) => {
-    // Open the query modal when the button is clicked
-    if (!checkAssetSelection()) return;
-    handleEvidence(actionId, controlId);
-    setSelectedActionId(actionId);
-    setSelectedControlId(controlId);
-    setQueryModalOpen(true);
-  };
+  // const handleFetchStatus = async () => {
+  //   setLoading(true); // Start loading state
 
-  const handleQuerySubmit = async (query, actionId, controlId) => {
-    if (!checkAssetSelection()) return;
-    try {
-      // Issue the evidence and pass the query
-      await issueInEvidence(actionId, controlId, query);
+  //   try {
+  //     const response = await getStatus(query);
+  //     const fetchedStatuses = Array.isArray(response) ? response : [response];
 
-      // Update the status in the list with the new query and status
-      const newStatus = 'Query Submitted'; // Example of a new status
-      updateStatusInList(actionId, newStatus, 'Submit Query', null, query);
+  //     // Apply sorting logic
+  //     const sortedStatuses = fetchedStatuses.sort((a, b) => {
+  //       const controlFamilyComparison = (
+  //         a.controlId?.controlFamily?.fixed_id || ''
+  //       ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
+  //       if (controlFamilyComparison !== 0) {
+  //         return controlFamilyComparison;
+  //       }
 
-      // Optionally refetch statuses after updating
-      await handleFetchStatus();
-    } catch (error) {
-      console.error('Error submitting query:', error);
-    }
-  };
+  //       const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
+  //         b.controlId?.fixed_id || ''
+  //       );
+  //       if (controlComparison !== 0) {
+  //         return controlComparison;
+  //       }
+
+  //       return (a.actionId?.fixed_id || '').localeCompare(
+  //         b.actionId?.fixed_id || ''
+  //       );
+  //     });
+
+  //     setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
+  //   } catch (error) {
+  //     console.error('Error fetching status:', error);
+  //   } finally {
+  //     setLoading(false); // End loading state
+  //   }
+  // };
 
   const handleFetchStatus = async () => {
     setLoading(true); // Start loading state
+    setNoTasks(false); // Reset the state to false initially
 
     try {
       const response = await getStatus(query);
+      console.log('asset', selectedAssetId);
+      console.log(response);
+
+      // Check if the response contains data
       const fetchedStatuses = Array.isArray(response) ? response : [response];
 
-      // Apply sorting logic
-      const sortedStatuses = fetchedStatuses.sort((a, b) => {
-        const controlFamilyComparison = (
-          a.controlId?.controlFamily?.fixed_id || ''
-        ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
-        if (controlFamilyComparison !== 0) {
-          return controlFamilyComparison;
-        }
+      if (fetchedStatuses.length === 0) {
+        setNoTasks(true); // Set noTasks to true if there are no fetched statuses
+        setFetchedStatuses([]); // Clear the statuses if there are no tasks
+        console.log('old', fetchedStatuses);
+        console.log('No data available for this asset or scope.');
+      } else {
+        // Apply sorting logic
+        const sortedStatuses = fetchedStatuses.sort((a, b) => {
+          const controlFamilyComparison = (
+            a.controlId?.controlFamily?.fixed_id || ''
+          ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
+          if (controlFamilyComparison !== 0) return controlFamilyComparison;
 
-        const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
-          b.controlId?.fixed_id || ''
-        );
-        if (controlComparison !== 0) {
-          return controlComparison;
-        }
+          const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
+            b.controlId?.fixed_id || ''
+          );
+          if (controlComparison !== 0) return controlComparison;
 
-        return (a.actionId?.fixed_id || '').localeCompare(
-          b.actionId?.fixed_id || ''
-        );
-      });
+          return (a.actionId?.fixed_id || '').localeCompare(
+            b.actionId?.fixed_id || ''
+          );
+        });
 
-      setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
+        setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
+        console.log('new', fetchedStatuses);
+      }
     } catch (error) {
-      console.error('Error fetching status:', error);
+      if (error.response && error.response.status === 404) {
+        console.log('No data available for this response (404 error).');
+      } else {
+        console.error('Error fetching status:', error);
+      }
     } finally {
       setLoading(false); // End loading state
     }
   };
+
+  // const handleFetchStatus = async () => {
+  //   setLoading(true); // Start loading state
+  //   setNoTasks(false); // Reset the state to false initially
+
+  //   try {
+  //     const response = await getStatus(query);
+  //     console.log('asset', selectedAssetId);
+  //     console.log(response);
+  //     const fetchedStatuses = Array.isArray(response) ? response : [response];
+
+  //     if (fetchedStatuses.length === 0) {
+  //       setNoTasks(true); // Set noTasks to true if there are no fetched statuses
+  //     } else {
+  //       // Apply sorting logic
+  //       const sortedStatuses = fetchedStatuses.sort((a, b) => {
+  //         const controlFamilyComparison = (
+  //           a.controlId?.controlFamily?.fixed_id || ''
+  //         ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
+  //         if (controlFamilyComparison !== 0) return controlFamilyComparison;
+
+  //         const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
+  //           b.controlId?.fixed_id || ''
+  //         );
+  //         if (controlComparison !== 0) return controlComparison;
+
+  //         return (a.actionId?.fixed_id || '').localeCompare(
+  //           b.actionId?.fixed_id || ''
+  //         );
+  //       });
+
+  //       setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching status:', error);
+  //   } finally {
+  //     setLoading(false); // End loading state
+  //   }
+  // };
 
   useEffect(() => {
     handleFetchStatus(); // Fetch data on component mount and when query changes
@@ -175,18 +241,46 @@ const CompletionStatusPage = ({
   );
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCurrentUserData = async () => {
       try {
-        setLoading(true);
-        const actionsResponse = await fetchActions();
+        const token = window.localStorage.getItem('token'); // Replace with actual token
+        const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
+        setCurrentUsername(userData.data.username); // Set current username
+        setCurrentUserId(userData.data._id); // Set current username
+        setRole(userData.data.role); // Set role from user data
       } catch (error) {
-        console.error('Error fetching actions:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching current user data:', error);
       }
     };
-    fetchData();
-  }, []);
+
+    fetchCurrentUserData(); // Call the async function inside useEffect
+  }, []); // Empty dependency array means it runs once after the component mounts
+
+  const handleQuery = async (actionId, controlId) => {
+    // Open the query modal when the button is clicked
+    if (!checkAssetSelection()) return;
+    handleEvidence(actionId, controlId);
+    setSelectedActionId(actionId);
+    setSelectedControlId(controlId);
+    setQueryModalOpen(true);
+  };
+
+  const handleQuerySubmit = async (query, actionId, controlId) => {
+    if (!checkAssetSelection()) return;
+    try {
+      // Issue the evidence and pass the query
+      await issueInEvidence(actionId, controlId, query);
+
+      // Update the status in the list with the new query and status
+      const newStatus = 'Query Submitted'; // Example of a new status
+      updateStatusInList(actionId, newStatus, 'Submit Query', null, query);
+
+      // Optionally refetch statuses after updating
+      await handleFetchStatus();
+    } catch (error) {
+      console.error('Error submitting query:', error);
+    }
+  };
 
   const handleDelegateToIT = async (statusId, assetId) => {
     if (!checkAssetSelection()) return;
@@ -260,23 +354,6 @@ const CompletionStatusPage = ({
     }
   };
 
-  // const handleDelegateToAuditor = async (statusId, currentUserId) => {
-  //   // Log parameters to ensure they are being passed correctly
-  //   if (!checkAssetSelection()) return;
-  //   try {
-  //     // Call the API to delegate the status to the auditor
-  //     const response = await delegateToAuditor(statusId, currentUserId);
-
-  //     await handleFetchStatus();
-  //   } catch (error) {
-  //     // Enhanced error logging
-  //     console.error('Error delegating to Auditor:', error.message);
-  //     if (error.response) {
-  //       console.error('Error response:', error.response.data);
-  //     }
-  //   }
-  // };
-
   const handleDelegateToExternalAuditor = async (statusId, currentUserId) => {
     if (!checkAssetSelection()) return;
     try {
@@ -305,22 +382,6 @@ const CompletionStatusPage = ({
     );
   };
 
-  // const updateStatusInList = (
-  //   statusId,
-  //   newStatus,
-  //   action,
-  //   assignedTo,
-  //   feedback = ''
-  // ) => {
-  //   setFetchedStatuses(
-  //     fetchedStatuses.map((status) =>
-  //       status._id === statusId
-  //         ? { ...status, status: newStatus, action, assignedTo, feedback }
-  //         : status
-  //     )
-  //   );
-  // };
-
   const handleViewEvidence = async (actionId, controlId) => {
     if (!checkAssetSelection()) return;
     try {
@@ -337,10 +398,7 @@ const CompletionStatusPage = ({
 
       // Check if the response contains a valid file URL
       if (res.data && res.data.fileUrl) {
-        // return res.data.fileUrl;
-        // Redirect to the file URL or a specific route
         const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
-        // window.location.href = fullUrl; // Redirect to the evidence URL
 
         setEvidenceUrl(fullUrl);
         window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
@@ -411,22 +469,6 @@ const CompletionStatusPage = ({
     }
   };
 
-  useEffect(() => {
-    const fetchCurrentUserData = async () => {
-      try {
-        const token = window.localStorage.getItem('token'); // Replace with actual token
-        const userData = await fetchCurrentUser(token); // Make sure fetchCurrentUser is defined elsewhere
-        setCurrentUsername(userData.data.username); // Set current username
-        setCurrentUserId(userData.data._id); // Set current username
-        setRole(userData.data.role); // Set role from user data
-      } catch (error) {
-        console.error('Error fetching current user data:', error);
-      }
-    };
-
-    fetchCurrentUserData(); // Call the async function inside useEffect
-  }, []); // Empty dependency array means it runs once after the component mounts
-
   const toCamelCase = (str) => {
     return str
       .split(' ')
@@ -457,6 +499,21 @@ const CompletionStatusPage = ({
       console.error(error.message);
     }
   };
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const actionsResponse = await fetchActions();
+  //       console.log(actionsResponse);
+  //     } catch (error) {
+  //       console.error('Error fetching actions:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -498,7 +555,7 @@ const CompletionStatusPage = ({
               No data available.
             </p>
             <a
-              href='http://localhost:3000/Product-Family'
+              href='/Product-Family'
               style={{
                 color: '#007bff',
                 textDecoration: 'none',
@@ -521,16 +578,9 @@ const CompletionStatusPage = ({
               Submit Product Family
             </a>
           </div>
+        ) : noTasks ? (
+          <div>No action</div> // Show "No action" when no tasks are available
         ) : (
-          // <div>
-          //   <p>No data available.</p>
-          //   <a
-          //     href='http://localhost:3000/Product-Family'
-          //     style={{ color: 'blue', textDecoration: 'underline' }}
-          //   >
-          //     Go to Product Family
-          //   </a>
-          // </div>
           <TableContainer
             component={Paper}
             style={{ maxHeight: 900, overflow: 'auto' }}
@@ -544,15 +594,16 @@ const CompletionStatusPage = ({
                   <TableCell>Control</TableCell>
                   {role !== 'IT Team' && <TableCell>Feedback</TableCell>}
                   <TableCell>Status</TableCell>
-                  <TableCell>Control Type</TableCell>
+                  <TableCell>Asset & Control Type</TableCell>
                   <TableCell>Software Selected</TableCell>
-                  <TableCell>Task:</TableCell>
+                  {/* <TableCell>Task:</TableCell> */}
 
                   {/* Conditional rendering for Upload Evidence based on role */}
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
 
                   <TableCell>View Evidence </TableCell>
-                  {(role === 'IT Team' || role === 'Compliance Team') && (
+
+                  {/* {(role === 'IT Team' || role === 'Compliance Team') && (
                     <TableCell>Mark as Not Applicable</TableCell>
                   )}
                   {(role === 'IT Team' || role === 'Admin') && (
@@ -563,7 +614,6 @@ const CompletionStatusPage = ({
                     <TableCell>Confirm as Not Applicable</TableCell>
                   )}
 
-                  {/* Actions for different roles */}
                   {role === 'IT Team' ||
                     (role === 'Compliance Team' && (
                       <TableCell>Actions</TableCell>
@@ -579,7 +629,8 @@ const CompletionStatusPage = ({
                       <TableCell>Actions</TableCell>
                       <TableCell>Mark as done</TableCell>
                     </>
-                  )}
+                  )} */}
+                  <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -639,6 +690,7 @@ const CompletionStatusPage = ({
                               )}
                               <TableCell>{status.status || 'N/A'}</TableCell>
                               <TableCell>
+                                {status.assetId.name}-
                                 {status.controlId.control_type}
                               </TableCell>
 
@@ -646,14 +698,14 @@ const CompletionStatusPage = ({
                                 {status?.selectedSoftware?.software_name ||
                                   'N/A'}
                               </TableCell>
-                              <ActionCell
+                              {/* <ActionCell
                                 actionId={status.actionId?._id}
                                 controlId={status.controlId?._id}
                                 productFamilyId={
                                   status.controlId.product_family_Id
                                 } // Assuming this exists
                                 softwareId={status.selectedSoftware?._id} // Assuming this exists
-                              />
+                              /> */}
                               {/* Evidence upload button for IT Team */}
                               {role === 'IT Team' && !isCompleted && (
                                 <EvidenceUpload
@@ -689,127 +741,114 @@ const CompletionStatusPage = ({
                                   </Tooltip>
                                 </TableCell>
                               )}
+                              {(role === 'Compliance Team' ||
+                                role === 'Admin') && (
+                                <Tooltip title='Delegate to IT'>
+                                  <Button
+                                    variant='text'
+                                    color='secondary'
+                                    onClick={() =>
+                                      handleDelegateToIT(
+                                        status._id,
+                                        status.assetId._id
+                                      )
+                                    }
+                                    disabled={
+                                      isCompleted ||
+                                      (status.status !== 'Open' &&
+                                        status.status !== 'Wrong Evidence')
+                                    }
+                                  >
+                                    Delegate to IT
+                                  </Button>
+                                </Tooltip>
+                              )}
 
                               {(role === 'IT Team' ||
                                 role === 'Compliance Team') && (
-                                <TableCell>
-                                  <Tooltip title='Set As Not Applicable'>
-                                    <Button
-                                      variant='text'
-                                      color='secondary'
-                                      onClick={() =>
-                                        handleSetNotApplicable(status._id)
-                                      }
-                                      disabled={
-                                        isCompleted ||
-                                        (status.status !== 'Open' &&
-                                          status.status !== 'Wrong Evidence' &&
-                                          status.status !==
-                                            'Delegated to IT Team')
-                                      }
-                                    >
-                                      Mark as Not Applicable
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Set As Not Applicable'>
+                                  <Button
+                                    variant='text'
+                                    color='secondary'
+                                    onClick={() =>
+                                      handleSetNotApplicable(status._id)
+                                    }
+                                    disabled={
+                                      isCompleted ||
+                                      (status.status !== 'Open' &&
+                                        status.status !== 'Wrong Evidence' &&
+                                        status.status !==
+                                          'Delegated to IT Team')
+                                    }
+                                  >
+                                    Not Applicable
+                                  </Button>
+                                </Tooltip>
                               )}
 
                               {/*  */}
                               {role === 'Auditor' && (
-                                <TableCell>
-                                  <Tooltip title='Confirm Not Applicable'>
-                                    <Button
-                                      variant='text'
-                                      color='secondary'
-                                      onClick={() =>
-                                        handleConfirmNotApplicable(status._id)
-                                      }
-                                      disabled={
-                                        status.status !==
-                                        'Not Applicable (Pending Auditor Confirmation)'
-                                      }
-                                    >
-                                      Confirm as Not Applicable
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Confirm Not Applicable'>
+                                  <Button
+                                    variant='text'
+                                    color='secondary'
+                                    onClick={() =>
+                                      handleConfirmNotApplicable(status._id)
+                                    }
+                                    disabled={
+                                      status.status !==
+                                      'Not Applicable (Pending Auditor Confirmation)'
+                                    }
+                                  >
+                                    Confirm as Not Applicable
+                                  </Button>
+                                </Tooltip>
                               )}
 
-                              {/* Delegate to IT Button for Compliance Team or Admin */}
-                              {(role === 'Compliance Team' ||
-                                role === 'Admin') && (
-                                <TableCell>
-                                  <Tooltip title='Delegate to IT'>
-                                    <Button
-                                      variant='text'
-                                      color='secondary'
-                                      onClick={() =>
-                                        handleDelegateToIT(
-                                          status._id,
-                                          status.assetId._id
-                                        )
-                                      }
-                                      disabled={
-                                        isCompleted ||
-                                        (status.status !== 'Open' &&
-                                          status.status !== 'Wrong Evidence')
-                                      }
-                                    >
-                                      Delegate to IT
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
-                              )}
-
-                              {/* Delegate to Auditor Button for IT Team or Admin */}
                               {(role === 'IT Team' || role === 'Admin') && (
-                                <TableCell>
-                                  <Tooltip title='Delegate to Auditor'>
-                                    <Button
-                                      variant='text'
-                                      color='secondary'
-                                      onClick={() =>
-                                        handleDelegateToAuditor(
-                                          status._id,
-                                          status.assetId._id
-                                        )
-                                      }
-                                      disabled={
-                                        isCompleted ||
-                                        status.status !== 'Evidence Uploaded'
-                                      }
-                                    >
-                                      Delegate to Auditor
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Delegate to Auditor'>
+                                  <Button
+                                    variant='text'
+                                    color='secondary'
+                                    onClick={() =>
+                                      handleDelegateToAuditor(
+                                        status._id,
+                                        status.assetId._id
+                                      )
+                                    }
+                                    disabled={
+                                      isCompleted ||
+                                      status.status !== 'Evidence Uploaded'
+                                    }
+                                  >
+                                    Delegate to Auditor
+                                  </Button>
+                                </Tooltip>
                               )}
 
                               {/* Raise Query Button for Auditor */}
                               {role === 'Auditor' && (
-                                <TableCell>
-                                  <Tooltip title='Raise Query'>
-                                    <Button
-                                      color='error'
-                                      startIcon={<Warning />}
-                                      onClick={() =>
-                                        handleQuery(
-                                          status.actionId?._id,
-                                          status.controlId?._id
-                                        )
-                                      }
-                                      disabled={
-                                        status.status === 'Wrong Evidence' ||
-                                        status.status ===
-                                          'External Audit Delegated' ||
-                                        status.status ===
-                                          'Not Applicable (Pending Auditor Confirmation)'
-                                      }
-                                    >
-                                      Raise Query
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Raise Query'>
+                                  <Button
+                                    color='error'
+                                    startIcon={<Warning />}
+                                    onClick={() =>
+                                      handleQuery(
+                                        status.actionId?._id,
+                                        status.controlId?._id
+                                      )
+                                    }
+                                    disabled={
+                                      status.status === 'Wrong Evidence' ||
+                                      status.status ===
+                                        'External Audit Delegated' ||
+                                      status.status ===
+                                        'Not Applicable (Pending Auditor Confirmation)'
+                                    }
+                                  >
+                                    Raise Query
+                                  </Button>
+                                </Tooltip>
                               )}
 
                               {/* Query Modal */}

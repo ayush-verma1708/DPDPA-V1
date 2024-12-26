@@ -4,16 +4,13 @@ import { fetchActions } from '../api/actionAPI';
 import { Snackbar, Alert, Tooltip } from '@mui/material';
 import Loading from '../components/Loading';
 import '../styles/ListOfActions.css';
-
-import { getAssetDetails, getAssetDetailsById } from '../api/assetDetailsApi';
+import { getAssetDetails } from '../api/assetDetailsApi';
 import { getAllEvidences, uploadEvidence } from '../api/evidenceApi';
-
-import SelectorsAndNotifications from '../components/assetSelection';
-
+import AssetSelection from '../components/assetSelection';
 import CompletionStatusPage from '../components/completionStatusPage';
 import { fetchCurrentUser } from '../api/userApi';
 import { getAssetNameById } from '../api/assetApi.js';
-import { createOrUpdateStatus, updateStatus } from '../api/completionStatusApi';
+import { createOrUpdateStatus } from '../api/completionStatusApi';
 import DataProtectionAct from '../components/DataProtectionAct'; // Import your component
 import DataProtectionActChapter7 from '../components/DataProtectionActChapter7';
 import DataProtectionActChapter8 from '../components/DataProtectionActChapter8';
@@ -39,7 +36,6 @@ const ListOfActions = () => {
   });
   const [assetName, setAssetName] = useState('');
 
-  const [showDataProtection, setShowDataProtection] = useState(false); // State to show/hide the component
   const [selectedChapter, setSelectedChapter] = useState(null); // State to track which chapter to show
 
   // Functions to handle button clicks for each chapter
@@ -579,7 +575,7 @@ const ListOfActions = () => {
       {/* Default content if no chapter is selected */}
       {selectedChapter === null && (
         <div className='content'>
-          <SelectorsAndNotifications
+          <AssetSelection
             selectedAssetId={selectedAssetId}
             assetName={assetName}
             assets={assets}

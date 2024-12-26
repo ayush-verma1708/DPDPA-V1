@@ -17,16 +17,41 @@ export const createOrUpdateStatus = async (statusData) => {
 };
 
 // Function to get status from API
+// export const getStatus = async (queryParams) => {
+//   try {
+//     const response = await axios.get(
+//       `http://localhost:8021/api/v1/completion-status`,
+//       { params: queryParams }
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error in getStatus:', error);
+//     throw error;
+//   }
+// };
+
 export const getStatus = async (queryParams) => {
   try {
     const response = await axios.get(
       `http://localhost:8021/api/v1/completion-status`,
       { params: queryParams }
     );
-    return response.data;
+
+    // Check if the response contains data
+    if (
+      !response.data ||
+      (Array.isArray(response.data) && response.data.length === 0)
+    ) {
+      console.log('No data available.');
+      return []; // Return an empty array if no data exists
+    }
+
+    return response.data; // Return the response data if available
   } catch (error) {
     console.error('Error in getStatus:', error);
-    throw error;
+
+    // Return an empty array in case of an error (e.g., 404, network issues)
+    return [];
   }
 };
 
