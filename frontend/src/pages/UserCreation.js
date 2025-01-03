@@ -136,7 +136,7 @@ const UserCreation = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>User ID</TableCell>
+              <TableCell>S.no.</TableCell>
               <TableCell>Username</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Password</TableCell>
@@ -147,13 +147,15 @@ const UserCreation = () => {
               <TableCell>Delegate Permission</TableCell>
               <TableCell>Upload Evidence Permission</TableCell>
               <TableCell>Confirm Evidence Permission</TableCell>
+              <TableCell>User ID</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
+            {users.map((user, index) => (
               <TableRow key={user._id}>
-                <TableCell>{user._id}</TableCell>
+                <TableCell>{index + 1}</TableCell>{' '}
+                {/* Display sequence number */}
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell> {/* Display email */}
                 <TableCell>********</TableCell> {/* Masked password */}
@@ -183,6 +185,7 @@ const UserCreation = () => {
                     disabled
                   />
                 </TableCell>
+                <TableCell>{user._id}</TableCell>
                 <TableCell>
                   <Button
                     variant='contained'

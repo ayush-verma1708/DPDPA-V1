@@ -38,7 +38,9 @@ const Sidebar = ({ onSelect }) => {
   const token = localStorage.getItem('token');
   const { user, loading, error } = useFetchUser(token);
 
-  window.localStorage.setItem('company', user?.company._id);
+  // window.localStorage.setItem('company', user?.company._id);
+  window.localStorage.setItem('company', user?.company?._id || null);
+
   window.localStorage.setItem('username', user?.username);
 
   const toggleDrawer = () => {

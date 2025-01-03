@@ -207,14 +207,16 @@ const UserPreferencesForm = ({ companyId }) => {
                             {software.software_name}
                           </option>
                         ))}
-                      <option value='None'>None of these</option>
-                      <option value='Others'>Others</option>
+                      <option value='None'>
+                        No Software Available for Implementation
+                      </option>
+                      <option value='Others'>Alternate Software</option>
                     </select>
                   </div>
                   {response.selectedSoftware === 'Others' && (
                     <div style={{ marginTop: '10px' }}>
                       <label style={{ fontWeight: 'bold', color: '#333' }}>
-                        Other Software:
+                        Software Name:
                       </label>
                       <input
                         type='text'

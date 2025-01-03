@@ -13,7 +13,9 @@ const Header = ({ title, handleLogout }) => {
   const { user, loading, error } = useFetchUser(token);
   const userId = user ? user._id : null;
 
-  window.localStorage.setItem('company', user?.company._id);
+  // window.localStorage.setItem('company', user?.company._id);
+  window.localStorage.setItem('company', user?.company?._id || null);
+
   window.localStorage.setItem('username', user?.username);
 
   return (

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import User from '../models/User.js'; // Adjust the import path if necessary
+import User from '../../models/User.js'; // Adjust the import path if necessary
 import bcrypt from 'bcryptjs'; // Ensure bcryptjs is installed
 import dotenv from 'dotenv';
 
@@ -13,6 +13,7 @@ const seedAdmin = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    console.log('Connected to MongoDB.');
 
     // Check if admin already exists
     const adminExists = await User.findOne({ username: 'adminuser' });
@@ -22,21 +23,21 @@ const seedAdmin = async () => {
     }
 
     // Create an admin user
-    const adminPassword = await bcrypt.hash('adminpassword', 10);
     const adminUser = new User({
       username: 'adminuser',
-      password: adminPassword,
+      email: 'admin@example.com', // Ensure this matches your schema
+      password: 'adminpassword', // Raw password, hashed in pre-save hook
       role: 'Admin',
     });
 
     await adminUser.save();
     console.log('Admin user seeded successfully.');
-
-    // Close the connection
-    await mongoose.disconnect();
   } catch (error) {
     console.error('Error seeding admin user:', error);
-    process.exit(1);
+  } finally {
+    // Close the connection
+    await mongoose.disconnect();
+    console.log('Disconnected from MongoDB.');
   }
 };
 

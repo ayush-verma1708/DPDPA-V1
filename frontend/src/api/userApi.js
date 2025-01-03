@@ -81,22 +81,10 @@ export const checkFormCompletion = async (userId) => {
     const response = await axios.get(
       `${BASE}/api/users/${userId}/form-completion`
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error checking form completion:', error);
     throw new Error('Failed to check form completion status');
-  }
-};
-
-export const updateFormCompletionStatus = async (userId) => {
-  try {
-    const response = await axios.patch(
-      `${BASE}/api/users/${userId}/form-completion`,
-      { hasCompletedCompanyForm: true }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error updating form completion status:', error);
-    throw new Error('Failed to update form completion status');
   }
 };

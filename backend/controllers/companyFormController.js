@@ -1,45 +1,87 @@
 import { CompanyForm } from '../models/CompanyForm.js';
 
 // Create a new company form entry
+// export const createCompanyForm = async (req, res) => {
+//   try {
+//     const {
+//       userId,
+//       phoneNumber,
+//       organizationName,
+//       industryType,
+//       customIndustryType,
+//       numberOfEmployees,
+//       otp,
+//     } = req.body;
+
+//     const newCompanyForm = new CompanyForm({
+//       userId,
+//       phoneNumber,
+//       companyDetails: {
+//         organizationName,
+//         industryType,
+//         customIndustryType,
+//         numberOfEmployees,
+//       },
+//       otp,
+//     });
+
+//     const companyWithUserExists = await CompanyForm.find({
+//       userId,
+//     });
+
+//     if (companyWithUserExists.length > 0) {
+//       return res.status(500).json({
+//         error: 'One user can be associated with only one company.',
+//         code: '1U1O',
+//       });
+//     }
+
+//     res.status(201).json(savedForm);
+//   } catch (error) {
+//     console.error('Error creating company form:', error);
+//     res.status(500).json({ message: 'Error creating company form', error });
+//   }
+// };
 export const createCompanyForm = async (req, res) => {
   try {
-    const {
-      userId,
-      phoneNumber,
-      organizationName,
-      industryType,
-      customIndustryType,
-      numberOfEmployees,
-      otp,
-    } = req.body;
+    // Destructure data from the request body
+    const { userId, phoneNumber, companyDetails } = req.body;
 
-    const newCompanyForm = new CompanyForm({
-      userId,
-      phoneNumber,
-      companyDetails: {
-        organizationName,
-        industryType,
-        customIndustryType,
-        numberOfEmployees,
-      },
-      otp,
-    });
+    // Log the data (after destructuring)
+    console.log(userId, phoneNumber, companyDetails);
 
-    const companyWithUserExists = await CompanyForm.find({
-      userId,
-    });
-
-    if (companyWithUserExists.length > 0) {
-      return res.status(500).json({
-        error: 'One user can be associated with only one company.',
-        code: '1U1O',
-      });
+    // Validate required fields
+    if (!userId || !phoneNumber || !companyDetails) {
+      return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    res.status(201).json(savedForm);
+    // Check if the user has already submitted a form
+    const existingForm = await CompanyForm.findOne({ userId });
+    if (existingForm) {
+      return res
+        .status(400)
+        .json({ message: 'Company form already exists for this user' });
+    }
+
+    // Create a new form
+    const newForm = new CompanyForm({
+      userId,
+      phoneNumber,
+      companyDetails,
+    });
+
+    // Save to the database
+    const savedForm = await newForm.save();
+
+    // Send the response back with saved form details
+    return res
+      .status(201)
+      .json({ message: 'Company form created successfully', data: savedForm });
   } catch (error) {
     console.error('Error creating company form:', error);
-    res.status(500).json({ message: 'Error creating company form', error });
+    return res
+      .status(500)
+      .json({ message: 'Internal server error', error: error.message });
   }
 };
 

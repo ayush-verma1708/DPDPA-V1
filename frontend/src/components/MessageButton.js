@@ -12,9 +12,9 @@ const MessageButton = ({ userId }) => {
   const [messages, setMessages] = useState([]); // State to hold the messages
 
   // Log the userId whenever the component renders
-  useEffect(() => {
-    console.log('User ID:', userId); // Log userId here
-  }, [userId]);
+  // useEffect(() => {
+  //   // console.log('User ID:', userId); // Log userId here
+  // }, [userId]);
 
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
