@@ -142,7 +142,9 @@ const UserResponsesManager = ({ companyId }) => {
       )}
 
       {/* Button at the bottom with an icon */}
-      <Box sx={{ marginTop: 'auto', textAlign: 'center' }}>
+      <Box
+        sx={{ marginTop: '2rem', textAlign: 'center', marginBottom: '1rem' }}
+      >
         <Button
           variant='contained'
           color='primary'

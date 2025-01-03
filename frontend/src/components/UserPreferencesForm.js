@@ -82,7 +82,9 @@ const UserPreferencesForm = ({ companyId }) => {
       setIsSubmitted(false); // Reset submission status on error
     } finally {
       // Set loading state to false once the request is complete
+
       setLoading(false);
+      window.location.reload();
     }
   };
 
