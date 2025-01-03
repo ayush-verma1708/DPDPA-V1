@@ -33,6 +33,10 @@ import {
   Warning,
   KeyboardArrowDown,
   KeyboardArrowUp,
+  AssignmentInd,
+  Cancel,
+  HelpOutline,
+  SupervisorAccount,
 } from '@mui/icons-material';
 import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as needed
 import { fetchCurrentUser } from '../api/userApi';
@@ -578,7 +582,14 @@ const CompletionStatusPage = ({
             </a>
           </div>
         ) : noTasks ? (
-          <div>Please select cotrol family</div> // Show "No action" when no tasks are available
+          <div>
+            <p>You've encountered a bug</p>{' '}
+            {/* Show message when no tasks are available */}
+            <button onClick={() => window.location.reload()}>
+              Reload Page
+            </button>{' '}
+            {/* Button to reload the page */}
+          </div>
         ) : (
           <TableContainer
             component={Paper}
@@ -678,7 +689,15 @@ const CompletionStatusPage = ({
                               <TableCell>
                                 {status.actionId?.fixed_id || 'N/A'}
                               </TableCell>
-                              <TableCell>
+                              <TableCell
+                                sx={{
+                                  width: '250px',
+                                  maxWidth: '250px',
+                                  // overflow: 'hidden',
+                                  // textOverflow: 'ellipsis',
+                                  // whiteSpace: 'nowrap',
+                                }}
+                              >
                                 {status.controlId?.section_desc || 'N/A'}
                               </TableCell>
 
@@ -788,7 +807,7 @@ const CompletionStatusPage = ({
                               {/*  */}
                               {role === 'Auditor' && (
                                 <Tooltip title='Confirm Not Applicable'>
-                                  <Button
+                                  <IconButton
                                     variant='text'
                                     color='secondary'
                                     onClick={() =>
@@ -799,14 +818,14 @@ const CompletionStatusPage = ({
                                       'Not Applicable (Pending Auditor Confirmation)'
                                     }
                                   >
-                                    Confirm as Not Applicable
-                                  </Button>
+                                    <Cancel />
+                                  </IconButton>
                                 </Tooltip>
                               )}
 
                               {(role === 'IT Team' || role === 'Admin') && (
                                 <Tooltip title='Delegate to Auditor'>
-                                  <Button
+                                  <IconButton
                                     variant='text'
                                     color='secondary'
                                     onClick={() =>
@@ -820,15 +839,15 @@ const CompletionStatusPage = ({
                                       status.status !== 'Evidence Uploaded'
                                     }
                                   >
-                                    Delegate to Auditor
-                                  </Button>
+                                    <AssignmentInd />{' '}
+                                  </IconButton>
                                 </Tooltip>
                               )}
 
                               {/* Raise Query Button for Auditor */}
                               {role === 'Auditor' && (
                                 <Tooltip title='Raise Query'>
-                                  <Button
+                                  <IconButton
                                     color='error'
                                     startIcon={<Warning />}
                                     onClick={() =>
@@ -845,8 +864,8 @@ const CompletionStatusPage = ({
                                         'Not Applicable (Pending Auditor Confirmation)'
                                     }
                                   >
-                                    Raise Query
-                                  </Button>
+                                    <HelpOutline />
+                                  </IconButton>
                                 </Tooltip>
                               )}
 
@@ -862,78 +881,70 @@ const CompletionStatusPage = ({
 
                               {/* Raise Query Button for External Auditor */}
                               {role === 'External Auditor' && (
-                                <TableCell>
-                                  <Tooltip title='Raise Query'>
-                                    <Button
-                                      color='error'
-                                      startIcon={<Warning />}
-                                      onClick={() =>
-                                        handleQuery(
-                                          status.actionId?._id,
-                                          status.controlId?._id
-                                        )
-                                      }
-                                      disabled={
-                                        isCompleted ||
-                                        status.status === 'Wrong Evidence'
-                                      }
-                                    >
-                                      Raise Query
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Raise Query'>
+                                  <IconButton
+                                    color='error'
+                                    onClick={() =>
+                                      handleQuery(
+                                        status.actionId?._id,
+                                        status.controlId?._id
+                                      )
+                                    }
+                                    disabled={
+                                      isCompleted ||
+                                      status.status === 'Wrong Evidence'
+                                    }
+                                  >
+                                    <Warning />
+                                  </IconButton>
+                                </Tooltip>
                               )}
 
                               {/* Delegate to External Auditor Button for Admin or Auditor */}
                               {(role === 'Admin' || role === 'Auditor') && (
-                                <TableCell>
-                                  <Tooltip title='Delegate to External Auditor'>
-                                    <Button
-                                      variant='text'
-                                      color='secondary'
-                                      onClick={() =>
-                                        handleDelegateToExternalAuditor(
-                                          status._id,
-                                          currentUserId
-                                        )
-                                      }
-                                      disabled={
-                                        isCompleted ||
-                                        status.status === 'Wrong Evidence' ||
-                                        status.status ===
-                                          'External Audit Delegated' ||
-                                        status.status ===
-                                          'Not Applicable (Pending Auditor Confirmation)'
-                                      }
-                                    >
-                                      Delegate to External Auditor
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Delegate to External Auditor'>
+                                  <IconButton
+                                    variant='text'
+                                    color='secondary'
+                                    onClick={() =>
+                                      handleDelegateToExternalAuditor(
+                                        status._id,
+                                        currentUserId
+                                      )
+                                    }
+                                    disabled={
+                                      isCompleted ||
+                                      status.status === 'Wrong Evidence' ||
+                                      status.status ===
+                                        'External Audit Delegated' ||
+                                      status.status ===
+                                        'Not Applicable (Pending Auditor Confirmation)'
+                                    }
+                                  >
+                                    <SupervisorAccount />
+                                  </IconButton>
+                                </Tooltip>
                               )}
 
                               {/* Confirm Evidence Button for External Auditor */}
                               {role === 'External Auditor' && (
-                                <TableCell>
-                                  <Tooltip title='Confirm Evidence'>
-                                    <Button
-                                      color='primary'
-                                      startIcon={<CheckCircle />}
-                                      onClick={() =>
-                                        handleMarkAsCompleted(
-                                          status.actionId?._id,
-                                          status.controlId?._id
-                                        )
-                                      }
-                                      disabled={
-                                        isCompleted ||
-                                        status.status === 'Wrong Evidence'
-                                      }
-                                    >
-                                      Confirm Evidence
-                                    </Button>
-                                  </Tooltip>
-                                </TableCell>
+                                <Tooltip title='Confirm Evidence'>
+                                  <IconButton
+                                    color='primary'
+                                    onClick={() =>
+                                      handleMarkAsCompleted(
+                                        status.actionId?._id,
+                                        status.controlId?._id
+                                      )
+                                    }
+                                    disabled={
+                                      isCompleted ||
+                                      status.status === 'Wrong Evidence'
+                                    }
+                                  >
+                                    <CheckCircle />
+                                  </IconButton>
+                                </Tooltip>
                               )}
                             </>
                           ) : (
