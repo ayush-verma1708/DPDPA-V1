@@ -1,4 +1,5 @@
 import { CompanyForm } from '../models/CompanyForm.js';
+import User from '../models/User.js';
 
 // Create a new company form entry
 // export const createCompanyForm = async (req, res) => {
@@ -72,6 +73,17 @@ export const createCompanyForm = async (req, res) => {
 
     // Save to the database
     const savedForm = await newForm.save();
+
+    // Find the user and update with the company details
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user model with the company form and set form completion status
+    user.company = savedForm._id; // Add the company form reference
+    // user.hasCompletedCompanyForm = true; // Mark as completed
+    await user.save(); // Save the updated user model
 
     // Send the response back with saved form details
     return res
