@@ -20,7 +20,6 @@ export const createMessage = async (
   completionStatusId
 ) => {
   try {
-    console.log(userId);
     const message = new Message({
       userId,
       message: messageContent,

@@ -380,15 +380,20 @@ export const delegateToIT = async (req, res) => {
   try {
     let completionStatus = await CompletionStatus.findById(
       completionStatusId
-    ).populate('selectedSoftware');
+    ).populate('selectedSoftware', 'assetId');
 
     if (!completionStatus) {
       return res.status(404).json({ error: 'CompletionStatus not found' });
     }
 
-    const softwareName = completionStatus.selectedSoftware?.software_name;
+    let completion2Status = await CompletionStatus.findById(
+      completionStatusId
+    ).populate('assetId', 'name'); // Populate the `assetId` field with the `name` field from the referenced document
 
-    // Folder creation logic removed
+    // Access the `name` field of the populated `assetId`
+    const delegatedAsset = completion2Status.assetId
+      ? completion2Status.assetId.name
+      : 'No Asset Assigned';
 
     // Proceed with the delegation logic
     const changes = {
@@ -405,7 +410,7 @@ export const delegateToIT = async (req, res) => {
     // Create a message indicating delegation to IT
     await createMessage(
       itOwnerId,
-      `Delegated to IT Team: ${itOwnerId}`,
+      `Task Delegated for: ${delegatedAsset}`,
       completionStatusId
     );
 
