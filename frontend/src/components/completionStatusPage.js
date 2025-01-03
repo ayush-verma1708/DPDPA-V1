@@ -24,6 +24,7 @@ import {
   Switch,
   FormControlLabel,
 } from '@mui/material';
+import { Assignment, Block, Visibility } from '@mui/icons-material'; // Replace with any desired icon
 
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
 
@@ -37,9 +38,7 @@ import { getAssetDetails } from '../api/assetDetailsApi'; // Adjust the path as 
 import { fetchCurrentUser } from '../api/userApi';
 import { Button, Tooltip } from '@mui/material';
 import EvidenceUpload from './EvidenceUpload';
-// import EvidenceFeedbackModal from './EvidenceFeedbackModal'; // Adjust the import path as needed
 import QueryModal from './EvidenceFeedbackModal';
-// import ActionCell from './ActionCell.js'; // Import the ActionCell component
 
 const CompletionStatusPage = ({
   expandedFamilyId,
@@ -579,7 +578,7 @@ const CompletionStatusPage = ({
             </a>
           </div>
         ) : noTasks ? (
-          <div>No action</div> // Show "No action" when no tasks are available
+          <div>Please select cotrol family</div> // Show "No action" when no tasks are available
         ) : (
           <TableContainer
             component={Paper}
@@ -725,27 +724,26 @@ const CompletionStatusPage = ({
                                 role === 'External Auditor') && (
                                 <TableCell>
                                   <Tooltip title='View Evidence'>
-                                    <Button
-                                      variant='text'
-                                      color='primary'
+                                    <IconButton
+                                      color='primary' // Primary color for the icon
                                       onClick={() =>
                                         handleViewEvidence(
                                           status.actionId?._id,
                                           status.controlId?._id
                                         )
                                       }
-                                      disabled={!status.isEvidenceUploaded}
+                                      disabled={!status.isEvidenceUploaded} // Disabled if no evidence is uploaded
                                     >
-                                      View Evidence
-                                    </Button>
-                                  </Tooltip>
+                                      <Visibility />{' '}
+                                      {/* You can replace this with another icon if needed */}
+                                    </IconButton>
+                                  </Tooltip>{' '}
                                 </TableCell>
                               )}
                               {(role === 'Compliance Team' ||
                                 role === 'Admin') && (
                                 <Tooltip title='Delegate to IT'>
-                                  <Button
-                                    variant='text'
+                                  <IconButton
                                     color='secondary'
                                     onClick={() =>
                                       handleDelegateToIT(
@@ -759,17 +757,17 @@ const CompletionStatusPage = ({
                                         status.status !== 'Wrong Evidence')
                                     }
                                   >
-                                    Delegate to IT
-                                  </Button>
+                                    <Assignment />{' '}
+                                    {/* Replace with any icon you prefer */}
+                                  </IconButton>
                                 </Tooltip>
                               )}
 
                               {(role === 'IT Team' ||
                                 role === 'Compliance Team') && (
                                 <Tooltip title='Set As Not Applicable'>
-                                  <Button
-                                    variant='text'
-                                    color='secondary'
+                                  <IconButton
+                                    color='error' // This makes the icon red
                                     onClick={() =>
                                       handleSetNotApplicable(status._id)
                                     }
@@ -781,8 +779,9 @@ const CompletionStatusPage = ({
                                           'Delegated to IT Team')
                                     }
                                   >
-                                    Not Applicable
-                                  </Button>
+                                    <Block />{' '}
+                                    {/* You can replace this icon with any other desired icon */}
+                                  </IconButton>
                                 </Tooltip>
                               )}
 

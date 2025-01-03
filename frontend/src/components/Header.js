@@ -100,9 +100,7 @@ const Header = ({ title, handleLogout }) => {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* Bell Icon for Notifications */}
             <NotificationButton />
-            {/* Bell Icon for Messages */}
             {userId && <MessageButton userId={userId} />}
           </Box>
 
