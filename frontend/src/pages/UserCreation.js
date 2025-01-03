@@ -17,6 +17,7 @@ import {
   FormControl,
   InputLabel,
   Checkbox,
+  Box,
 } from '@mui/material';
 import { getUsers, saveUser, deleteUser } from '../api/userApi'; // Adjust the path as necessary
 
@@ -59,7 +60,15 @@ const UserCreation = () => {
 
     try {
       await saveUser(
-        { username, email, password, role, permissions, company: companyId },
+        {
+          username,
+          email,
+          password,
+          role,
+          permissions,
+          company: companyId,
+          hasCompletedCompanyForm: true,
+        },
         isEditing,
         selectedUser?._id
       );
@@ -124,13 +133,21 @@ const UserCreation = () => {
   };
 
   return (
-    <Container maxWidth='lg'>
-      <Typography variant='h4' gutterBottom>
-        User Management
-      </Typography>
-      <Button variant='contained' color='primary' onClick={openDrawerForAdd}>
+    <Container style={{ maxWidth: '1266px', width: '100%' }}>
+      <Box display='flex' justifyContent='center' alignItems='center'>
+        <Typography variant='h4' gutterBottom>
+          User Management
+        </Typography>
+      </Box>
+      <Button
+        variant='contained'
+        color='primary'
+        onClick={openDrawerForAdd}
+        style={{ padding: '10px 20px', marginBottom: '20px' }}
+      >
         Add User
       </Button>
+
       {error && <Typography color='error'>{error}</Typography>}
       <TableContainer component={Paper}>
         <Table>

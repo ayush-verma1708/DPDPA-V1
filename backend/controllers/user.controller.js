@@ -61,7 +61,15 @@ export const updateFormCompletionStatus = async (req, res) => {
 //   res.status(201).json(new ApiResponse(201, createdUser, 'User created successfully.'));
 // });
 const createUser = AsyncHandler(async (req, res) => {
-  const { username, email, password, role, permissions, company } = req.body;
+  const {
+    username,
+    email,
+    password,
+    role,
+    permissions,
+    company,
+    hasCompletedCompanyForm,
+  } = req.body;
 
   if (!username || !email || !password) {
     throw new ApiError(400, 'Username, email, and password are required.');
@@ -93,6 +101,7 @@ const createUser = AsyncHandler(async (req, res) => {
     role,
     permissions,
     company,
+    hasCompletedCompanyForm: hasCompletedCompanyForm || true, // Default to false if not provided
   });
   const createdUser = await user.save();
   res
@@ -125,7 +134,15 @@ const createUser = AsyncHandler(async (req, res) => {
 // });
 const updateUser = AsyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { username, email, password, role, permissions, company } = req.body;
+  const {
+    username,
+    email,
+    password,
+    role,
+    permissions,
+    company,
+    hasCompletedCompanyForm,
+  } = req.body;
 
   const validRoles = [
     'Admin',
@@ -156,6 +173,7 @@ const updateUser = AsyncHandler(async (req, res) => {
   if (password) user.password = password; // Handle password hashing in the model
   if (role) user.role = role;
   if (permissions) user.permissions = permissions;
+  user.hasCompletedCompanyForm = hasCompletedCompanyForm || true; // Update the status
 
   const updatedUser = await user.save();
   res
