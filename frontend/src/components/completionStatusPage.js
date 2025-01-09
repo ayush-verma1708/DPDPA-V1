@@ -8,6 +8,8 @@ import {
   setNotApplicableStatus,
   confirmNotApplicableStatus,
 } from '../api/completionStatusApi';
+import Toolbar from '@mui/material/Toolbar'; // For MUI v5
+import MoreVertIcon from '@mui/icons-material/MoreVert'; // Example icon
 
 import {
   Table,
@@ -25,6 +27,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import { Assignment, Block, Visibility } from '@mui/icons-material'; // Replace with any desired icon
+import Checkbox from '@mui/material/Checkbox';
 
 import { fetchActions } from '../api/actionAPI'; // Adjust the path as needed
 
@@ -53,6 +56,10 @@ const CompletionStatusPage = ({
   issueInEvidence,
   checkAssetSelection,
 }) => {
+  const [isToolbarOpen, setIsToolbarOpen] = useState(false);
+
+  const [selectedRows, setSelectedRows] = useState([]);
+
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
 
   const [loading, setLoading] = useState(true);
@@ -141,6 +148,10 @@ const CompletionStatusPage = ({
     }
   };
 
+  const handleToggleToolbar = () => {
+    setIsToolbarOpen((prev) => !prev);
+  };
+
   useEffect(() => {
     handleFetchStatus(); // Fetch data on component mount and when query changes
   }, [query]);
@@ -208,6 +219,18 @@ const CompletionStatusPage = ({
     } catch (error) {
       console.error('Error submitting query:', error);
     }
+  };
+
+  const handleBulkDelegateToIT = (selectedRows) => {
+    if (selectedRows.length === 0) return;
+
+    selectedRows.forEach(({ statusId, assetId }) => {
+      handleDelegateToIT(statusId, assetId);
+      // console.log(statusId, ' ');
+    });
+
+    // Clear selection after action
+    setSelectedRows([]);
   };
 
   const handleDelegateToIT = async (statusId, assetId) => {
@@ -416,6 +439,14 @@ const CompletionStatusPage = ({
 
   return (
     <div style={{ padding: '20px' }}>
+      <Button
+        variant='contained'
+        color='primary'
+        onClick={() => handleBulkDelegateToIT(selectedRows)} // Trigger the bulk action
+        disabled={selectedRows.length === 0} // Disable if no rows are selected
+      >
+        Delegate Selected to IT
+      </Button>
       <section style={{ marginTop: '20px' }}>
         <FormControlLabel
           control={
@@ -494,6 +525,7 @@ const CompletionStatusPage = ({
             <Table>
               <TableHead>
                 <TableRow>
+                  {role !== 'Compliance Team' && <TableCell>Select</TableCell>}
                   <TableCell />
                   {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
                   <TableCell>Action</TableCell>
@@ -532,6 +564,36 @@ const CompletionStatusPage = ({
                     return (
                       <React.Fragment key={status._id}>
                         <TableRow>
+                          <TableCell>
+                            <Checkbox
+                              color='primary'
+                              checked={selectedRows.some(
+                                (item) => item.statusId === status._id
+                              )}
+                              onChange={() => {
+                                setSelectedRows((prev) => {
+                                  const isSelected = prev.some(
+                                    (item) => item.statusId === status._id
+                                  );
+                                  if (isSelected) {
+                                    // Remove the item from selectedRows
+                                    return prev.filter(
+                                      (item) => item.statusId !== status._id
+                                    );
+                                  } else {
+                                    // Add the new item with both statusId and assetId
+                                    return [
+                                      ...prev,
+                                      {
+                                        statusId: status._id,
+                                        assetId: status.assetId._id,
+                                      },
+                                    ];
+                                  }
+                                });
+                              }}
+                            />
+                          </TableCell>
                           <TableCell>
                             <IconButton
                               size='small'
@@ -879,6 +941,17 @@ const CompletionStatusPage = ({
                         </TableRow>
                       </React.Fragment>
                     );
+                    // Add a Bulk Action Button
+                    <Toolbar>
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={() => handleBulkDelegateToIT(selectedRows)}
+                        disabled={selectedRows.length === 0}
+                      >
+                        Delegate Selected to IT
+                      </Button>
+                    </Toolbar>;
                   })}
               </TableBody>
             </Table>
