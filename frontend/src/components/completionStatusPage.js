@@ -8,8 +8,6 @@ import {
   setNotApplicableStatus,
   confirmNotApplicableStatus,
 } from '../api/completionStatusApi';
-import Toolbar from '@mui/material/Toolbar'; // For MUI v5
-import MoreVertIcon from '@mui/icons-material/MoreVert'; // Example icon
 
 import {
   Table,
@@ -56,8 +54,6 @@ const CompletionStatusPage = ({
   issueInEvidence,
   checkAssetSelection,
 }) => {
-  const [isToolbarOpen, setIsToolbarOpen] = useState(false);
-
   const [selectedRows, setSelectedRows] = useState([]);
 
   const [fetchedStatuses, setFetchedStatuses] = useState([]);
@@ -146,10 +142,6 @@ const CompletionStatusPage = ({
     } finally {
       setLoading(false); // End loading state
     }
-  };
-
-  const handleToggleToolbar = () => {
-    setIsToolbarOpen((prev) => !prev);
   };
 
   useEffect(() => {
@@ -565,34 +557,40 @@ const CompletionStatusPage = ({
                       <React.Fragment key={status._id}>
                         <TableRow>
                           <TableCell>
-                            <Checkbox
-                              color='primary'
-                              checked={selectedRows.some(
-                                (item) => item.statusId === status._id
-                              )}
-                              onChange={() => {
-                                setSelectedRows((prev) => {
-                                  const isSelected = prev.some(
-                                    (item) => item.statusId === status._id
-                                  );
-                                  if (isSelected) {
-                                    // Remove the item from selectedRows
-                                    return prev.filter(
-                                      (item) => item.statusId !== status._id
+                            {role === 'Compliance Team' && (
+                              <Checkbox
+                                color='primary'
+                                checked={selectedRows.some(
+                                  (item) => item.statusId === status._id
+                                )}
+                                onChange={() => {
+                                  setSelectedRows((prev) => {
+                                    const isSelected = prev.some(
+                                      (item) => item.statusId === status._id
                                     );
-                                  } else {
-                                    // Add the new item with both statusId and assetId
-                                    return [
-                                      ...prev,
-                                      {
-                                        statusId: status._id,
-                                        assetId: status.assetId._id,
-                                      },
-                                    ];
-                                  }
-                                });
-                              }}
-                            />
+                                    if (isSelected) {
+                                      // Remove the item from selectedRows
+                                      return prev.filter(
+                                        (item) => item.statusId !== status._id
+                                      );
+                                    } else {
+                                      // Add the new item with both statusId and assetId
+                                      return [
+                                        ...prev,
+                                        {
+                                          statusId: status._id,
+                                          assetId: status.assetId._id,
+                                        },
+                                      ];
+                                    }
+                                  });
+                                }}
+                                // disabled={status.status !== 'Open'} // Disable if status is not 'Open'
+                                disabled={
+                                  status.status !== 'Open' || !status.isTask
+                                }
+                              />
+                            )}
                           </TableCell>
                           <TableCell>
                             <IconButton
@@ -941,17 +939,6 @@ const CompletionStatusPage = ({
                         </TableRow>
                       </React.Fragment>
                     );
-                    // Add a Bulk Action Button
-                    <Toolbar>
-                      <Button
-                        variant='contained'
-                        color='primary'
-                        onClick={() => handleBulkDelegateToIT(selectedRows)}
-                        disabled={selectedRows.length === 0}
-                      >
-                        Delegate Selected to IT
-                      </Button>
-                    </Toolbar>;
                   })}
               </TableBody>
             </Table>
