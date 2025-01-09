@@ -92,42 +92,6 @@ const CompletionStatusPage = ({
     [selectedScopeId, selectedAssetId, expandedFamilyId, currentUserId]
   );
 
-  // const handleFetchStatus = async () => {
-  //   setLoading(true); // Start loading state
-
-  //   try {
-  //     const response = await getStatus(query);
-  //     const fetchedStatuses = Array.isArray(response) ? response : [response];
-
-  //     // Apply sorting logic
-  //     const sortedStatuses = fetchedStatuses.sort((a, b) => {
-  //       const controlFamilyComparison = (
-  //         a.controlId?.controlFamily?.fixed_id || ''
-  //       ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
-  //       if (controlFamilyComparison !== 0) {
-  //         return controlFamilyComparison;
-  //       }
-
-  //       const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
-  //         b.controlId?.fixed_id || ''
-  //       );
-  //       if (controlComparison !== 0) {
-  //         return controlComparison;
-  //       }
-
-  //       return (a.actionId?.fixed_id || '').localeCompare(
-  //         b.actionId?.fixed_id || ''
-  //       );
-  //     });
-
-  //     setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
-  //   } catch (error) {
-  //     console.error('Error fetching status:', error);
-  //   } finally {
-  //     setLoading(false); // End loading state
-  //   }
-  // };
-
   const handleFetchStatus = async () => {
     setLoading(true); // Start loading state
     setNoTasks(false); // Reset the state to false initially
@@ -176,45 +140,6 @@ const CompletionStatusPage = ({
       setLoading(false); // End loading state
     }
   };
-
-  // const handleFetchStatus = async () => {
-  //   setLoading(true); // Start loading state
-  //   setNoTasks(false); // Reset the state to false initially
-
-  //   try {
-  //     const response = await getStatus(query);
-  //     console.log('asset', selectedAssetId);
-  //     console.log(response);
-  //     const fetchedStatuses = Array.isArray(response) ? response : [response];
-
-  //     if (fetchedStatuses.length === 0) {
-  //       setNoTasks(true); // Set noTasks to true if there are no fetched statuses
-  //     } else {
-  //       // Apply sorting logic
-  //       const sortedStatuses = fetchedStatuses.sort((a, b) => {
-  //         const controlFamilyComparison = (
-  //           a.controlId?.controlFamily?.fixed_id || ''
-  //         ).localeCompare(b.controlId?.controlFamily?.fixed_id || '');
-  //         if (controlFamilyComparison !== 0) return controlFamilyComparison;
-
-  //         const controlComparison = (a.controlId?.fixed_id || '').localeCompare(
-  //           b.controlId?.fixed_id || ''
-  //         );
-  //         if (controlComparison !== 0) return controlComparison;
-
-  //         return (a.actionId?.fixed_id || '').localeCompare(
-  //           b.actionId?.fixed_id || ''
-  //         );
-  //       });
-
-  //       setFetchedStatuses(sortedStatuses); // Update state with sorted statuses
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching status:', error);
-  //   } finally {
-  //     setLoading(false); // End loading state
-  //   }
-  // };
 
   useEffect(() => {
     handleFetchStatus(); // Fetch data on component mount and when query changes
@@ -428,14 +353,9 @@ const CompletionStatusPage = ({
         }
       );
 
-      // Check if the response contains a valid file URL
       if (res.data && res.data.fileUrl) {
-        // return res.data.fileUrl;
-        // Redirect to the file URL or a specific route
         const fullUrl = `http://localhost:8021${res.data.fileUrl}`;
-        // window.location.href = fullUrl; // Redirect to the evidence URL
         setEvidenceUrl(fullUrl);
-        // window.open(fullUrl, '_blank'); // Opens the URL in a new window/tab
       } else {
         return null; // No evidence found
       }
@@ -448,12 +368,7 @@ const CompletionStatusPage = ({
   const handleMarkAsCompleted = async (actionId, controlId) => {
     if (!checkAssetSelection()) return;
     try {
-      // Prompt for feedback
-
-      // Mark the action as completed
       await markActionAsCompleted(actionId, controlId);
-
-      // Update status in the list
 
       await handleFetchStatus();
     } catch (error) {
@@ -476,7 +391,6 @@ const CompletionStatusPage = ({
     return str
       .split(' ')
       .map((word, index) => {
-        // Capitalize the first letter of each word and make the rest lowercase
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       })
       .join(''); // Join without spaces to form camel case
@@ -485,7 +399,6 @@ const CompletionStatusPage = ({
   const handleSetNotApplicable = async (statusId) => {
     try {
       await setNotApplicableStatus(statusId, currentUserId);
-      // setCompletionStatus(updatedStatus); // Update the status in UI
       await handleFetchStatus();
     } catch (error) {
       console.error(error.message);
@@ -496,27 +409,10 @@ const CompletionStatusPage = ({
     try {
       await confirmNotApplicableStatus(statusId, currentUserId);
       await handleFetchStatus();
-
-      // setCompletionStatus(updatedStatus); // Update the status in UI
     } catch (error) {
       console.error(error.message);
     }
   };
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const actionsResponse = await fetchActions();
-  //       console.log(actionsResponse);
-  //     } catch (error) {
-  //       console.error('Error fetching actions:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -606,40 +502,11 @@ const CompletionStatusPage = ({
                   <TableCell>Status</TableCell>
                   <TableCell>Asset & Control Type</TableCell>
                   <TableCell>Software Selected</TableCell>
-                  {/* <TableCell>Task:</TableCell> */}
 
-                  {/* Conditional rendering for Upload Evidence based on role */}
                   {role === 'IT Team' && <TableCell>Upload Evidence</TableCell>}
 
                   <TableCell>View Evidence </TableCell>
 
-                  {/* {(role === 'IT Team' || role === 'Compliance Team') && (
-                    <TableCell>Mark as Not Applicable</TableCell>
-                  )}
-                  {(role === 'IT Team' || role === 'Admin') && (
-                    <TableCell>Action</TableCell>
-                  )}
-
-                  {role === 'Auditor' && (
-                    <TableCell>Confirm as Not Applicable</TableCell>
-                  )}
-
-                  {role === 'IT Team' ||
-                    (role === 'Compliance Team' && (
-                      <TableCell>Actions</TableCell>
-                    ))}
-                  {role === 'Auditor' && (
-                    <>
-                      <TableCell>Actions</TableCell>
-                      <TableCell>Confirm</TableCell>
-                    </>
-                  )}
-                  {role === 'External Auditor' && (
-                    <>
-                      <TableCell>Actions</TableCell>
-                      <TableCell>Mark as done</TableCell>
-                    </>
-                  )} */}
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -693,9 +560,6 @@ const CompletionStatusPage = ({
                                 sx={{
                                   width: '250px',
                                   maxWidth: '250px',
-                                  // overflow: 'hidden',
-                                  // textOverflow: 'ellipsis',
-                                  // whiteSpace: 'nowrap',
                                 }}
                               >
                                 {status.controlId?.section_desc || 'N/A'}
@@ -716,14 +580,7 @@ const CompletionStatusPage = ({
                                 {status?.selectedSoftware?.software_name ||
                                   'N/A'}
                               </TableCell>
-                              {/* <ActionCell
-                                actionId={status.actionId?._id}
-                                controlId={status.controlId?._id}
-                                productFamilyId={
-                                  status.controlId.product_family_Id
-                                } // Assuming this exists
-                                softwareId={status.selectedSoftware?._id} // Assuming this exists
-                              /> */}
+
                               {/* Evidence upload button for IT Team */}
                               {role === 'IT Team' && !isCompleted && (
                                 <EvidenceUpload

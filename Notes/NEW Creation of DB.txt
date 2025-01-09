@@ -1,0 +1,33 @@
+SETUP Document:
+
+NEW Creation of DB 
+1. New Mongoose URI 
+2. Transfer 
+	- Actions
+	- ControlFamilies
+	- Controls
+	- NewActions
+	- ProductFamilies
+	- Softwares
+3. Seed Admin Script run 
+	cred: admin@example.com
+		adminpassword
+4. Fill the company form 
+	otp is 9999
+5. Declare Users for application 
+	- Compliance Team 
+		- For all the work allocation
+	- IT Team 
+		 - For Software Allocation
+	- Auditor 
+		- Check before Final Auditor
+	- External Auditor ** Id for external auditor has to be '66f5509b121a8c3a25a91924'
+		- Verify Status and push 
+6. Asset and scope creation
+7. Asset declaration
+8. Submit Product Families
+	- will be saving company info too
+9. Start assigning tasks
+10. Upload evidence
+11. Confirm evidence
+12. View reports

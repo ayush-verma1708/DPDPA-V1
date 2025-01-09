@@ -1,0 +1,15 @@
+http://localhost:8021/api/v1/control-families - > http://riskindex360.com:8080/api/v1/control-families
+
+
+
+
+
+No software : 
+	Delegate to IT -> Please share --> Delegate to Auditor for final stamping 
+ 
+				
+			i have prod implement in future : Capture the details {Text box } For auditor validation 
+			risk accepted  
+			no prod  
+
+	

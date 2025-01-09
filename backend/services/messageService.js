@@ -6,7 +6,9 @@ export const getMessagesForUser = async (userId) => {
   try {
     return await Message.find({ userId }) // Find messages by userId
       .sort({ createdAt: -1 }) // Sort by creation date, newest first
-      .populate('userId', 'username'); // Populate the userId field to get username
+      .populate('userId', 'username')
+      .populate('completionStatusId', 'assetId scopeId')
+      .populate('completionStatusId.assetId');
   } catch (error) {
     console.error('Error fetching messages:', error);
     throw error; // Propagate the error

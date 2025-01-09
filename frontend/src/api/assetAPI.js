@@ -25,6 +25,7 @@ export const getAssets = async () => {
 
 export const getAssetById = async (id) => {
   const response = await axios.get(`${API_URL_ASSET_DETAILS}${id}`);
+  console.log('response', response);
   return response.data;
 };
 

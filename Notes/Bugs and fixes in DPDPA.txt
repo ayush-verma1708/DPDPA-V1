@@ -1,0 +1,26 @@
+Check for company form 
+
+1. Edit and Delete asset from asset details
+2. Duplicacy in asset details ( verify for asset and scope )
+3. Scoped assets to group together
+4. No same user for different declaration
+5. if asset already task started then it can not be deleted 
+6. Rerun script for creation of asset , scope , control , control families ,action. if the task has already begun 
+7. Asset active and inactive
+									8. Default value for asset and scope
+9. Uploading bug
+10. multiple uploading 
+									11. mark as not applicable bug
+									12. Column readiblity in compliance operation
+13. Buttons in same columns 
+14. localhost on submit prod family in 	compliance operation
+15. Scanner
+16. Azure scanner api confirm
+17. Product family
+	- No product in category
+	- I have alternate prod 
+	 	- Give prod name
+			Highlight risk
+18. Universal recommendation for alter prod
+19. Notification and message ui change
+20. Script to verify mip tasks 
