@@ -517,7 +517,7 @@ const CompletionStatusPage = ({
             <Table>
               <TableHead>
                 <TableRow>
-                  {role !== 'Compliance Team' && <TableCell>Select</TableCell>}
+                  {role === 'Compliance Team' && <TableCell>Select</TableCell>}
                   <TableCell />
                   {role !== 'IT Team' && <TableCell>Assigned to</TableCell>}
                   <TableCell>Action</TableCell>
@@ -556,8 +556,8 @@ const CompletionStatusPage = ({
                     return (
                       <React.Fragment key={status._id}>
                         <TableRow>
-                          <TableCell>
-                            {role === 'Compliance Team' && (
+                          {role === 'Compliance Team' && (
+                            <TableCell>
                               <Checkbox
                                 color='primary'
                                 checked={selectedRows.some(
@@ -590,8 +590,8 @@ const CompletionStatusPage = ({
                                   status.status !== 'Open' || !status.isTask
                                 }
                               />
-                            )}
-                          </TableCell>
+                            </TableCell>
+                          )}
                           <TableCell>
                             <IconButton
                               size='small'
