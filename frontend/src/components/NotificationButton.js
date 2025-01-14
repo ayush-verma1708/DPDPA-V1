@@ -27,9 +27,7 @@ const NotificationButton = () => {
   useEffect(() => {
     const fetchNotificationCount = async () => {
       try {
-        console.log('Fetching notifications...'); // Debugging log
         const notifications = await getAllNotifications(); // Fetch all notifications
-        console.log('Notifications fetched:', notifications); // Debugging log
 
         // Count unread notifications
         const unreadCount = notifications.filter(

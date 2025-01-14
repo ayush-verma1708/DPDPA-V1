@@ -1,7 +1,5 @@
 import Assignment from '../models/AssignmentModel.js'; // Import the Assignment model
 import User from '../models/User.js';
-import Training from '../models/trainingModel.js';
-import Quiz from '../models/quizModel.js';
 
 export const createAssignment = async (req, res) => {
   const { user, item, itemType, dueDate } = req.body;

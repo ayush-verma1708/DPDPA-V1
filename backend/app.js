@@ -38,6 +38,8 @@ import quizRoutes from './routes/quizRoutes.js';
 import assignmentRoutes from './routes/assignmentRoutes.js'; // Import assignment routes
 import userAnswerRoutes from './routes/userAnswerRoutes.js'; // Import user answer routes
 
+import swaggerDocs from './swagger.js'; // Import the Swagger setup
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -57,38 +59,36 @@ app.use(express.static('uploads'));
 app.use(cookieParser());
 
 // Use the routes
-app.use('/api/user-responses', userResponseRoutes);
-app.use('/api', productFamilyRoutes); // Mount the product family routes at /api
+app.use('/api/v1/actions', actionRoutes); // Add action routes
 app.use('/api/v1/assets', assetRouter);
-app.use('/api/v1/scoped', scopedRouter);
-app.use('/api/v1/coverage', coverageRouter);
-app.use('/api/v1/business', businessRouter);
-app.use('/api/v1/it', itRouter);
+app.use('/api/v1/assetDetails', assetDetailRouter);
+app.use('/api/assignments', assignmentRoutes); // Assignment routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api', azureRoutes);
+app.use('/api/v1/business', businessRouter);
+app.use('/api/company-form', companyFormRoutes);
+app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
+app.use('/api/v1/compliance-snapshot', complianceSnapshotRoutes);
 app.use('/api/v1/control-families', controlFamiliesRoutes); // Add this line to handle control families
 app.use('/api/v1/controls', controlRoutes); // Add control routes
-app.use('/api/v1/actions', actionRoutes); // Add action routes
-app.use('/api/v1/assetDetails', assetDetailRouter);
-app.use('/api/v1/completion-status', completionStatusRoutes); // Add completion status routes
+app.use('/api/v1/coverage', coverageRouter);
+app.use('/api/v1', discoveredAssetRoutes);
 app.use('/api/evidence', evidenceRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/v1', stepTasks);
-app.use('/api', newActionRoutes);
-app.use('/api/company-form', companyFormRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/api/v1/compliance-snapshot', complianceSnapshotRoutes);
+app.use('/api/v1/it', itRouter);
 app.use('/api/messages', messageRoutes);
 app.use('/api', networkRoutes);
+app.use('/api', newActionRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api', packetRoutes);
-app.use('/api', azureRoutes);
-app.use('/api/v1', discoveredAssetRoutes);
-
-app.use('/api', trainingRoutes);
+app.use('/api', productFamilyRoutes); // Mount the product family routes at /api
 app.use('/api', quizRoutes); // quiz routes
-app.use('/api/assignments', assignmentRoutes); // Assignment routes
-
+app.use('/api/v1/scoped', scopedRouter);
+app.use('/api/v1', stepTasks);
+app.use('/api', trainingRoutes);
 app.use('/api/assignments', userAnswerRoutes); // Assignment routes
+app.use('/api/user-responses', userResponseRoutes);
+app.use('/api/users', userRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/:filename', async (req, res) => {
   const { filename } = req.params;
@@ -96,13 +96,17 @@ app.get('/:filename', async (req, res) => {
   return res.download(filepath);
   // return res.send(filepath)
 }),
-  // Global error handling middleware
-  app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(err.statusCode || 500).json({
-      message: err.message || 'Internal Server Error',
-      error: process.env.NODE_ENV === 'development' ? err : {},
-    });
+  // Set up Swagger documentation
+  swaggerDocs(app); // Initialize Swagger UI
+
+// Global error handling middleware
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.statusCode || 500).json({
+    message: err.message || 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err : {},
   });
+});
 
 export { app };
