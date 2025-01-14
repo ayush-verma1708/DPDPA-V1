@@ -8,6 +8,7 @@ import {
   setNotApplicableStatus,
   confirmNotApplicableStatus,
 } from '../api/completionStatusApi';
+import OverallStatus from './OverallStatus.js';
 
 import {
   Table,
@@ -502,12 +503,11 @@ const CompletionStatusPage = ({
           </div>
         ) : noTasks ? (
           <div>
-            <p>You've encountered a bug</p>{' '}
-            {/* Show message when no tasks are available */}
-            <button onClick={() => window.location.reload()}>
-              Reload Page
-            </button>{' '}
-            {/* Button to reload the page */}
+            {/* <p>You've encountered a bug</p>{' '}
+              <button onClick={() => window.location.reload()}>
+                Reload Page
+              </button>{' '} */}
+            <OverallStatus />
           </div>
         ) : (
           <TableContainer
@@ -537,11 +537,9 @@ const CompletionStatusPage = ({
               <TableBody>
                 {paginatedData
                   .filter((status) => {
-                    // Allow Admin and Compliance Team to view all statuses
                     if (role === 'Admin' || role === 'Compliance Team') {
                       return true; // No filtering for these roles, return all data
                     }
-                    // For other users, only show statuses where assigned to the current user
                     return (
                       currentUserId === status.AssignedTo?._id ||
                       currentUserId === status.AssignedBy?._id
