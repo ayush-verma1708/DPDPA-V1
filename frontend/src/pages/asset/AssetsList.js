@@ -60,7 +60,8 @@ const AssetList = () => {
     const fetchUsers = async () => {
       try {
         const userData = await getUsers();
-        setUsers(userData.users || []); // Extract the users array
+        console.log(userData);
+        setUsers(userData || []); // Ensure userData is set correctly
       } catch (error) {
         console.error('Error fetching users:', error);
         setUsers([]);

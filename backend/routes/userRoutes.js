@@ -47,7 +47,7 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.get('/', getUsers); // Get all users
+router.get('/all', getUsers); // Get all users
 
 /**
  * @swagger

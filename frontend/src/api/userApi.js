@@ -6,7 +6,8 @@ const BASE = 'http://localhost:8021';
 // Function to get users with optional pagination
 export const getUsers = async (pageNumber = 1) => {
   try {
-    const { data } = await axios.get(`${API_URL}?pageNumber=${pageNumber}`);
+    const { data } = await axios.get(`${API_URL}/all?pageNumber=${pageNumber}`);
+    console.log(data);
     return data;
   } catch (error) {
     console.error('Error fetching users:', error);

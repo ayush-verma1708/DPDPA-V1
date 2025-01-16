@@ -44,7 +44,7 @@ const UserAssignmentPage = () => {
     const fetchUsers = async () => {
       try {
         const userData = await getUsers(); // Fetch users using the API
-        setUsers(userData.users);
+        setUsers(userData);
       } catch (error) {
         console.error('Error fetching users:', error);
         setUsers([]); // Set users to an empty array in case of error

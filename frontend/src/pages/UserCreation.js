@@ -43,7 +43,7 @@ const UserCreation = () => {
   const fetchUsers = async () => {
     try {
       const response = await getUsers();
-      setUsers(response.users);
+      setUsers(response); // Directly set the response to users
     } catch (error) {
       console.error('Failed to fetch users:', error);
       setError('Failed to fetch users');
@@ -169,51 +169,52 @@ const UserCreation = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user, index) => (
-              <TableRow key={user._id}>
-                <TableCell>{index + 1}</TableCell>{' '}
-                {/* Display sequence number */}
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell> {/* Display email */}
-                <TableCell>********</TableCell> {/* Masked password */}
-                {/* <TableCell>{user.password}</TableCell> */}
-                <TableCell>{user.role}</TableCell>
-                <TableCell>
-                  <Checkbox checked={user.permissions.view} disabled />
-                </TableCell>
-                <TableCell>
-                  <Checkbox checked={user.permissions.add} disabled />
-                </TableCell>
-                <TableCell>
-                  <Checkbox checked={user.permissions.edit} disabled />
-                </TableCell>
-                <TableCell>
-                  <Checkbox checked={user.permissions.delegate} disabled />
-                </TableCell>
-                <TableCell>
-                  <Checkbox
-                    checked={user.permissions.uploadEvidence}
-                    disabled
-                  />
-                </TableCell>
-                <TableCell>
-                  <Checkbox
-                    checked={user.permissions.confirmEvidence}
-                    disabled
-                  />
-                </TableCell>
-                <TableCell>{user._id}</TableCell>
-                <TableCell>
-                  <Button
-                    variant='contained'
-                    color='secondary'
-                    onClick={() => openDrawerForEdit(user)}
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {users &&
+              users.map((user, index) => (
+                <TableRow key={user._id}>
+                  <TableCell>{index + 1}</TableCell>{' '}
+                  {/* Display sequence number */}
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.email}</TableCell> {/* Display email */}
+                  <TableCell>********</TableCell> {/* Masked password */}
+                  {/* <TableCell>{user.password}</TableCell> */}
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>
+                    <Checkbox checked={user.permissions.view} disabled />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked={user.permissions.add} disabled />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked={user.permissions.edit} disabled />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox checked={user.permissions.delegate} disabled />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={user.permissions.uploadEvidence}
+                      disabled
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={user.permissions.confirmEvidence}
+                      disabled
+                    />
+                  </TableCell>
+                  <TableCell>{user._id}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant='contained'
+                      color='secondary'
+                      onClick={() => openDrawerForEdit(user)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

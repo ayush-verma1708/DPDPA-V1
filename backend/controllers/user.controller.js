@@ -182,21 +182,17 @@ const updateUser = AsyncHandler(async (req, res) => {
 });
 
 // Get all users with pagination
-const getUsers = AsyncHandler(async (req, res) => {
-  const pageSize = 10;
-  const page = Number(req.query.pageNumber) || 1;
-
-  const count = await User.countDocuments({});
-  const users = await User.find({})
-    .limit(pageSize)
-    .skip(pageSize * (page - 1));
-
-  res.json({
-    users,
-    page,
-    pages: Math.ceil(count / pageSize),
-  });
-});
+// Controller function to get all users
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find(); // Retrieve all users from the database
+    res.status(200).json(users); // Send the users as a JSON response
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Failed to retrieve users', error: error.message });
+  }
+};
 
 // Delete a user by ID
 const deleteUser = AsyncHandler(async (req, res) => {
